@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWyki - Portal del Universo Pirate Galaxy</title>
+    <meta name="description" content="Wiki dedicada al universo de Pirate Galaxy con información completa sobre naves, personajes, misiones y más.">
+    <meta name="keywords" content="Pirate Galaxy, naves, misiones, wiki, guía, estrategia">
+    <meta name="author" content="GalaxWyki Team">
+    
+    <!-- Tailwind CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.0/font/bootstrap-icons.min.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/characters_render/logos/pirategalaxy_skull.png">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 font-sans transition-all duration-300">
+    <!-- Main Layout -->
+    <div id="appLayout" class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <!-- Sidebar Header -->
+            <header class="sidebar-header">
+                <div class="brand">
+                    <img src="assets/characters_render/logos/pirategalaxy_skull.png" 
+                        alt="GalaxWyki Logo" 
+                        class="brand-logo">
+                    <div class="brand-text">
+                        <h1 class="text-xl font-bold gradient-text-blue">GalaxWyki</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Portal Pirate Galaxy</p>
+                    </div>
+                </div>
+                <!-- Toggle Button -->
+                <button id="sidebarToggle" 
+                        class="sidebar-toggle"
+                        aria-label="Toggle Sidebar">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+            </header>
+            
+            <!-- Scrollable Content -->
+            <div id="sidebarContent" class="sidebar-content custom-scrollbar">
+                <!-- Search Container -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="search" 
+                            id="searchInput"
+                            class="search-input"
+                            placeholder="Buscar en GalaxWyki..."
+                            aria-label="Buscar">
+                        <button id="searchClear" 
+                                class="search-clear hidden"
+                                aria-label="Limpiar búsqueda">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                    <!-- Search Results -->
+                    <div id="searchResults" class="search-results hidden"></div>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="sidebar-nav" id="sidebarNav" aria-label="Navegación principal">
+                    <!-- Principal Section -->
+                    <div class="nav-section">
+                        <div class="nav-section-header">
+                            <h3>Principal</h3>
+                        </div>
+                        <ul class="nav-list">
+                            <li class="nav-item">
+                                <button class="nav-link active" 
+                                        data-section="home"
+                                        data-tooltip="Inicio">
+                                    <i class="bi bi-house-door nav-icon"></i>
+                                    <span class="nav-text">Inicio</span>
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" 
+                                        data-section="blueprints"
+                                        data-tooltip="Planos">
+                                    <i class="bi bi-box-seam nav-icon"></i>
+                                    <span class="nav-text">Planos</span>
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" 
+                                        data-section="ships"
+                                        data-tooltip="Naves">
+                                    <i class="bi bi-airplane nav-icon"></i>
+                                    <span class="nav-text">Naves</span>
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" 
+                                        data-section="missions"
+                                        data-tooltip="Misiones">
+                                    <i class="bi bi-clipboard-check nav-icon"></i>
+                                    <span class="nav-text">Misiones</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Historia Section -->
+                    <div class="nav-section">
+                        <div class="nav-section-header">
+                            <h3>Historia</h3>
+                        </div>
+                        <ul class="nav-list">
+                            <li class="nav-item dropdown" data-dropdown="history">
+                                <button class="nav-link dropdown-toggle"
+                                        data-tooltip="Historia"
+                                        aria-expanded="false">
+                                    <i class="bi bi-book nav-icon"></i>
+                                    <span class="nav-text">Historia</span>
+                                    <i class="bi bi-chevron-down nav-arrow"></i>
+                                </button>
+                                <ul class="submenu" aria-hidden="true">
+                                    <li class="submenu-item">
+                                        <button class="submenu-link" 
+                                                data-section="characters">
+                                            <i class="bi bi-person-circle"></i>
+                                            <span>Personajes</span>
+                                        </button>
+                                    </li>
+                                    <li class="submenu-item">
+                                        <button class="submenu-link" 
+                                                data-section="ships-history">
+                                            <i class="bi bi-rocket"></i>
+                                            <span>Naves</span>
+                                        </button>
+                                    </li>
+                                    <li class="submenu-item">
+                                        <button class="submenu-link" 
+                                                data-section="structures">
+                                            <i class="bi bi-building"></i>
+                                            <span>Estructuras</span>
+                                        </button>
+                                    </li>
+                                    <li class="submenu-item">
+                                        <button class="submenu-link" 
+                                                data-section="avatar">
+                                            <i class="bi bi-person"></i>
+                                            <span>Avatar</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Universo Section -->
+                    <div class="nav-section">
+                        <div class="nav-section-header">
+                            <h3>Universo</h3>
+                        </div>
+                        <ul class="nav-list">
+                            <li class="nav-item">
+                                <button class="nav-link" 
+                                        data-section="systems"
+                                        data-tooltip="Sistemas Planetarios">
+                                    <i class="bi bi-globe nav-icon"></i>
+                                    <span class="nav-text">Sistemas Planetarios</span>
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" 
+                                        data-section="conquests"
+                                        data-tooltip="Conquistas">
+                                    <i class="bi bi-sword nav-icon"></i>
+                                    <span class="nav-text">Conquistas</span>
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" 
+                                        data-section="store"
+                                        data-tooltip="Tienda">
+                                    <i class="bi bi-cart nav-icon"></i>
+                                    <span class="nav-text">Tienda</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Recursos Section -->
+                    <div class="nav-section">
+                        <div class="nav-section-header">
+                            <h3>Recursos</h3>
+                        </div>
+                        <ul class="nav-list">
+                            <li class="nav-item dropdown" data-dropdown="data">
+                                <button class="nav-link dropdown-toggle"
+                                        data-tooltip="Data"
+                                        aria-expanded="false">
+                                    <i class="bi bi-folder nav-icon"></i>
+                                    <span class="nav-text">Data</span>
+                                    <i class="bi bi-chevron-down nav-arrow"></i>
+                                </button>
+                                <ul class="submenu" aria-hidden="true">
+                                    <li class="submenu-item">
+                                        <button class="submenu-link" 
+                                                data-section="screenshots">
+                                            <i class="bi bi-image"></i>
+                                            <span>Screenshots</span>
+                                        </button>
+                                    </li>
+                                    <li class="submenu-item">
+                                        <button class="submenu-link" 
+                                                data-section="misc">
+                                            <i class="bi bi-grid"></i>
+                                            <span>Miscelánea</span>
+                                        </button>
+                                    </li>
+                                    <li class="submenu-item">
+                                        <button class="submenu-link" 
+                                                data-section="events">
+                                            <i class="bi bi-calendar-event"></i>
+                                            <span>Eventos</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" 
+                                        data-section="calculator"
+                                        data-tooltip="Calculadora">
+                                    <i class="bi bi-calculator nav-icon"></i>
+                                    <span class="nav-text">Calculadora</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            
+            <!-- Sidebar Footer -->
+            <footer class="sidebar-footer">
+                <!-- Settings Links -->
+                <ul class="footer-links">
+                    <li>
+                        <button class="nav-link" 
+                                data-section="notifications"
+                                data-tooltip="Notificaciones">
+                            <i class="bi bi-bell nav-icon"></i>
+                            <span class="nav-text">Notificaciones</span>
+                            <span class="notification-badge">3</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-link" 
+                                data-section="settings"
+                                data-tooltip="Configuración">
+                            <i class="bi bi-gear nav-icon"></i>
+                            <span class="nav-text">Configuración</span>
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- User Profile -->
+                <button class="user-profile" 
+                        data-tooltip="Perfil de Usuario"
+                        aria-label="Perfil de Usuario">
+                    <img src="assets/characters_render/logos/pirategalaxy_skull.png" 
+                        alt="YaKross Avatar" 
+                        class="user-avatar">
+                    <div class="user-info">
+                        <p class="user-name">YaKross</p>
+                        <p class="user-email">spleetscreen@gmail.com</p>
+                        <div class="user-status">
+                            <div class="status-indicator"></div>
+                            <span class="status-text">En línea</span>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right user-menu-btn"></i>
+                </button>
+            </footer>
+        </aside>
+        
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="mobile-overlay"></div>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="page-header">
+                <div class="header-bg"></div>
+                <div class="header-gradient"></div>
+                <div class="header-content">
+                    <!-- Breadcrumbs -->
+                    <nav class="breadcrumbs" aria-label="breadcrumb">
+                        <ol>
+                            <li>
+                                <button class="breadcrumb-link" data-section="home">
+                                    <i class="bi bi-house-door"></i>
+                                    GalaxWyki
+                                </button>
+                            </li>
+                            <li class="separator">
+                                <i class="bi bi-chevron-right"></i>
+                            </li>
+                            <li class="current">Inicio</li>
+                        </ol>
+                    </nav>
+                    
+                    <!-- Header Info -->
+                    <div class="header-info">
+                        <h1>Bienvenido a GalaxWyki</h1>
+                        <p>Tu portal completo al universo de Pirate Galaxy</p>
+                        
+                        <!-- Stats -->
+                        <div class="header-stats">
+                            <div class="stat-item">
+                                <i class="bi bi-rocket-takeoff"></i>
+                                <div class="stat-content">
+                                    <div class="stat-number">156</div>
+                                    <div class="stat-label">Naves</div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <i class="bi bi-target"></i>
+                                <div class="stat-content">
+                                    <div class="stat-number">342</div>
+                                    <div class="stat-label">Misiones</div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <i class="bi bi-globe"></i>
+                                <div class="stat-content">
+                                    <div class="stat-number">28</div>
+                                    <div class="stat-label">Sistemas</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Content Area -->
+            <div id="contentArea" class="content-area">
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuToggle" 
+                        class="mobile-menu-toggle"
+                        aria-label="Abrir menú">
+                    <i class="bi bi-list"></i>
+                </button>
+                
+                <!-- Content Grid -->
+                <div class="content-grid">
+                    <!-- Explore Ships Card -->
+                    <article class="content-card card-ships">
+                        <div class="card-header">
+                            <div class="card-icon-wrapper gradient-blue">
+                                <i class="bi bi-rocket-takeoff"></i>
+                            </div>
+                            <div class="card-header-content">
+                                <h2 class="card-title">Explora las Naves</h2>
+                                <span class="card-badge badge-success">Actualizado</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Descubre la flota completa de naves disponibles en Pirate Galaxy. Desde las ágiles naves de reconocimiento hasta las poderosas naves de batalla.
+                            </p>
+                            <div class="card-footer">
+                                <button class="btn btn-primary" data-section="ships">
+                                    <span>Ver Naves</span>
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                                <span class="card-meta">156 naves disponibles</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <!-- Missions Card -->
+                    <article class="content-card card-missions">
+                        <div class="card-header">
+                            <div class="card-icon-wrapper gradient-purple">
+                                <i class="bi bi-clipboard-check"></i>
+                            </div>
+                            <div class="card-header-content">
+                                <h2 class="card-title">Misiones y Objetivos</h2>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Accede a la base de datos completa de misiones, desde las misiones principales de la historia hasta las misiones secundarias y eventos especiales.
+                            </p>
+                            <div class="card-footer">
+                                <button class="btn btn-outline" data-section="missions">
+                                    <span>Ver Misiones</span>
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                                <span class="card-meta">342 misiones</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <!-- Planetary Systems Card -->
+                    <article class="content-card card-systems">
+                        <div class="card-header">
+                            <div class="card-icon-wrapper gradient-green">
+                                <i class="bi bi-globe"></i>
+                            </div>
+                            <div class="card-header-content">
+                                <h2 class="card-title">Sistemas Planetarios</h2>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Explora todos los sistemas solares conocidos en el universo de Pirate Galaxy. Información detallada sobre planetas y estaciones espaciales.
+                            </p>
+                            <div class="card-footer">
+                                <button class="btn btn-outline" data-section="systems">
+                                    <span>Explorar</span>
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                                <span class="card-meta">28 sistemas</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <!-- Conquests Card -->
+                    <article class="content-card card-conquests">
+                        <div class="card-header">
+                            <div class="card-icon-wrapper gradient-red">
+                                <i class="bi bi-sword"></i>
+                            </div>
+                            <div class="card-header-content">
+                                <h2 class="card-title">Conquistas y PvP</h2>
+                                <span class="card-badge badge-popular">Popular</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Guías completas para el combate jugador contra jugador, estrategias de conquista y tácticas avanzadas para dominar el espacio.
+                            </p>
+                            <div class="card-footer">
+                                <button class="btn btn-outline" data-section="conquests">
+                                    <span>Ver Guías</span>
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                                <span class="card-meta">Actualizado hoy</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <!-- Calculator Card -->
+                    <article class="content-card card-calculator">
+                        <div class="card-header">
+                            <div class="card-icon-wrapper gradient-indigo">
+                                <i class="bi bi-calculator"></i>
+                            </div>
+                            <div class="card-header-content">
+                                <h2 class="card-title">Calculadora de Recursos</h2>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Herramienta avanzada para calcular recursos necesarios para construcción de naves y mejoras de equipamiento.
+                            </p>
+                            <div class="card-footer">
+                                <button class="btn btn-outline" data-section="calculator">
+                                    <span>Calcular</span>
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                                <span class="card-meta">Nueva función</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <!-- Store Card -->
+                    <article class="content-card card-store">
+                        <div class="card-header">
+                            <div class="card-icon-wrapper gradient-yellow">
+                                <i class="bi bi-cart"></i>
+                            </div>
+                            <div class="card-header-content">
+                                <h2 class="card-title">Tienda del Juego</h2>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-description">
+                                Información completa sobre todos los items disponibles en la tienda oficial del juego y sus precios actualizados.
+                            </p>
+                            <div class="card-footer">
+                                <button class="btn btn-outline" data-section="store">
+                                    <span>Ver Tienda</span>
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                                <span class="card-meta">Precios actualizados</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                
+                <!-- News Section -->
+                <section class="news-section">
+                    <div class="section-header">
+                        <div class="section-icon gradient-blue">
+                            <i class="bi bi-newspaper"></i>
+                        </div>
+                        <h2>Últimas Actualizaciones</h2>
+                    </div>
+                    
+                    <div class="news-list">
+                        <!-- News Item 1 -->
+                        <article class="news-item news-new">
+                            <div class="news-icon gradient-green">
+                                <i class="bi bi-stars"></i>
+                            </div>
+                            <div class="news-content">
+                                <h3>Nueva función de calculadora de recursos</h3>
+                                <p>Ahora puedes calcular los recursos necesarios para construir naves y equipamiento con nuestra nueva herramienta avanzada.</p>
+                                <div class="news-meta">
+                                    <span class="news-time">Hace 2 horas</span>
+                                    <span class="news-indicator"></span>
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <!-- News Item 2 -->
+                        <article class="news-item news-update">
+                            <div class="news-icon gradient-blue">
+                                <i class="bi bi-tools"></i>
+                            </div>
+                            <div class="news-content">
+                                <h3>Actualización de la base de datos de naves</h3>
+                                <p>Se agregaron 15 nuevas naves con especificaciones completas y guías detalladas de construcción.</p>
+                                <div class="news-meta">
+                                    <span class="news-time">Ayer</span>
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <!-- News Item 3 -->
+                        <article class="news-item news-enhancement">
+                            <div class="news-icon gradient-purple">
+                                <i class="bi bi-magic"></i>
+                            </div>
+                            <div class="news-content">
+                                <h3>Mejoras en la interfaz de usuario</h3>
+                                <p>Nueva experiencia de navegación más intuitiva y rápida con diseño mejorado y mejor rendimiento.</p>
+                                <div class="news-meta">
+                                    <span class="news-time">Hace 3 días</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Dark Mode Toggle Button -->
+    <button id="themeToggle" 
+            class="theme-toggle"
+            aria-label="Cambiar tema">
+        <div class="theme-icon sun-icon">
+            <i class="bi bi-sun-fill"></i>
+        </div>
+        <div class="theme-icon moon-icon">
+            <i class="bi bi-moon-stars-fill"></i>
+        </div>
+        <div class="theme-bg"></div>
+    </button>
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Cargando...</h3>
+            <p class="loading-text">Inicializando aplicación...</p>
+        </div>
+    </div>
+    
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+    
+    <!-- Custom Scripts -->
+    <script src="scripts/scripts.js"></script>
+</body>
+</html>
