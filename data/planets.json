@@ -7,6 +7,11 @@
       "level": 3,
       "type": "terran",
       "description": "Planeta hogar de la humanidad. Base principal de operaciones.",
+      "model3D": "models/planets/earth.glb",
+      "texture": "textures/planets/earth_day.jpg",
+      "atmosphere": true,
+      "rotation": 0.5,
+      "scale": 1.0,
       "colonies": [
         {
           "id": "earth-starbase",
@@ -29,7 +34,9 @@
       "resources": ["Credits", "Ore", "Basic Components"],
       "enemies": ["Rebel Forces"],
       "hasUnrest": true,
-      "coordinates": { "x": 0, "y": 0, "z": 0 }
+      "coordinates": { "x": 0, "y": 0, "z": 0 },
+      "orbitRadius": 100,
+      "orbitSpeed": 0.01
     },
     {
       "id": "mars",
@@ -38,6 +45,11 @@
       "level": 5,
       "type": "rocky",
       "description": "Colonia minera estratégica. Centro de producción de naves Parsec.",
+      "model3D": "models/planets/mars.glb",
+      "texture": "textures/planets/mars.jpg",
+      "atmosphere": false,
+      "rotation": 0.3,
+      "scale": 0.7,
       "colonies": [
         {
           "id": "mars-colony",
@@ -51,7 +63,9 @@
       ],
       "resources": ["Iron Ore", "Titanium", "Energy Crystals"],
       "enemies": ["Mantis Scouts", "Pirate Raiders"],
-      "coordinates": { "x": 15, "y": 3, "z": -5 }
+      "coordinates": { "x": 15, "y": 3, "z": -5 },
+      "orbitRadius": 150,
+      "orbitSpeed": 0.008
     },
     {
       "id": "jupiter",
@@ -60,6 +74,11 @@
       "level": 7,
       "type": "gas",
       "description": "Gigante gaseoso con estaciones orbitales. Rica en recursos energéticos.",
+      "model3D": "models/planets/jupiter.glb",
+      "texture": "textures/planets/jupiter.jpg",
+      "atmosphere": true,
+      "rotation": 1.2,
+      "scale": 2.5,
       "colonies": [
         {
           "id": "jupiter-station",
@@ -72,7 +91,10 @@
       ],
       "resources": ["Hydrogen", "Helium-3", "Plasma Cells"],
       "enemies": ["Space Pirates", "Mantis Drones"],
-      "coordinates": { "x": 45, "y": 8, "z": 12 }
+      "coordinates": { "x": 45, "y": 8, "z": 12 },
+      "orbitRadius": 400,
+      "orbitSpeed": 0.003,
+      "rings": true
     },
     {
       "id": "saturn",
@@ -81,6 +103,11 @@
       "level": 8,
       "type": "gas",
       "description": "Planeta anillado con múltiples lunas colonizadas.",
+      "model3D": "models/planets/saturn.glb",
+      "texture": "textures/planets/saturn.jpg",
+      "atmosphere": true,
+      "rotation": 1.0,
+      "scale": 2.3,
       "colonies": [
         {
           "id": "titan-base",
@@ -93,7 +120,10 @@
       ],
       "resources": ["Ice", "Methane", "Rare Minerals"],
       "enemies": ["Mantis Raiders"],
-      "coordinates": { "x": 85, "y": -12, "z": 20 }
+      "coordinates": { "x": 85, "y": -12, "z": 20 },
+      "orbitRadius": 600,
+      "orbitSpeed": 0.002,
+      "rings": true
     },
     {
       "id": "venar",
@@ -102,6 +132,11 @@
       "level": 10,
       "type": "terran",
       "description": "Primera colonia en Tau Ceti. Centro comercial próspero.",
+      "model3D": "models/planets/venar.glb",
+      "texture": "textures/planets/terran_green.jpg",
+      "atmosphere": true,
+      "rotation": 0.6,
+      "scale": 1.1,
       "colonies": [
         {
           "id": "venar-starbase",
@@ -114,7 +149,9 @@
       ],
       "resources": ["Advanced Components", "Exotic Minerals"],
       "enemies": ["Mantis Forces"],
-      "coordinates": { "x": 150, "y": 30, "z": -40 }
+      "coordinates": { "x": 150, "y": 30, "z": -40 },
+      "orbitRadius": 120,
+      "orbitSpeed": 0.009
     },
     {
       "id": "cetacea",
@@ -123,6 +160,11 @@
       "level": 14,
       "type": "ocean",
       "description": "Mundo oceánico con plataformas flotantes. Hogar de las naves Neon.",
+      "model3D": "models/planets/cetacea.glb",
+      "texture": "textures/planets/ocean_blue.jpg",
+      "atmosphere": true,
+      "rotation": 0.8,
+      "scale": 1.2,
       "colonies": [
         {
           "id": "neon-facility",
@@ -137,7 +179,10 @@
       "resources": ["Aqua Crystals", "Bio-fuel", "Neon Components"],
       "enemies": ["Mantis Elite"],
       "isSpecial": true,
-      "coordinates": { "x": 160, "y": 35, "z": -38 }
+      "coordinates": { "x": 160, "y": 35, "z": -38 },
+      "orbitRadius": 180,
+      "orbitSpeed": 0.007,
+      "glowEffect": true
     },
     {
       "id": "sirius-alpha",
@@ -146,6 +191,11 @@
       "level": 15,
       "type": "singularity",
       "description": "Planeta dinámico en la singularidad. Cambia cada rotación.",
+      "model3D": "models/planets/singularity.glb",
+      "texture": "textures/planets/singularity.jpg",
+      "atmosphere": false,
+      "rotation": 2.0,
+      "scale": 1.5,
       "colonies": [
         {
           "id": "temporal-station",
@@ -159,7 +209,10 @@
       "resources": ["Quantum Particles", "Unstable Matter"],
       "enemies": ["Dimensional Anomalies"],
       "isDynamic": true,
-      "coordinates": { "x": 200, "y": 0, "z": 0 }
+      "coordinates": { "x": 200, "y": 0, "z": 0 },
+      "orbitRadius": 250,
+      "orbitSpeed": 0.015,
+      "distortionEffect": true
     },
     {
       "id": "gazica",
@@ -168,6 +221,11 @@
       "level": 20,
       "type": "volcanic",
       "description": "Mundo volcánico hostil. Alto peligro Mantis.",
+      "model3D": "models/planets/gazica.glb",
+      "texture": "textures/planets/volcanic.jpg",
+      "atmosphere": true,
+      "rotation": 0.4,
+      "scale": 1.0,
       "colonies": [
         {
           "id": "outpost-gamma",
@@ -181,7 +239,10 @@
       "resources": ["Lava Crystals", "Thermal Energy"],
       "enemies": ["Mantis Warriors", "Mantis Elite"],
       "dangerLevel": "high",
-      "coordinates": { "x": 280, "y": -50, "z": 60 }
+      "coordinates": { "x": 280, "y": -50, "z": 60 },
+      "orbitRadius": 140,
+      "orbitSpeed": 0.006,
+      "lavaEffect": true
     },
     {
       "id": "mantis-hive",
@@ -190,13 +251,21 @@
       "level": 22,
       "type": "hive",
       "description": "Colmena Mantis principal. Extremadamente peligroso.",
+      "model3D": "models/planets/hive.glb",
+      "texture": "textures/planets/hive_organic.jpg",
+      "atmosphere": false,
+      "rotation": 0.2,
+      "scale": 1.3,
       "colonies": [],
       "resources": ["Mantis Tech", "Bio-materials"],
       "enemies": ["Mantis Queen", "Mantis Guardians", "Mantis Swarm"],
       "hostile": true,
       "dangerLevel": "extreme",
       "isBossLocation": true,
-      "coordinates": { "x": 295, "y": -55, "z": 65 }
+      "coordinates": { "x": 295, "y": -55, "z": 65 },
+      "orbitRadius": 160,
+      "orbitSpeed": 0.004,
+      "pulseEffect": true
     },
     {
       "id": "valkion",
@@ -205,6 +274,11 @@
       "level": 23,
       "type": "desert",
       "description": "Planeta desértico con ruinas antiguas.",
+      "model3D": "models/planets/valkion.glb",
+      "texture": "textures/planets/desert.jpg",
+      "atmosphere": false,
+      "rotation": 0.3,
+      "scale": 0.9,
       "colonies": [
         {
           "id": "valkion-ruins",
@@ -218,7 +292,9 @@
       "resources": ["Ancient Artifacts", "Rare Metals"],
       "enemies": ["Guardian Drones", "Mantis Scavengers"],
       "hasAncientRuins": true,
-      "coordinates": { "x": 300, "y": -48, "z": 58 }
+      "coordinates": { "x": 300, "y": -48, "z": 58 },
+      "orbitRadius": 170,
+      "orbitSpeed": 0.005
     },
     {
       "id": "baumar",
@@ -227,6 +303,11 @@
       "level": 25,
       "type": "industrial",
       "description": "Centro de manufactura pesada. Producción de armamento.",
+      "model3D": "models/planets/baumar.glb",
+      "texture": "textures/planets/industrial.jpg",
+      "atmosphere": true,
+      "rotation": 0.5,
+      "scale": 1.1,
       "colonies": [
         {
           "id": "baumar-factory",
@@ -239,7 +320,10 @@
       ],
       "resources": ["Alloys", "Weapon Parts", "Ammunition"],
       "enemies": ["Vega Scouts"],
-      "coordinates": { "x": 350, "y": 70, "z": -80 }
+      "coordinates": { "x": 350, "y": 70, "z": -80 },
+      "orbitRadius": 200,
+      "orbitSpeed": 0.007,
+      "smokeEffect": true
     },
     {
       "id": "desai",
@@ -248,6 +332,11 @@
       "level": 30,
       "type": "terran",
       "description": "Gemelo comercial. Hub económico galáctico.",
+      "model3D": "models/planets/desai.glb",
+      "texture": "textures/planets/terran_rich.jpg",
+      "atmosphere": true,
+      "rotation": 0.7,
+      "scale": 1.2,
       "colonies": [
         {
           "id": "desai-trade-center",
@@ -261,7 +350,10 @@
       "resources": ["Credits", "Trade Goods", "Luxury Items"],
       "enemies": ["Pirates"],
       "isTradeHub": true,
-      "coordinates": { "x": 450, "y": 90, "z": -100 }
+      "coordinates": { "x": 450, "y": 90, "z": -100 },
+      "orbitRadius": 150,
+      "orbitSpeed": 0.01,
+      "cityLights": true
     },
     {
       "id": "axiom",
@@ -270,6 +362,11 @@
       "level": 40,
       "type": "fortress",
       "description": "Fortaleza Vega. Zona de alto nivel extremadamente peligrosa.",
+      "model3D": "models/planets/axiom.glb",
+      "texture": "textures/planets/fortress.jpg",
+      "atmosphere": false,
+      "rotation": 0.2,
+      "scale": 1.4,
       "colonies": [
         {
           "id": "axiom-fortress",
@@ -285,7 +382,10 @@
       "hostile": true,
       "dangerLevel": "extreme",
       "isBossLocation": true,
-      "coordinates": { "x": 600, "y": -120, "z": 150 }
+      "coordinates": { "x": 600, "y": -120, "z": 150 },
+      "orbitRadius": 180,
+      "orbitSpeed": 0.003,
+      "shieldEffect": true
     },
     {
       "id": "colossus",
@@ -294,6 +394,11 @@
       "level": 42,
       "type": "titan",
       "description": "Titán mecánico planetario. Boss épico.",
+      "model3D": "models/planets/colossus.glb",
+      "texture": "textures/planets/titan_metal.jpg",
+      "atmosphere": false,
+      "rotation": 0.1,
+      "scale": 2.0,
       "colonies": [],
       "resources": ["Titan Core", "Legendary Materials"],
       "enemies": ["Titan Guardian", "Titan Boss"],
@@ -301,7 +406,10 @@
       "dangerLevel": "legendary",
       "isBossLocation": true,
       "isRaidLocation": true,
-      "coordinates": { "x": 615, "y": -125, "z": 155 }
+      "coordinates": { "x": 615, "y": -125, "z": 155 },
+      "orbitRadius": 220,
+      "orbitSpeed": 0.002,
+      "mechanicalParts": true
     },
     {
       "id": "erebos",
@@ -310,6 +418,11 @@
       "level": 46,
       "type": "dark",
       "description": "Planeta oscuro en los confines. Acceso a naves Raven.",
+      "model3D": "models/planets/erebos.glb",
+      "texture": "textures/planets/dark_planet.jpg",
+      "atmosphere": false,
+      "rotation": 0.1,
+      "scale": 1.3,
       "colonies": [
         {
           "id": "hidden-station",
@@ -325,7 +438,10 @@
       "enemies": ["Unknown Entities", "Void Creatures"],
       "isSpecial": true,
       "isEliteLocation": true,
-      "coordinates": { "x": 800, "y": -200, "z": 250 }
+      "coordinates": { "x": 800, "y": -200, "z": 250 },
+      "orbitRadius": 300,
+      "orbitSpeed": 0.001,
+      "darkAura": true
     }
   ],
   
@@ -334,86 +450,114 @@
       "name": "Terran",
       "description": "Planetas habitables similares a la Tierra",
       "color": "green",
-      "icon": "globe"
+      "icon": "globe",
+      "atmosphereColor": "#4299E1",
+      "cloudDensity": 0.7
     },
     "rocky": {
       "name": "Rocky",
       "description": "Planetas rocosos con recursos minerales",
       "color": "gray",
-      "icon": "mountain"
+      "icon": "mountain",
+      "atmosphereColor": "#718096",
+      "cloudDensity": 0.2
     },
     "gas": {
       "name": "Gas Giant",
       "description": "Gigantes gaseosos ricos en energía",
       "color": "cyan",
-      "icon": "wind"
+      "icon": "wind",
+      "atmosphereColor": "#38B2AC",
+      "cloudDensity": 0.9
     },
     "volcanic": {
       "name": "Volcanic",
       "description": "Mundos volcánicos hostiles",
       "color": "red",
-      "icon": "flame"
+      "icon": "flame",
+      "atmosphereColor": "#F56565",
+      "cloudDensity": 0.5,
+      "emissive": true
     },
     "ocean": {
       "name": "Ocean World",
       "description": "Planetas cubiertos de agua",
       "color": "blue",
-      "icon": "waves"
+      "icon": "waves",
+      "atmosphereColor": "#4299E1",
+      "cloudDensity": 0.6,
+      "reflective": true
     },
     "desert": {
       "name": "Desert",
       "description": "Planetas áridos con ruinas antiguas",
       "color": "yellow",
-      "icon": "sun"
+      "icon": "sun",
+      "atmosphereColor": "#ECC94B",
+      "cloudDensity": 0.1
     },
     "ice": {
       "name": "Ice World",
       "description": "Mundos congelados",
       "color": "cyan",
-      "icon": "snowflake"
+      "icon": "snowflake",
+      "atmosphereColor": "#E0F2FE",
+      "cloudDensity": 0.3,
+      "reflective": true
     },
     "hive": {
       "name": "Hive",
       "description": "Colmenas Mantis hostiles",
       "color": "purple",
-      "icon": "bug"
+      "icon": "bug",
+      "atmosphereColor": "#9F7AEA",
+      "cloudDensity": 0.4,
+      "organic": true
     },
     "fortress": {
       "name": "Fortress",
       "description": "Fortalezas enemigas fortificadas",
       "color": "red",
-      "icon": "shield-alert"
+      "icon": "shield-alert",
+      "atmosphereColor": "#FC8181",
+      "cloudDensity": 0.2,
+      "metallic": true
     },
     "singularity": {
       "name": "Singularity",
       "description": "Planetas en zonas de singularidad",
       "color": "purple",
-      "icon": "sparkles"
+      "icon": "sparkles",
+      "atmosphereColor": "#B794F4",
+      "cloudDensity": 0.8,
+      "distortion": true
     },
     "dark": {
       "name": "Dark Planet",
       "description": "Mundos oscuros misteriosos",
       "color": "gray",
-      "icon": "moon"
+      "icon": "moon",
+      "atmosphereColor": "#2D3748",
+      "cloudDensity": 0.3,
+      "darkAura": true
+    },
+    "industrial": {
+      "name": "Industrial",
+      "description": "Planetas industrializados",
+      "color": "orange",
+      "icon": "factory",
+      "atmosphereColor": "#F6AD55",
+      "cloudDensity": 0.5,
+      "pollution": true
+    },
+    "titan": {
+      "name": "Titan",
+      "description": "Titanes mecánicos planetarios",
+      "color": "steel",
+      "icon": "cpu",
+      "atmosphereColor": "#A0AEC0",
+      "cloudDensity": 0.1,
+      "mechanical": true
     }
-  },
-  
-  "colonyServices": {
-    "repair": "Reparación de naves",
-    "trade": "Comercio general",
-    "missions": "Misiones disponibles",
-    "blueprints": "Planos de naves",
-    "research": "Investigación tecnológica",
-    "refinery": "Refinería de recursos",
-    "weapons": "Armamento avanzado",
-    "neon-ships": "Naves Neon especiales",
-    "raven-ships": "Naves Raven elite",
-    "premium-trade": "Comercio premium",
-    "exchange": "Intercambio de recursos",
-    "bank": "Servicios bancarios",
-    "artifacts": "Artefactos antiguos",
-    "advanced-weapons": "Armamento de nivel superior",
-    "elite-trade": "Comercio elite",
-    "special-trade": "Comercio especial"
   }
 }

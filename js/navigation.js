@@ -1,20 +1,79 @@
 // js/navigation.js
-// Sistema de navegación y manejo de rutas
+// Sistema de navegación y manejo de rutas mejorado
 
 class Navigation {
     constructor() {
         this.currentPage = this.getCurrentPage();
         this.params = this.getURLParams();
+        this.user = this.getCurrentUser();
     }
 
-    // Obtener página actual
+    // ===== GESTIÓN DE USUARIOS =====
+    
+    getCurrentUser() {
+        const userStr = localStorage.getItem('pirate_galaxy_user');
+        return userStr ? JSON.parse(userStr) : null;
+    }
+
+    setCurrentUser(user) {
+        if (user) {
+            localStorage.setItem('pirate_galaxy_user', JSON.stringify(user));
+            this.user = user;
+        } else {
+            localStorage.removeItem('pirate_galaxy_user');
+            this.user = null;
+        }
+    }
+
+    isLoggedIn() {
+        return this.user !== null;
+    }
+
+    logout() {
+        this.setCurrentUser(null);
+        window.location.href = 'login.html';
+    }
+
+    // Verificar si la página requiere autenticación
+    requireAuth() {
+        const publicPages = ['login.html', 'register.html', 'index.html'];
+        const currentPage = this.getCurrentPage() + '.html';
+        
+        if (!publicPages.includes(currentPage) && !this.isLoggedIn()) {
+            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+            return false;
+        }
+        return true;
+    }
+
+    // Actualizar UI según estado de login
+    updateAuthUI() {
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const userDisplay = document.getElementById('user-display');
+
+        if (this.isLoggedIn()) {
+            if (loginBtn) loginBtn.classList.add('hidden');
+            if (logoutBtn) logoutBtn.classList.remove('hidden');
+            if (userDisplay) {
+                userDisplay.textContent = this.user.username;
+                userDisplay.classList.remove('hidden');
+            }
+        } else {
+            if (loginBtn) loginBtn.classList.remove('hidden');
+            if (logoutBtn) logoutBtn.classList.add('hidden');
+            if (userDisplay) userDisplay.classList.add('hidden');
+        }
+    }
+
+    // ===== NAVEGACIÓN =====
+
     getCurrentPage() {
         const path = window.location.pathname;
         const page = path.split('/').pop().replace('.html', '') || 'index';
         return page;
     }
 
-    // Obtener parámetros de URL
     getURLParams() {
         const params = new URLSearchParams(window.location.search);
         const result = {};
@@ -24,7 +83,6 @@ class Navigation {
         return result;
     }
 
-    // Navegar a página con parámetros
     navigateTo(page, params = {}) {
         const url = new URL(window.location.origin + '/' + page + '.html');
         Object.entries(params).forEach(([key, value]) => {
@@ -33,7 +91,6 @@ class Navigation {
         window.location.href = url.toString();
     }
 
-    // Actualizar parámetros sin recargar página
     updateParams(params) {
         const url = new URL(window.location);
         Object.entries(params).forEach(([key, value]) => {
@@ -47,7 +104,6 @@ class Navigation {
         this.params = this.getURLParams();
     }
 
-    // Marcar elemento de navegación activo
     setActiveNavItem() {
         const navItems = document.querySelectorAll('.game-nav-item');
         const currentPath = window.location.pathname;
@@ -62,7 +118,6 @@ class Navigation {
         });
     }
 
-    // Construir breadcrumb dinámico
     buildBreadcrumb(items) {
         const breadcrumbContainer = document.getElementById('breadcrumb');
         if (!breadcrumbContainer) return;
@@ -82,16 +137,16 @@ class Navigation {
         }).join('');
 
         breadcrumbContainer.innerHTML = breadcrumbHTML;
-        lucide.createIcons();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
-    // Sistema de filtros para páginas
+    // ===== FILTROS =====
+
     initFilters(filterConfig) {
         const { containerId, onFilter } = filterConfig;
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        // Escuchar cambios en filtros
         container.addEventListener('change', (e) => {
             if (e.target.matches('select, input[type="checkbox"], input[type="radio"]')) {
                 const filters = this.collectFilters(container);
@@ -99,7 +154,6 @@ class Navigation {
             }
         });
 
-        // Escuchar input de búsqueda
         const searchInput = container.querySelector('input[type="search"], input[type="text"]');
         if (searchInput) {
             let debounceTimer;
@@ -113,18 +167,15 @@ class Navigation {
         }
     }
 
-    // Recolectar valores de filtros
     collectFilters(container) {
         const filters = {};
         
-        // Selects
         container.querySelectorAll('select').forEach(select => {
             if (select.value) {
                 filters[select.name || select.id] = select.value;
             }
         });
 
-        // Checkboxes
         const checkboxGroups = {};
         container.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
             const name = checkbox.name || checkbox.id;
@@ -135,12 +186,10 @@ class Navigation {
         });
         Object.assign(filters, checkboxGroups);
 
-        // Radio buttons
         container.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
             filters[radio.name] = radio.value;
         });
 
-        // Text inputs
         container.querySelectorAll('input[type="search"], input[type="text"]').forEach(input => {
             if (input.value.trim()) {
                 filters[input.name || input.id] = input.value.trim();
@@ -150,7 +199,6 @@ class Navigation {
         return filters;
     }
 
-    // Limpiar filtros
     clearFilters(containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -161,7 +209,8 @@ class Navigation {
         container.querySelectorAll('input[type="search"], input[type="text"]').forEach(input => input.value = '');
     }
 
-    // Sistema de tabs
+    // ===== TABS =====
+
     initTabs(tabsContainerId) {
         const container = document.getElementById(tabsContainerId);
         if (!container) return;
@@ -173,11 +222,9 @@ class Navigation {
             tab.addEventListener('click', () => {
                 const tabName = tab.getAttribute('data-tab');
 
-                // Actualizar tabs activos
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
 
-                // Mostrar contenido correspondiente
                 contents.forEach(content => {
                     if (content.getAttribute('data-tab-content') === tabName) {
                         content.classList.remove('hidden');
@@ -186,12 +233,10 @@ class Navigation {
                     }
                 });
 
-                // Actualizar URL
                 this.updateParams({ tab: tabName });
             });
         });
 
-        // Activar tab inicial desde URL
         const initialTab = this.params.tab;
         if (initialTab) {
             const tabToActivate = Array.from(tabs).find(t => t.getAttribute('data-tab') === initialTab);
@@ -201,7 +246,8 @@ class Navigation {
         }
     }
 
-    // Sistema de paginación
+    // ===== PAGINACIÓN =====
+
     createPagination(totalItems, itemsPerPage, currentPage, containerId, onPageChange) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -214,7 +260,6 @@ class Navigation {
 
         let paginationHTML = '<div class="flex items-center justify-center gap-2 mt-6">';
 
-        // Previous button
         paginationHTML += `
             <button 
                 class="px-3 py-2 rounded ${currentPage === 1 ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-800 text-blue-400 hover:bg-gray-700'}"
@@ -225,7 +270,6 @@ class Navigation {
             </button>
         `;
 
-        // Page numbers
         const maxButtons = 7;
         let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
         let endPage = Math.min(totalPages, startPage + maxButtons - 1);
@@ -259,7 +303,6 @@ class Navigation {
             paginationHTML += `<button class="px-3 py-2 rounded bg-gray-800 text-blue-400 hover:bg-gray-700" onclick="navigation.changePage(${totalPages})">${totalPages}</button>`;
         }
 
-        // Next button
         paginationHTML += `
             <button 
                 class="px-3 py-2 rounded ${currentPage === totalPages ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-800 text-blue-400 hover:bg-gray-700'}"
@@ -272,7 +315,7 @@ class Navigation {
 
         paginationHTML += '</div>';
         container.innerHTML = paginationHTML;
-        lucide.createIcons();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
 
         this.onPageChangeCallback = onPageChange;
     }
@@ -283,6 +326,39 @@ class Navigation {
         }
         this.updateParams({ page });
     }
+
+    // ===== UTILIDADES =====
+
+    showNotification(message, type = 'info') {
+        const notificationContainer = document.getElementById('notifications');
+        if (!notificationContainer) {
+            const container = document.createElement('div');
+            container.id = 'notifications';
+            container.className = 'fixed top-4 right-4 z-50 space-y-2';
+            document.body.appendChild(container);
+        }
+
+        const colors = {
+            success: 'bg-green-500',
+            error: 'bg-red-500',
+            warning: 'bg-yellow-500',
+            info: 'bg-blue-500'
+        };
+
+        const notification = document.createElement('div');
+        notification.className = `${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-slideIn`;
+        notification.innerHTML = `
+            <i data-lucide="check-circle" class="w-5 h-5"></i>
+            <span>${message}</span>
+        `;
+
+        document.getElementById('notifications').appendChild(notification);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
 }
 
 // Instancia global
@@ -291,4 +367,5 @@ const navigation = new Navigation();
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
     navigation.setActiveNavItem();
+    navigation.updateAuthUI();
 });
