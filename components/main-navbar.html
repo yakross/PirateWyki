@@ -1,0 +1,313 @@
+<!-- components/main-navbar.html -->
+<nav class="game-navbar mb-6">
+    <div class="px-4 py-3">
+        <div class="flex flex-wrap items-center gap-2">
+            
+            <!-- Home -->
+            <a href="index.html" class="game-nav-item active flex items-center gap-2 min-w-[100px]">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span class="hidden sm:inline">Inicio</span>
+            </a>
+            
+            <!-- Ships Dropdown -->
+            <div class="relative group">
+                <button class="game-nav-item flex items-center gap-2 min-w-[100px]">
+                    <i data-lucide="rocket" class="w-5 h-5"></i>
+                    <span>Naves</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                <div class="dropdown-menu hidden group-hover:block absolute top-full left-0 mt-2 w-64 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl z-50">
+                    <div class="p-2">
+                        <a href="ships.html" class="dropdown-item">
+                            <i data-lucide="list" class="w-4 h-4"></i>
+                            Todas las Naves
+                        </a>
+                        
+                        <div class="border-t border-gray-700 my-2"></div>
+                        <div class="px-3 py-1 text-xs font-semibold text-gray-500 uppercase">Por Clase</div>
+                        
+                        <a href="ships.html?class=raider" class="dropdown-item">
+                            <i data-lucide="user" class="w-4 h-4 text-gray-400"></i>
+                            Raider (Starter)
+                        </a>
+                        <a href="ships.html?class=storm" class="dropdown-item">
+                            <i data-lucide="zap" class="w-4 h-4 text-red-400"></i>
+                            Storm (DPS)
+                        </a>
+                        <a href="ships.html?class=shock" class="dropdown-item">
+                            <i data-lucide="activity" class="w-4 h-4 text-purple-400"></i>
+                            Shock (Control)
+                        </a>
+                        <a href="ships.html?class=tank" class="dropdown-item">
+                            <i data-lucide="shield" class="w-4 h-4 text-blue-400"></i>
+                            Tank (Resistencia)
+                        </a>
+                        <a href="ships.html?class=engineer" class="dropdown-item">
+                            <i data-lucide="wrench" class="w-4 h-4 text-green-400"></i>
+                            Engineer (Soporte)
+                        </a>
+                        <a href="ships.html?class=defender" class="dropdown-item">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i>
+                            Defender (Área)
+                        </a>
+                        <a href="ships.html?class=sniper" class="dropdown-item">
+                            <i data-lucide="crosshair" class="w-4 h-4 text-orange-400"></i>
+                            Sniper (Alcance)
+                        </a>
+                        <a href="ships.html?class=clan" class="dropdown-item">
+                            <i data-lucide="users" class="w-4 h-4 text-yellow-400"></i>
+                            Clan Ship (Conquest)
+                        </a>
+                        
+                        <div class="border-t border-gray-700 my-2"></div>
+                        <div class="px-3 py-1 text-xs font-semibold text-gray-500 uppercase">Especiales</div>
+                        
+                        <a href="ships.html?type=parsec" class="dropdown-item">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i>
+                            Parsec (Híbrida)
+                        </a>
+                        <a href="ships.html?type=raven" class="dropdown-item">
+                            <i data-lucide="bird" class="w-4 h-4 text-orange-400"></i>
+                            Raven
+                        </a>
+                        <a href="ships.html?type=neon" class="dropdown-item">
+                            <i data-lucide="lightbulb" class="w-4 h-4 text-pink-400"></i>
+                            Neon (Tau Ceti)
+                        </a>
+                        
+                        <div class="border-t border-gray-700 my-2"></div>
+                        <a href="ship-comparison.html" class="dropdown-item">
+                            <i data-lucide="git-compare" class="w-4 h-4"></i>
+                            Comparador de Naves
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Universe/Systems Dropdown -->
+            <div class="relative group">
+                <button class="game-nav-item flex items-center gap-2 min-w-[100px]">
+                    <i data-lucide="globe" class="w-5 h-5"></i>
+                    <span>Sistemas</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                <div class="dropdown-menu hidden group-hover:block absolute top-full left-0 mt-2 w-64 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl z-50">
+                    <div class="p-2">
+                        <a href="universe.html" class="dropdown-item">
+                            <i data-lucide="map" class="w-4 h-4"></i>
+                            Mapa del Universo
+                        </a>
+                        
+                        <div class="border-t border-gray-700 my-2"></div>
+                        <div class="px-3 py-1 text-xs font-semibold text-gray-500 uppercase">Sistemas</div>
+                        
+                        <a href="system.html?name=sol" class="dropdown-item">
+                            <i data-lucide="sun" class="w-4 h-4 text-yellow-400"></i>
+                            Sol
+                        </a>
+                        <a href="system.html?name=tauceti" class="dropdown-item">
+                            <i data-lucide="star" class="w-4 h-4 text-blue-400"></i>
+                            Tau Ceti
+                        </a>
+                        <a href="system.html?name=draconis" class="dropdown-item">
+                            <i data-lucide="flame" class="w-4 h-4 text-orange-400"></i>
+                            Draconis
+                        </a>
+                        <a href="system.html?name=mizar" class="dropdown-item">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+                            Mizar
+                        </a>
+                        <a href="system.html?name=gemini" class="dropdown-item">
+                            <i data-lucide="git-merge" class="w-4 h-4 text-cyan-400"></i>
+                            Gemini
+                        </a>
+                        <a href="system.html?name=antares" class="dropdown-item">
+                            <i data-lucide="circle-dot" class="w-4 h-4 text-red-400"></i>
+                            Antares
+                        </a>
+                        <a href="system.html?name=vega" class="dropdown-item">
+                            <i data-lucide="zap" class="w-4 h-4 text-pink-400"></i>
+                            Vega
+                        </a>
+                        <a href="system.html?name=erebos" class="dropdown-item">
+                            <i data-lucide="moon" class="w-4 h-4 text-gray-400"></i>
+                            Erebos
+                        </a>
+                        
+                        <div class="border-t border-gray-700 my-2"></div>
+                        <div class="px-3 py-1 text-xs font-semibold text-gray-500 uppercase">Especial</div>
+                        
+                        <a href="system.html?name=sirius" class="dropdown-item">
+                            <i data-lucide="disc" class="w-4 h-4 text-blue-300"></i>
+                            Sirius (Singularidad)
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Equipment Dropdown -->
+            <div class="relative group">
+                <button class="game-nav-item flex items-center gap-2 min-w-[120px]">
+                    <i data-lucide="wrench" class="w-5 h-5"></i>
+                    <span>Equipamiento</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                <div class="dropdown-menu hidden group-hover:block absolute top-full left-0 mt-2 w-56 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl z-50">
+                    <div class="p-2">
+                        <a href="equipment.html" class="dropdown-item">
+                            <i data-lucide="package" class="w-4 h-4"></i>
+                            Todo el Equipamiento
+                        </a>
+                        <div class="border-t border-gray-700 my-2"></div>
+                        <a href="equipment.html?type=weapons" class="dropdown-item">
+                            <i data-lucide="crosshair" class="w-4 h-4 text-red-400"></i>
+                            Armas
+                        </a>
+                        <a href="equipment.html?type=shields" class="dropdown-item">
+                            <i data-lucide="shield" class="w-4 h-4 text-blue-400"></i>
+                            Escudos
+                        </a>
+                        <a href="equipment.html?type=engines" class="dropdown-item">
+                            <i data-lucide="gauge" class="w-4 h-4 text-cyan-400"></i>
+                            Motores
+                        </a>
+                        <a href="equipment.html?type=armor" class="dropdown-item">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-green-400"></i>
+                            Armaduras
+                        </a>
+                        <a href="equipment.html?type=specials" class="dropdown-item">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+                            Especiales
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Missions Dropdown -->
+            <div class="relative group">
+                <button class="game-nav-item flex items-center gap-2 min-w-[100px]">
+                    <i data-lucide="scroll-text" class="w-5 h-5"></i>
+                    <span>Misiones</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                <div class="dropdown-menu hidden group-hover:block absolute top-full left-0 mt-2 w-56 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl z-50">
+                    <div class="p-2">
+                        <a href="missions.html?type=main" class="dropdown-item">
+                            <i data-lucide="star" class="w-4 h-4 text-yellow-400"></i>
+                            Misiones Principales
+                        </a>
+                        <a href="missions.html?type=side" class="dropdown-item">
+                            <i data-lucide="circle-dot" class="w-4 h-4 text-blue-400"></i>
+                            Misiones Secundarias
+                        </a>
+                        <a href="missions.html?type=events" class="dropdown-item">
+                            <i data-lucide="zap" class="w-4 h-4 text-purple-400"></i>
+                            Eventos Especiales
+                        </a>
+                        <a href="missions.html?type=daily" class="dropdown-item">
+                            <i data-lucide="calendar" class="w-4 h-4 text-green-400"></i>
+                            Misiones Diarias
+                        </a>
+                        <div class="border-t border-gray-700 my-2"></div>
+                        <a href="mission-tracker.html" class="dropdown-item">
+                            <i data-lucide="check-square" class="w-4 h-4"></i>
+                            Rastreador
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Colonias -->
+            <a href="colonies.html" class="game-nav-item flex items-center gap-2 min-w-[100px]">
+                <i data-lucide="building" class="w-5 h-5"></i>
+                <span class="hidden md:inline">Colonias</span>
+            </a>
+            
+            <!-- Resources -->
+            <a href="resources.html" class="game-nav-item flex items-center gap-2 min-w-[100px]">
+                <i data-lucide="coins" class="w-5 h-5"></i>
+                <span class="hidden md:inline">Recursos</span>
+            </a>
+            
+            <!-- Guides -->
+            <div class="relative group">
+                <button class="game-nav-item flex items-center gap-2 min-w-[100px]">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                    <span>Guías</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                <div class="dropdown-menu hidden group-hover:block absolute top-full left-0 mt-2 w-56 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl z-50">
+                    <div class="p-2">
+                        <a href="guides.html?type=beginner" class="dropdown-item">
+                            <i data-lucide="graduation-cap" class="w-4 h-4 text-green-400"></i>
+                            Guía de Inicio
+                        </a>
+                        <a href="guides.html?type=builds" class="dropdown-item">
+                            <i data-lucide="wrench" class="w-4 h-4 text-blue-400"></i>
+                            Builds por Tipo
+                        </a>
+                        <a href="guides.html?type=pvp" class="dropdown-item">
+                            <i data-lucide="swords" class="w-4 h-4 text-red-400"></i>
+                            PvP / Conquista
+                        </a>
+                        <a href="guides.html?type=farming" class="dropdown-item">
+                            <i data-lucide="coins" class="w-4 h-4 text-yellow-400"></i>
+                            Farming de Recursos
+                        </a>
+                        <a href="guides.html?type=progression" class="dropdown-item">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-purple-400"></i>
+                            Progresión Rápida
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</nav>
+
+<style>
+    .dropdown-menu {
+        animation: slideDown 0.2s ease-out;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    
+    .dropdown-menu::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .dropdown-menu::-webkit-scrollbar-thumb {
+        background: rgba(100, 150, 255, 0.3);
+        border-radius: 3px;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        color: #C0D0E0;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: all 0.2s;
+        font-size: 14px;
+    }
+    
+    .dropdown-item:hover {
+        background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2));
+        color: #E0F0FF;
+        padding-left: 16px;
+    }
+</style>

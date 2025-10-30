@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategy Guides - Pirate Galaxy</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/game-styles.css">
+</head>
+<body class="bg-gray-950 text-gray-100">
+
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                Strategy Guides & Tips
+            </h1>
+            <p class="text-gray-400">Learn strategies, builds and tips from experienced players</p>
+        </div>
+
+        <!-- Guide Categories -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <button onclick="filterByCategory('all')" class="guide-category-card active" data-category="all">
+                <i data-lucide="book-open" class="w-8 h-8 text-blue-400 mb-2"></i>
+                <h3 class="font-bold">All Guides</h3>
+                <p class="text-xs text-gray-500 mt-1">View everything</p>
+            </button>
+            <button onclick="filterByCategory('beginner')" class="guide-category-card" data-category="beginner">
+                <i data-lucide="graduation-cap" class="w-8 h-8 text-green-400 mb-2"></i>
+                <h3 class="font-bold">Beginner</h3>
+                <p class="text-xs text-gray-500 mt-1">Start here</p>
+            </button>
+            <button onclick="filterByCategory('builds')" class="guide-category-card" data-category="builds">
+                <i data-lucide="wrench" class="w-8 h-8 text-purple-400 mb-2"></i>
+                <h3 class="font-bold">Ship Builds</h3>
+                <p class="text-xs text-gray-500 mt-1">Optimize your setup</p>
+            </button>
+            <button onclick="filterByCategory('pvp')" class="guide-category-card" data-category="pvp">
+                <i data-lucide="swords" class="w-8 h-8 text-red-400 mb-2"></i>
+                <h3 class="font-bold">PvP & Conquest</h3>
+                <p class="text-xs text-gray-500 mt-1">Dominate battles</p>
+            </button>
+            <button onclick="filterByCategory('farming')" class="guide-category-card" data-category="farming">
+                <i data-lucide="coins" class="w-8 h-8 text-yellow-400 mb-2"></i>
+                <h3 class="font-bold">Farming</h3>
+                <p class="text-xs text-gray-500 mt-1">Maximize resources</p>
+            </button>
+            <button onclick="filterByCategory('progression')" class="guide-category-card" data-category="progression">
+                <i data-lucide="trending-up" class="w-8 h-8 text-cyan-400 mb-2"></i>
+                <h3 class="font-bold">Progression</h3>
+                <p class="text-xs text-gray-500 mt-1">Level up fast</p>
+            </button>
+            <button onclick="filterByCategory('endgame')" class="guide-category-card" data-category="endgame">
+                <i data-lucide="crown" class="w-8 h-8 text-orange-400 mb-2"></i>
+                <h3 class="font-bold">End-game</h3>
+                <p class="text-xs text-gray-500 mt-1">Advanced content</p>
+            </button>
+            <button onclick="filterByCategory('tips')" class="guide-category-card" data-category="tips">
+                <i data-lucide="lightbulb" class="w-8 h-8 text-pink-400 mb-2"></i>
+                <h3 class="font-bold">Tips & Tricks</h3>
+                <p class="text-xs text-gray-500 mt-1">Pro strategies</p>
+            </button>
+        </div>
+
+        <!-- Search -->
+        <div class="content-panel p-4 mb-6">
+            <input 
+                type="text" 
+                id="search-input"
+                placeholder="Search guides..."
+                class="w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-green-500 focus:outline-none"
+                oninput="filterGuides()"
+            >
+        </div>
+
+        <!-- Guides Grid -->
+        <div id="guides-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Guides will be loaded here -->
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="js/component-loader.js"></script>
+    <script>
+        let allGuides = [];
+        let filteredGuides = [];
+        let currentCategory = 'all';
+
+        // Guides database
+        const guidesDatabase = [
+            {
+                id: 'getting-started',
+                title: 'Getting Started Guide',
+                category: 'beginner',
+                difficulty: 'beginner',
+                readTime: '10 min',
+                author: 'PirateWyki Team',
+                date: '2025-01-15',
+                description: 'Complete beginner guide covering basics, first ship, and early progression.',
+                content: `
+                    <h3>Welcome to Pirate Galaxy!</h3>
+                    <p>This guide will help you start your journey...</p>
+                    <h4>1. Choose Your First Ship</h4>
+                    <p>Start with Starblaze for basic combat training...</p>
+                    <h4>2. Complete Tutorial Missions</h4>
+                    <p>Follow the main story in Sol System...</p>
+                `,
+                tags: ['tutorial', 'new-player', 'basics'],
+                views: 15420,
+                likes: 892
+            },
+            {
+                id: 'parsec-explained',
+                title: 'Parsec Ships: Complete Guide',
+                category: 'beginner',
+                difficulty: 'beginner',
+                readTime: '15 min',
+                author: 'CaptainSteel',
+                date: '2025-01-20',
+                description: 'Everything about Parsec hybrid ships and which variant to choose.',
+                content: `
+                    <h3>Understanding Parsec Ships</h3>
+                    <p>Parsec ships are unique hybrid vessels...</p>
+                `,
+                tags: ['parsec', 'ships', 'hybrid'],
+                views: 12340,
+                likes: 756
+            },
+            {
+                id: 'storm-dps-build',
+                title: 'Storm DPS Build - Maximum Damage',
+                category: 'builds',
+                difficulty: 'intermediate',
+                readTime: '12 min',
+                author: 'DPSMaster99',
+                date: '2025-01-25',
+                description: 'Optimize your Storm ship for maximum damage output in PvE and PvP.',
+                content: `
+                    <h3>Best Equipment for Storm DPS</h3>
+                    <p>Primary Weapons: 4x Plasma Destroyer...</p>
+                `,
+                tags: ['storm', 'dps', 'build', 'weapons'],
+                views: 18750,
+                likes: 1234
+            },
+            {
+                id: 'tank-survival-build',
+                title: 'Indestructible Tank Build',
+                category: 'builds',
+                difficulty: 'intermediate',
+                readTime: '10 min',
+                author: 'IronWall',
+                date: '2025-01-22',
+                description: 'Tank build focused on maximum survivability and damage mitigation.',
+                content: `
+                    <h3>Tank Equipment Setup</h3>
+                    <p>Shields: Titan Barrier + Reinforced Shield...</p>
+                `,
+                tags: ['tank', 'survivability', 'build', 'defense'],
+                views: 14230,
+                likes: 987
+            },
+            {
+                id: 'engineer-support-guide',
+                title: 'Engineer Support: Team Healer',
+                category: 'builds',
+                difficulty: 'intermediate',
+                readTime: '14 min',
+                author: 'MedicMain',
+                date: '2025-01-18',
+                description: 'Master support role with Engineer ships in group content.',
+                content: `
+                    <h3>Support Equipment</h3>
+                    <p>Essential: Repair Field Generator...</p>
+                `,
+                tags: ['engineer', 'support', 'healer', 'team'],
+                views: 9450,
+                likes: 654
+            },
+            {
+                id: 'credits-farming-2025',
+                title: 'Credits Farming Guide 2025',
+                category: 'farming',
+                difficulty: 'beginner',
+                readTime: '8 min',
+                author: 'GoldRush',
+                date: '2025-01-28',
+                description: 'Best methods to farm credits efficiently in current patch.',
+                content: `
+                    <h3>Top 5 Credit Farming Spots</h3>
+                    <p>1. Gemini Trade Routes...</p>
+                `,
+                tags: ['credits', 'farming', 'economy'],
+                views: 23450,
+                likes: 1567
+            },
+            {
+                id: 'cryonite-guide',
+                title: 'Cryonite Management Guide',
+                category: 'farming',
+                difficulty: 'beginner',
+                readTime: '12 min',
+                author: 'F2PPlayer',
+                date: '2025-01-12',
+                description: 'How to earn and spend Cryonite effectively as F2P player.',
+                content: `
+                    <h3>Earning Cryonite</h3>
+                    <p>Daily missions, events, achievements...</p>
+                `,
+                tags: ['cryonite', 'premium', 'f2p'],
+                views: 18920,
+                likes: 1123
+            },
+            {
+                id: '1-50-fast',
+                title: 'Level 1-50 in 7 Days',
+                category: 'progression',
+                difficulty: 'intermediate',
+                readTime: '20 min',
+                author: 'SpeedRunner',
+                date: '2025-01-15',
+                description: 'Fastest leveling route from beginner to end-game.',
+                content: `
+                    <h3>Efficient Leveling Path</h3>
+                    <p>Day 1-2: Sol System (Levels 1-10)...</p>
+                `,
+                tags: ['leveling', 'progression', 'fast'],
+                views: 28340,
+                likes: 2134
+            },
+            {
+                id: 'system-progression',
+                title: 'System Progression Order',
+                category: 'progression',
+                difficulty: 'beginner',
+                readTime: '10 min',
+                author: 'NavigatorX',
+                date: '2025-01-10',
+                description: 'Recommended order to progress through game systems.',
+                content: `
+                    <h3>Progression Route</h3>
+                    <p>Sol → Tau Ceti → Sirius → Draconis...</p>
+                `,
+                tags: ['systems', 'progression', 'order'],
+                views: 16780,
+                likes: 945
+            },
+            {
+                id: 'conquest-tactics',
+                title: 'Conquest Battle Tactics',
+                category: 'pvp',
+                difficulty: 'advanced',
+                readTime: '18 min',
+                author: 'WarLord',
+                date: '2025-01-27',
+                description: 'Advanced tactics for clan conquest battles and territory control.',
+                content: `
+                    <h3>Conquest Strategy</h3>
+                    <p>Team composition, positioning, timing...</p>
+                `,
+                tags: ['conquest', 'pvp', 'clan', 'tactics'],
+                views: 11230,
+                likes: 789
+            },
+            {
+                id: 'pvp-combat-guide',
+                title: 'PvP Combat Fundamentals',
+                category: 'pvp',
+                difficulty: 'intermediate',
+                readTime: '15 min',
+                author: 'PvPPro',
+                date: '2025-01-24',
+                description: 'Master PvP combat mechanics, positioning and ship control.',
+                content: `
+                    <h3>PvP Basics</h3>
+                    <p>Movement, targeting, ability timing...</p>
+                `,
+                tags: ['pvp', 'combat', 'mechanics'],
+                views: 13450,
+                likes: 876
+            },
+            {
+                id: 'vega-boss-guide',
+                title: 'Vega Boss Strategies',
+                category: 'endgame',
+                difficulty: 'advanced',
+                readTime: '25 min',
+                author: 'RaidLeader',
+                date: '2025-01-26',
+                description: 'Complete guide to all Vega system bosses and raid mechanics.',
+                content: `
+                    <h3>Vega Commander</h3>
+                    <p>Phase 1: Shield Phase...</p>
+                `,
+                tags: ['vega', 'boss', 'raid', 'endgame'],
+                views: 19450,
+                likes: 1456
+            },
+            {
+                id: 'titan-raid-guide',
+                title: 'Titan Colossus Raid Guide',
+                category: 'endgame',
+                difficulty: 'expert',
+                readTime: '30 min',
+                author: 'EliteRaider',
+                date: '2025-01-29',
+                description: 'Detailed mechanics and strategy for the hardest raid boss.',
+                content: `
+                    <h3>Raid Requirements</h3>
+                    <p>8 players, level 42+, specific builds...</p>
+                `,
+                tags: ['titan', 'raid', 'endgame', 'legendary'],
+                views: 15670,
+                likes: 1234
+            },
+            {
+                id: 'sirius-singularity',
+                title: 'Sirius Singularity: Complete Guide',
+                category: 'endgame',
+                difficulty: 'advanced',
+                readTime: '20 min',
+                author: 'QuantumPilot',
+                date: '2025-01-21',
+                description: 'Navigate the Sirius singularity and find rare blueprints.',
+                content: `
+                    <h3>Singularity Mechanics</h3>
+                    <p>Dynamic planets, special effects...</p>
+                `,
+                tags: ['sirius', 'singularity', 'blueprints'],
+                views: 14320,
+                likes: 1087
+            },
+            {
+                id: 'hidden-secrets',
+                title: '10 Hidden Secrets & Easter Eggs',
+                category: 'tips',
+                difficulty: 'all',
+                readTime: '12 min',
+                author: 'SecretHunter',
+                date: '2025-01-19',
+                description: 'Discover hidden locations, easter eggs and secret rewards.',
+                content: `
+                    <h3>Secret Locations</h3>
+                    <p>1. Hidden Station in Erebos...</p>
+                `,
+                tags: ['secrets', 'easter-eggs', 'hidden'],
+                views: 21340,
+                likes: 1678
+            },
+            {
+                id: 'resource-management',
+                title: 'Resource Management Tips',
+                category: 'tips',
+                difficulty: 'beginner',
+                readTime: '8 min',
+                author: 'EcoManager',
+                date: '2025-01-17',
+                description: 'Manage inventory, storage and resources efficiently.',
+                content: `
+                    <h3>Inventory Tips</h3>
+                    <p>Always keep repair kits, sell extras...</p>
+                `,
+                tags: ['resources', 'inventory', 'management'],
+                views: 12890,
+                likes: 834
+            }
+        ];
+
+        allGuides = guidesDatabase;
+        filteredGuides = [...allGuides];
+
+        // Filter by category
+        function filterByCategory(category) {
+            currentCategory = category;
+            
+            document.querySelectorAll('.guide-category-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            
+            filterGuides();
+        }
+
+        // Filter guides
+        function filterGuides() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+
+            filteredGuides = allGuides.filter(guide => {
+                const matchesCategory = currentCategory === 'all' || guide.category === currentCategory;
+                const matchesSearch = guide.title.toLowerCase().includes(search) || 
+                                    guide.description.toLowerCase().includes(search) ||
+                                    guide.tags.some(tag => tag.includes(search));
+
+                return matchesCategory && matchesSearch;
+            });
+
+            renderGuides();
+        }
+
+        // Render guides
+        function renderGuides() {
+            const grid = document.getElementById('guides-grid');
+
+            if (filteredGuides.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i data-lucide="search-x" class="w-16 h-16 mx-auto text-gray-600 mb-4"></i>
+                        <p class="text-gray-400">No guides found</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            grid.innerHTML = filteredGuides.map(guide => createGuideCard(guide)).join('');
+            lucide.createIcons();
+        }
+
+        // Create guide card
+        function createGuideCard(guide) {
+            const difficultyColors = {
+                beginner: 'green',
+                intermediate: 'yellow',
+                advanced: 'orange',
+                expert: 'red',
+                all: 'blue'
+            };
+            const color = difficultyColors[guide.difficulty];
+
+            return `
+                <a href="guide-detail.html?id=${guide.id}" class="content-panel p-6 hover:border-${color}-400 transition group block">
+                    <div class="flex items-start justify-between mb-3">
+                        <span class="badge badge-${color} text-xs">${guide.difficulty}</span>
+                        <div class="flex items-center gap-3 text-xs text-gray-500">
+                            <span>
+                                <i data-lucide="clock" class="inline w-3 h-3"></i>
+                                ${guide.readTime}
+                            </span>
+                            <span>
+                                <i data-lucide="eye" class="inline w-3 h-3"></i>
+                                ${(guide.views / 1000).toFixed(1)}k
+                            </span>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-${color}-300 group-hover:text-${color}-200 mb-2">
+                        ${guide.title}
+                    </h3>
+
+                    <p class="text-sm text-gray-400 mb-4 line-clamp-3">${guide.description}</p>
+
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${guide.tags.slice(0, 3).map(tag => `
+                            <span class="px-2 py-1 bg-gray-800 rounded text-xs text-gray-400">
+                                ${tag}
+                            </span>
+                        `).join('')}
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-700">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-${color}-500/20 flex items-center justify-center">
+                                <i data-lucide="user" class="w-4 h-4 text-${color}-400"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-400">${guide.author}</div>
+                                <div class="text-xs text-gray-600">${guide.date}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 text-sm text-gray-400">
+                            <i data-lucide="thumbs-up" class="w-4 h-4"></i>
+                            <span>${guide.likes}</span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+
+        // Initialize
+        async function init() {
+            await componentLoader.loadAll({
+                'header': 'components/header.html',
+                'footer': 'components/footer.html'
+            });
+
+            componentLoader.renderAll({
+                'header-placeholder': 'header',
+                'footer-placeholder': 'footer'
+            });
+
+            renderGuides();
+            lucide.createIcons();
+        }
+
+        init();
+    </script>
+
+    <style>
+        .guide-category-card {
+            padding: 1.5rem;
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            border-radius: 0.75rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .guide-category-card:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .guide-category-card.active {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.2));
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .badge-green { background: rgba(34, 197, 94, 0.2); color: #86EFAC; }
+        .badge-yellow { background: rgba(234, 179, 8, 0.2); color: #FDE047; }
+        .badge-orange { background: rgba(249, 115, 22, 0.2); color: #FDBA74; }
+        .badge-red { background: rgba(239, 68, 68, 0.2); color: #FCA5A5; }
+        .badge-blue { background: rgba(59, 130, 246, 0.2); color: #93C5FD; }
+    </style>
+
+</body>
+</html>

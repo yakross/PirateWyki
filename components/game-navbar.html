@@ -1,0 +1,91 @@
+<!-- components/game-navbar.html -->
+<nav class="game-navbar rounded-lg">
+    <div class="flex gap-2 p-3 overflow-x-auto">
+        
+        <a href="#overview" data-tab="overview" class="game-nav-item active flex flex-col items-center min-w-[80px]">
+            <i data-lucide="layout-dashboard" class="game-nav-icon"></i>
+            <span class="text-xs">Overview</span>
+        </a>
+        
+        <a href="#stats" data-tab="stats" class="game-nav-item flex flex-col items-center min-w-[80px]">
+            <i data-lucide="bar-chart-3" class="game-nav-icon"></i>
+            <span class="text-xs">Stats</span>
+        </a>
+        
+        <a href="#equipment" data-tab="equipment" class="game-nav-item flex flex-col items-center min-w-[80px]">
+            <i data-lucide="wrench" class="game-nav-icon"></i>
+            <span class="text-xs">Equipment</span>
+        </a>
+        
+        <a href="#weapons" data-tab="weapons" class="game-nav-item flex flex-col items-center min-w-[80px]">
+            <i data-lucide="target" class="game-nav-icon"></i>
+            <span class="text-xs">Weapons</span>
+        </a>
+        
+        <a href="#defense" data-tab="defense" class="game-nav-item flex flex-col items-center min-w-[80px]">
+            <i data-lucide="shield" class="game-nav-icon"></i>
+            <span class="text-xs">Defense</span>
+        </a>
+        
+        <a href="#build" data-tab="build" class="game-nav-item flex flex-col items-center min-w-[80px]">
+            <i data-lucide="zap" class="game-nav-icon"></i>
+            <span class="text-xs">Build</span>
+        </a>
+        
+        <a href="#locations" data-tab="locations" class="game-nav-item flex flex-col items-center min-w-[80px]">
+            <i data-lucide="map" class="game-nav-icon"></i>
+            <span class="text-xs">Locations</span>
+        </a>
+        
+        <a href="#guide" data-tab="guide" class="game-nav-item flex flex-col items-center min-w-[80px]">
+            <i data-lucide="book-open" class="game-nav-icon"></i>
+            <span class="text-xs">Guide</span>
+        </a>
+        
+    </div>
+</nav>
+
+<script>
+    // Tab switching logic
+    document.querySelectorAll('[data-tab]').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('[data-tab]').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            
+            // Get tab name
+            const tabName = tab.getAttribute('data-tab');
+            
+            // Hide all tab contents
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Show selected tab content
+            const targetContent = document.querySelector(`[data-tab-content="${tabName}"]`);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+            }
+            
+            // Update URL hash without scrolling
+            history.replaceState(null, null, `#${tabName}`);
+        });
+    });
+    
+    // Load active tab from URL hash on page load
+    window.addEventListener('load', () => {
+        const hash = window.location.hash.replace('#', '');
+        if (hash) {
+            const tab = document.querySelector(`[data-tab="${hash}"]`);
+            if (tab) {
+                tab.click();
+            }
+        }
+    });
+</script>

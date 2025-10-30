@@ -1,0 +1,419 @@
+{
+  "planets": [
+    {
+      "id": "earth",
+      "name": "Earth",
+      "system": "sol",
+      "level": 3,
+      "type": "terran",
+      "description": "Planeta hogar de la humanidad. Base principal de operaciones.",
+      "colonies": [
+        {
+          "id": "earth-starbase",
+          "name": "Earth Starbase",
+          "level": 1,
+          "type": "military",
+          "services": ["repair", "trade", "missions", "blueprints"],
+          "npcs": ["Commander Steel", "Merchant Sara", "Tech Officer Vex"]
+        },
+        {
+          "id": "unrest-zone",
+          "name": "Unrest Zone",
+          "level": 3,
+          "type": "combat",
+          "services": [],
+          "enemies": ["Rebel Scout", "Rebel Fighter"],
+          "description": "Zona de conflicto con rebeldes"
+        }
+      ],
+      "resources": ["Credits", "Ore", "Basic Components"],
+      "enemies": ["Rebel Forces"],
+      "hasUnrest": true,
+      "coordinates": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "mars",
+      "name": "Mars",
+      "system": "sol",
+      "level": 5,
+      "type": "rocky",
+      "description": "Colonia minera estratégica. Centro de producción de naves Parsec.",
+      "colonies": [
+        {
+          "id": "mars-colony",
+          "name": "Mars Colony",
+          "level": 5,
+          "type": "industrial",
+          "services": ["repair", "trade", "blueprints"],
+          "npcs": ["Engineer Drake", "Parsec Dealer"],
+          "specialShips": ["Parsec Storm", "Parsec Tank", "Parsec Engineer", "Parsec Shock"]
+        }
+      ],
+      "resources": ["Iron Ore", "Titanium", "Energy Crystals"],
+      "enemies": ["Mantis Scouts", "Pirate Raiders"],
+      "coordinates": { "x": 15, "y": 3, "z": -5 }
+    },
+    {
+      "id": "jupiter",
+      "name": "Jupiter",
+      "system": "sol",
+      "level": 7,
+      "type": "gas",
+      "description": "Gigante gaseoso con estaciones orbitales. Rica en recursos energéticos.",
+      "colonies": [
+        {
+          "id": "jupiter-station",
+          "name": "Jupiter Station",
+          "level": 7,
+          "type": "mining",
+          "services": ["repair", "trade", "refinery"],
+          "npcs": ["Station Master Cole"]
+        }
+      ],
+      "resources": ["Hydrogen", "Helium-3", "Plasma Cells"],
+      "enemies": ["Space Pirates", "Mantis Drones"],
+      "coordinates": { "x": 45, "y": 8, "z": 12 }
+    },
+    {
+      "id": "saturn",
+      "name": "Saturn",
+      "system": "sol",
+      "level": 8,
+      "type": "gas",
+      "description": "Planeta anillado con múltiples lunas colonizadas.",
+      "colonies": [
+        {
+          "id": "titan-base",
+          "name": "Titan Base",
+          "level": 8,
+          "type": "research",
+          "services": ["repair", "research", "blueprints"],
+          "npcs": ["Dr. Nova", "Research Director"]
+        }
+      ],
+      "resources": ["Ice", "Methane", "Rare Minerals"],
+      "enemies": ["Mantis Raiders"],
+      "coordinates": { "x": 85, "y": -12, "z": 20 }
+    },
+    {
+      "id": "venar",
+      "name": "Vénar",
+      "system": "tauceti",
+      "level": 10,
+      "type": "terran",
+      "description": "Primera colonia en Tau Ceti. Centro comercial próspero.",
+      "colonies": [
+        {
+          "id": "venar-starbase",
+          "name": "Vénar Starbase",
+          "level": 10,
+          "type": "commercial",
+          "services": ["repair", "trade", "missions", "blueprints"],
+          "npcs": ["Governor Hayes", "Trade Master Lin"]
+        }
+      ],
+      "resources": ["Advanced Components", "Exotic Minerals"],
+      "enemies": ["Mantis Forces"],
+      "coordinates": { "x": 150, "y": 30, "z": -40 }
+    },
+    {
+      "id": "cetacea",
+      "name": "Cetacea",
+      "system": "tauceti",
+      "level": 14,
+      "type": "ocean",
+      "description": "Mundo oceánico con plataformas flotantes. Hogar de las naves Neon.",
+      "colonies": [
+        {
+          "id": "neon-facility",
+          "name": "Neon Facility",
+          "level": 14,
+          "type": "special",
+          "services": ["repair", "trade", "neon-ships"],
+          "npcs": ["Neon Engineer Kai", "Special Dealer"],
+          "specialShips": ["Neon Storm", "Neon Tank", "Neon Engineer", "Neon Shock"]
+        }
+      ],
+      "resources": ["Aqua Crystals", "Bio-fuel", "Neon Components"],
+      "enemies": ["Mantis Elite"],
+      "isSpecial": true,
+      "coordinates": { "x": 160, "y": 35, "z": -38 }
+    },
+    {
+      "id": "sirius-alpha",
+      "name": "Sirius Alpha",
+      "system": "sirius",
+      "level": 15,
+      "type": "singularity",
+      "description": "Planeta dinámico en la singularidad. Cambia cada rotación.",
+      "colonies": [
+        {
+          "id": "temporal-station",
+          "name": "Temporal Station",
+          "level": 15,
+          "type": "research",
+          "services": ["repair", "special-trade"],
+          "npcs": ["Quantum Scientist"]
+        }
+      ],
+      "resources": ["Quantum Particles", "Unstable Matter"],
+      "enemies": ["Dimensional Anomalies"],
+      "isDynamic": true,
+      "coordinates": { "x": 200, "y": 0, "z": 0 }
+    },
+    {
+      "id": "gazica",
+      "name": "Gazica",
+      "system": "draconis",
+      "level": 20,
+      "type": "volcanic",
+      "description": "Mundo volcánico hostil. Alto peligro Mantis.",
+      "colonies": [
+        {
+          "id": "outpost-gamma",
+          "name": "Outpost Gamma",
+          "level": 20,
+          "type": "military",
+          "services": ["repair", "missions"],
+          "npcs": ["Commander Frost"]
+        }
+      ],
+      "resources": ["Lava Crystals", "Thermal Energy"],
+      "enemies": ["Mantis Warriors", "Mantis Elite"],
+      "dangerLevel": "high",
+      "coordinates": { "x": 280, "y": -50, "z": 60 }
+    },
+    {
+      "id": "mantis-hive",
+      "name": "Mantis Hive",
+      "system": "draconis",
+      "level": 22,
+      "type": "hive",
+      "description": "Colmena Mantis principal. Extremadamente peligroso.",
+      "colonies": [],
+      "resources": ["Mantis Tech", "Bio-materials"],
+      "enemies": ["Mantis Queen", "Mantis Guardians", "Mantis Swarm"],
+      "hostile": true,
+      "dangerLevel": "extreme",
+      "isBossLocation": true,
+      "coordinates": { "x": 295, "y": -55, "z": 65 }
+    },
+    {
+      "id": "valkion",
+      "name": "Valkion",
+      "system": "draconis",
+      "level": 23,
+      "type": "desert",
+      "description": "Planeta desértico con ruinas antiguas.",
+      "colonies": [
+        {
+          "id": "valkion-ruins",
+          "name": "Valkion Ruins",
+          "level": 23,
+          "type": "archaeological",
+          "services": ["research", "artifacts"],
+          "npcs": ["Archaeologist Vera"]
+        }
+      ],
+      "resources": ["Ancient Artifacts", "Rare Metals"],
+      "enemies": ["Guardian Drones", "Mantis Scavengers"],
+      "hasAncientRuins": true,
+      "coordinates": { "x": 300, "y": -48, "z": 58 }
+    },
+    {
+      "id": "baumar",
+      "name": "Baumar",
+      "system": "mizar",
+      "level": 25,
+      "type": "industrial",
+      "description": "Centro de manufactura pesada. Producción de armamento.",
+      "colonies": [
+        {
+          "id": "baumar-factory",
+          "name": "Baumar Factory",
+          "level": 25,
+          "type": "industrial",
+          "services": ["repair", "trade", "weapons", "blueprints"],
+          "npcs": ["Factory Boss Gregor", "Weapons Dealer"]
+        }
+      ],
+      "resources": ["Alloys", "Weapon Parts", "Ammunition"],
+      "enemies": ["Vega Scouts"],
+      "coordinates": { "x": 350, "y": 70, "z": -80 }
+    },
+    {
+      "id": "desai",
+      "name": "Desai",
+      "system": "gemini",
+      "level": 30,
+      "type": "terran",
+      "description": "Gemelo comercial. Hub económico galáctico.",
+      "colonies": [
+        {
+          "id": "desai-trade-center",
+          "name": "Desai Trade Center",
+          "level": 30,
+          "type": "commercial",
+          "services": ["repair", "premium-trade", "exchange", "bank"],
+          "npcs": ["Trade Baron Yuki", "Exchange Master"]
+        }
+      ],
+      "resources": ["Credits", "Trade Goods", "Luxury Items"],
+      "enemies": ["Pirates"],
+      "isTradeHub": true,
+      "coordinates": { "x": 450, "y": 90, "z": -100 }
+    },
+    {
+      "id": "axiom",
+      "name": "Axiom",
+      "system": "vega",
+      "level": 40,
+      "type": "fortress",
+      "description": "Fortaleza Vega. Zona de alto nivel extremadamente peligrosa.",
+      "colonies": [
+        {
+          "id": "axiom-fortress",
+          "name": "Axiom Fortress",
+          "level": 40,
+          "type": "military",
+          "services": ["repair", "advanced-weapons"],
+          "npcs": ["General Vex"]
+        }
+      ],
+      "resources": ["Vega Tech", "Advanced Weapons"],
+      "enemies": ["Vega Elite", "Vega Titans", "Vega Commander"],
+      "hostile": true,
+      "dangerLevel": "extreme",
+      "isBossLocation": true,
+      "coordinates": { "x": 600, "y": -120, "z": 150 }
+    },
+    {
+      "id": "colossus",
+      "name": "Colossus",
+      "system": "vega",
+      "level": 42,
+      "type": "titan",
+      "description": "Titán mecánico planetario. Boss épico.",
+      "colonies": [],
+      "resources": ["Titan Core", "Legendary Materials"],
+      "enemies": ["Titan Guardian", "Titan Boss"],
+      "hostile": true,
+      "dangerLevel": "legendary",
+      "isBossLocation": true,
+      "isRaidLocation": true,
+      "coordinates": { "x": 615, "y": -125, "z": 155 }
+    },
+    {
+      "id": "erebos",
+      "name": "Erebos",
+      "system": "oort",
+      "level": 46,
+      "type": "dark",
+      "description": "Planeta oscuro en los confines. Acceso a naves Raven.",
+      "colonies": [
+        {
+          "id": "hidden-station",
+          "name": "Hidden Station",
+          "level": 46,
+          "type": "secret",
+          "services": ["repair", "raven-ships", "elite-trade"],
+          "npcs": ["Shadow Dealer", "Raven Engineer"],
+          "specialShips": ["Raven Elite"]
+        }
+      ],
+      "resources": ["Dark Matter", "Void Crystals", "Elite Components"],
+      "enemies": ["Unknown Entities", "Void Creatures"],
+      "isSpecial": true,
+      "isEliteLocation": true,
+      "coordinates": { "x": 800, "y": -200, "z": 250 }
+    }
+  ],
+  
+  "planetTypes": {
+    "terran": {
+      "name": "Terran",
+      "description": "Planetas habitables similares a la Tierra",
+      "color": "green",
+      "icon": "globe"
+    },
+    "rocky": {
+      "name": "Rocky",
+      "description": "Planetas rocosos con recursos minerales",
+      "color": "gray",
+      "icon": "mountain"
+    },
+    "gas": {
+      "name": "Gas Giant",
+      "description": "Gigantes gaseosos ricos en energía",
+      "color": "cyan",
+      "icon": "wind"
+    },
+    "volcanic": {
+      "name": "Volcanic",
+      "description": "Mundos volcánicos hostiles",
+      "color": "red",
+      "icon": "flame"
+    },
+    "ocean": {
+      "name": "Ocean World",
+      "description": "Planetas cubiertos de agua",
+      "color": "blue",
+      "icon": "waves"
+    },
+    "desert": {
+      "name": "Desert",
+      "description": "Planetas áridos con ruinas antiguas",
+      "color": "yellow",
+      "icon": "sun"
+    },
+    "ice": {
+      "name": "Ice World",
+      "description": "Mundos congelados",
+      "color": "cyan",
+      "icon": "snowflake"
+    },
+    "hive": {
+      "name": "Hive",
+      "description": "Colmenas Mantis hostiles",
+      "color": "purple",
+      "icon": "bug"
+    },
+    "fortress": {
+      "name": "Fortress",
+      "description": "Fortalezas enemigas fortificadas",
+      "color": "red",
+      "icon": "shield-alert"
+    },
+    "singularity": {
+      "name": "Singularity",
+      "description": "Planetas en zonas de singularidad",
+      "color": "purple",
+      "icon": "sparkles"
+    },
+    "dark": {
+      "name": "Dark Planet",
+      "description": "Mundos oscuros misteriosos",
+      "color": "gray",
+      "icon": "moon"
+    }
+  },
+  
+  "colonyServices": {
+    "repair": "Reparación de naves",
+    "trade": "Comercio general",
+    "missions": "Misiones disponibles",
+    "blueprints": "Planos de naves",
+    "research": "Investigación tecnológica",
+    "refinery": "Refinería de recursos",
+    "weapons": "Armamento avanzado",
+    "neon-ships": "Naves Neon especiales",
+    "raven-ships": "Naves Raven elite",
+    "premium-trade": "Comercio premium",
+    "exchange": "Intercambio de recursos",
+    "bank": "Servicios bancarios",
+    "artifacts": "Artefactos antiguos",
+    "advanced-weapons": "Armamento de nivel superior",
+    "elite-trade": "Comercio elite",
+    "special-trade": "Comercio especial"
+  }
+}

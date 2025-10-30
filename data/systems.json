@@ -1,0 +1,272 @@
+{
+  "systems": [
+    {
+      "id": "sol",
+      "name": "Sol",
+      "level": 1,
+      "type": "normal",
+      "description": "Sistema inicial de la humanidad. Hogar de la Tierra y base de operaciones para nuevos pilotos.",
+      "planets": [
+        {"id": "mercury", "name": "Mercury", "level": 1, "type": "rocky"},
+        {"id": "venus", "name": "Venus", "level": 2, "type": "rocky"},
+        {"id": "earth", "name": "Earth", "level": 3, "type": "terran", "hasUnrest": true},
+        {"id": "moon", "name": "Moon", "level": 3, "type": "moon"},
+        {"id": "mars", "name": "Mars", "level": 5, "type": "rocky"},
+        {"id": "jupiter", "name": "Jupiter", "level": 7, "type": "gas"},
+        {"id": "saturn", "name": "Saturn", "level": 8, "type": "gas"},
+        {"id": "uranus", "name": "Uranus", "level": 9, "type": "ice"},
+        {"id": "neptune", "name": "Neptune", "level": 10, "type": "ice"},
+        {"id": "ax03", "name": "AX-03", "level": 5, "type": "event"},
+        {"id": "bx12", "name": "BX-12", "level": 5, "type": "event"},
+        {"id": "cx09", "name": "CX-09", "level": 5, "type": "event"},
+        {"id": "dy52", "name": "DY-52", "level": 5, "type": "event"},
+        {"id": "ez35", "name": "EZ-35", "level": 5, "type": "event"},
+        {"id": "fx46", "name": "FX-46", "level": 5, "type": "event"},
+        {"id": "gw75", "name": "GW-75", "level": 5, "type": "event"},
+        {"id": "sayaron", "name": "Rebel Sanctuary Sayaron", "level": 8, "type": "rebel"}
+      ],
+      "stargate": true
+    },
+    {
+      "id": "tauceti",
+      "name": "Tau Ceti",
+      "level": 10,
+      "type": "normal",
+      "description": "Sistema colonial avanzado. Hogar de las naves Neon especiales.",
+      "planets": [
+        {"id": "venar", "name": "Vénar", "level": 10, "type": "terran"},
+        {"id": "calon", "name": "Calon", "level": 12, "type": "industrial"},
+        {"id": "cetacea", "name": "Cetacea", "level": 14, "type": "ocean"}
+      ],
+      "specialShips": ["Neon Series"],
+      "stargate": true
+    },
+    {
+      "id": "sirius",
+      "name": "Sirius",
+      "level": 15,
+      "type": "singularity",
+      "description": "Singularidad única con hasta 32 planetas dinámicos. Recursos y blueprints raros.",
+      "planets": [],
+      "dynamicPlanets": 32,
+      "planetTypes": ["Resource", "Ancient"],
+      "features": [
+        "Planetas dinámicos que cambian",
+        "Efectos únicos por planeta",
+        "Enemigos especiales",
+        "Blueprints exclusivos"
+      ],
+      "stargate": false
+    },
+    {
+      "id": "draconis",
+      "name": "Draconis",
+      "level": 20,
+      "type": "normal",
+      "description": "Sistema Mantis con alta actividad hostil. Zona de combate intenso.",
+      "planets": [
+        {"id": "gazica", "name": "Gazica", "level": 20, "type": "volcanic"},
+        {"id": "mantis-hive", "name": "Mantis Hive", "level": 22, "type": "hive", "hostile": true},
+        {"id": "valkion", "name": "Valkion", "level": 23, "type": "desert"},
+        {"id": "arkon", "name": "Arkon", "level": 24, "type": "industrial"},
+        {"id": "woe-fields", "name": "Woe Fields", "level": 25, "type": "asteroid"},
+        {"id": "unstable-wormhole", "name": "Unstable Wormhole", "level": 25, "type": "wormhole"}
+      ],
+      "stargate": true
+    },
+    {
+      "id": "mizar",
+      "name": "Mizar",
+      "level": 25,
+      "type": "normal",
+      "description": "Sistema de tránsito importante. Hub comercial y militar.",
+      "planets": [
+        {"id": "baumar", "name": "Baumar", "level": 25, "type": "industrial"},
+        {"id": "molikar", "name": "Molikar", "level": 26, "type": "mining"},
+        {"id": "ob", "name": "Ob", "level": 27, "type": "frozen"},
+        {"id": "cosmo", "name": "Cosmo", "level": 28, "type": "research"},
+        {"id": "mizar-starbase", "name": "Mizar Starbase", "level": 28, "type": "station"}
+      ],
+      "stargate": true
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini",
+      "level": 30,
+      "type": "normal",
+      "description": "Sistema gemelo con economía próspera. Centro de comercio galáctico.",
+      "planets": [
+        {"id": "desai", "name": "Desai", "level": 30, "type": "terran"},
+        {"id": "iga", "name": "Iga", "level": 31, "type": "agricultural"},
+        {"id": "prosperous", "name": "Prosperous", "level": 32, "type": "wealthy"},
+        {"id": "commerce-central", "name": "Commerce Central", "level": 33, "type": "trade"},
+        {"id": "technatoria", "name": "Technatoria", "level": 34, "type": "tech"},
+        {"id": "gemini-starbase", "name": "Gemini Starbase", "level": 35, "type": "station"}
+      ],
+      "stargate": true
+    },
+    {
+      "id": "antares",
+      "name": "Antares",
+      "level": 35,
+      "type": "normal",
+      "description": "Sistema de frontera con amenazas crecientes.",
+      "planets": [
+        {"id": "remo", "name": "Remo", "level": 35, "type": "rocky"},
+        {"id": "lustra", "name": "Lustra", "level": 36, "type": "crystal"},
+        {"id": "terasa", "name": "Terasa", "level": 37, "type": "desert"},
+        {"id": "goya", "name": "Goya", "level": 38, "type": "volcanic"}
+      ],
+      "stargate": true
+    },
+    {
+      "id": "vega",
+      "name": "Vega",
+      "level": 40,
+      "type": "normal",
+      "description": "Sistema Vega de alto nivel. Zona de end-game con enemigos poderosos.",
+      "planets": [
+        {"id": "axiom", "name": "Axiom", "level": 40, "type": "fortress"},
+        {"id": "kalabesh", "name": "Kalabesh", "level": 41, "type": "desert"},
+        {"id": "colossus", "name": "Colossus", "level": 42, "type": "titan"},
+        {"id": "lyris", "name": "Lyris", "level": 43, "type": "crystal"},
+        {"id": "aurora", "name": "Aurora", "level": 44, "type": "nebula"},
+        {"id": "phobos", "name": "Phobos", "level": 45, "type": "moon"},
+        {"id": "dante", "name": "Dante", "level": 46, "type": "infernal"},
+        {"id": "asteroid-junkyard", "name": "Asteroid Junkyard", "level": 47, "type": "asteroid"}
+      ],
+      "stargate": true
+    },
+    {
+      "id": "oort",
+      "name": "Oort",
+      "level": 45,
+      "type": "normal",
+      "description": "Sistema remoto en los confines del espacio conocido.",
+      "planets": [
+        {"id": "caliris", "name": "Caliris", "level": 45, "type": "ice"},
+        {"id": "erebos", "name": "Erebos", "level": 46, "type": "dark", "special": true},
+        {"id": "bantia", "name": "Bantia", "level": 47, "type": "barren"},
+        {"id": "armene", "name": "Armene", "level": 48, "type": "ancient"}
+      ],
+      "stargate": false
+    }
+  ],
+  
+  "shipClasses": [
+    {
+      "id": "raider",
+      "name": "Raider",
+      "role": "Starter",
+      "description": "Nave inicial básica para nuevos pilotos",
+      "color": "gray",
+      "icon": "user"
+    },
+    {
+      "id": "storm",
+      "name": "Storm",
+      "role": "DPS / Daño",
+      "description": "Especializadas en causar máximo daño",
+      "color": "red",
+      "icon": "zap"
+    },
+    {
+      "id": "shock",
+      "name": "Shock",
+      "role": "Control / Debuff",
+      "description": "Control de enemigos y efectos de estado",
+      "color": "purple",
+      "icon": "activity"
+    },
+    {
+      "id": "tank",
+      "name": "Tank",
+      "role": "Resistencia",
+      "description": "Alta defensa y absorción de daño",
+      "color": "blue",
+      "icon": "shield"
+    },
+    {
+      "id": "engineer",
+      "name": "Engineer",
+      "role": "Soporte / Curación",
+      "description": "Reparación y soporte al equipo",
+      "color": "green",
+      "icon": "wrench"
+    },
+    {
+      "id": "defender",
+      "name": "Defender",
+      "role": "Defensa de Área",
+      "description": "Protección de zonas y aliados",
+      "color": "cyan",
+      "icon": "shield-check"
+    },
+    {
+      "id": "sniper",
+      "name": "Sniper",
+      "role": "Largo Alcance",
+      "description": "Daño preciso a larga distancia",
+      "color": "orange",
+      "icon": "crosshair"
+    },
+    {
+      "id": "clan",
+      "name": "Clan Ship",
+      "role": "Conquest",
+      "description": "Naves especiales para batallas de clanes",
+      "color": "yellow",
+      "icon": "users"
+    }
+  ],
+  
+  "equipmentCategories": [
+    {"id": "cannon", "name": "Cañón", "type": "weapon", "slot": "primary"},
+    {"id": "collector", "name": "Recolector", "type": "utility", "slot": "special"},
+    {"id": "repair", "name": "Reparador", "type": "support", "slot": "special"},
+    {"id": "booster", "name": "Impulsor", "type": "utility", "slot": "special"},
+    {"id": "missile", "name": "Misil", "type": "weapon", "slot": "secondary"},
+    {"id": "shield", "name": "Escudo", "type": "defense", "slot": "shield"},
+    {"id": "telerepair", "name": "Telerreparador", "type": "support", "slot": "special"},
+    {"id": "accelerator", "name": "Acelerador", "type": "utility", "slot": "engine"},
+    {"id": "targeting", "name": "Mira Computarizada", "type": "utility", "slot": "special"},
+    {"id": "miner", "name": "Picador", "type": "utility", "slot": "special"},
+    {"id": "protector", "name": "Protector", "type": "defense", "slot": "special"},
+    {"id": "decelerator", "name": "Desacelerador", "type": "control", "slot": "special"},
+    {"id": "drill", "name": "Perforador", "type": "weapon", "slot": "special"},
+    {"id": "jammer", "name": "Señal de Interferencia", "type": "control", "slot": "special"},
+    {"id": "repair-field", "name": "Campo de Reparación", "type": "support", "slot": "special"},
+    {"id": "decoy", "name": "Señuelo", "type": "utility", "slot": "special"},
+    {"id": "thermal-ray", "name": "Rayo Térmico", "type": "weapon", "slot": "primary"},
+    {"id": "aggro-bomb", "name": "Bomba de Agresión", "type": "utility", "slot": "special"},
+    {"id": "resurrector", "name": "Resurrector", "type": "support", "slot": "special"},
+    {"id": "paralyzer", "name": "Paralizador", "type": "control", "slot": "special"},
+    {"id": "long-range", "name": "Largo Alcance", "type": "weapon", "slot": "primary"},
+    {"id": "attack-drone", "name": "Droide de Ataque", "type": "drone", "slot": "drone"},
+    {"id": "orbital", "name": "Orbital", "type": "weapon", "slot": "special"},
+    {"id": "charge", "name": "Carga de Ataque", "type": "weapon", "slot": "special"},
+    {"id": "repair-tower", "name": "Torre de Reparación", "type": "support", "slot": "special"},
+    {"id": "attack-tower", "name": "Torre de Ataque", "type": "weapon", "slot": "special"},
+    {"id": "limpet-mine", "name": "Bomba Lapa", "type": "weapon", "slot": "special"},
+    {"id": "mine", "name": "Mina", "type": "weapon", "slot": "special"},
+    {"id": "magnetic-trap", "name": "Trampa Magnética", "type": "control", "slot": "special"},
+    {"id": "quantum-jump", "name": "Salto Cuántico", "type": "utility", "slot": "special"},
+    {"id": "corruption-cloud", "name": "Nube de Corrupción", "type": "control", "slot": "special"},
+    {"id": "electric-beam", "name": "Haz Eléctrico", "type": "weapon", "slot": "primary"},
+    {"id": "damage-inverter", "name": "Inversor de Daño", "type": "defense", "slot": "special"},
+    {"id": "protective-aura", "name": "Aura Protectora", "type": "defense", "slot": "special"},
+    {"id": "reflector-drone", "name": "Droide Reflector", "type": "drone", "slot": "drone"},
+    {"id": "range-absorber", "name": "Absorbedor de Alcance", "type": "defense", "slot": "special"}
+  ],
+  
+  "additionalEquipment": {
+    "drones": {
+      "description": "Unidades autónomas que asisten en combate",
+      "types": ["Attack Drone", "Repair Drone", "Reflector Drone", "Shield Drone"]
+    },
+    "cortex": {
+      "description": "Mejoras permanentes de nave que aumentan estadísticas base",
+      "types": ["Weapon Cortex", "Shield Cortex", "Engine Cortex", "Special Cortex"]
+    }
+  }
+}

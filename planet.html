@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planet | Pirate Galaxy</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/game-styles.css">
+</head>
+<body class="bg-gray-950 text-gray-100">
+
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <!-- Breadcrumb -->
+    <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center gap-2 text-sm text-gray-400">
+            <a href="index.html" class="hover:text-blue-400 transition">Home</a>
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            <a href="universe.html" class="hover:text-blue-400 transition">Universe</a>
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            <a href="#" id="breadcrumb-system" class="hover:text-blue-400 transition">System</a>
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            <span id="breadcrumb-planet" class="text-blue-400">Planet</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 pb-12">
+        
+        <!-- Planet Header -->
+        <div class="content-panel p-8 mb-8">
+            <div class="flex items-start gap-6 mb-6">
+                <div id="planet-icon" class="w-24 h-24 rounded-full bg-blue-500/20 flex items-center justify-center">
+                    <i data-lucide="map-pin" class="w-12 h-12 text-blue-400"></i>
+                </div>
+                <div class="flex-1">
+                    <h1 id="planet-name" class="text-4xl font-bold text-blue-300 mb-2">Loading...</h1>
+                    <p id="planet-type" class="text-gray-400 text-lg mb-4 capitalize"></p>
+                    <div class="flex gap-3">
+                        <span class="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded">
+                            Level <span id="planet-level">-</span>
+                        </span>
+                        <span id="planet-badges" class="flex gap-2"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coming Soon Notice -->
+        <div class="content-panel p-12 text-center">
+            <i data-lucide="construction" class="w-16 h-16 mx-auto text-yellow-400 mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-300 mb-2">Planet Details Coming Soon</h2>
+            <p class="text-gray-400 mb-6 max-w-lg mx-auto">
+                Detailed information about colonies, resources, NPCs, and missions will be available soon.
+            </p>
+            <div class="flex gap-4 justify-center">
+                <button onclick="history.back()" class="game-nav-item">
+                    <i data-lucide="arrow-left" class="inline w-4 h-4 mr-2"></i>
+                    Go Back
+                </button>
+                <a href="universe.html" class="game-nav-item">
+                    <i data-lucide="map" class="inline w-4 h-4 mr-2"></i>
+                    View Universe Map
+                </a>
+            </div>
+        </div>
+
+        <!-- Future Sections (Placeholder) -->
+        <div class="grid md:grid-cols-3 gap-6 mt-8">
+            <div class="content-panel p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <i data-lucide="building" class="w-6 h-6 text-blue-400"></i>
+                    <h3 class="text-lg font-bold">Colonies</h3>
+                </div>
+                <p class="text-sm text-gray-500">Information about colonies on this planet</p>
+            </div>
+            
+            <div class="content-panel p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <i data-lucide="box" class="w-6 h-6 text-green-400"></i>
+                    <h3 class="text-lg font-bold">Resources</h3>
+                </div>
+                <p class="text-sm text-gray-500">Minerals and materials available here</p>
+            </div>
+            
+            <div class="content-panel p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <i data-lucide="sword" class="w-6 h-6 text-red-400"></i>
+                    <h3 class="text-lg font-bold">NPCs & Enemies</h3>
+                </div>
+                <p class="text-sm text-gray-500">Enemy types and difficulty levels</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="js/component-loader.js"></script>
+    <script>
+        async function loadPlanetData() {
+            const params = new URLSearchParams(window.location.search);
+            const systemId = params.get('system');
+            const planetId = params.get('planet');
+
+            if (!systemId || !planetId) {
+                document.getElementById('planet-name').textContent = 'Planet Not Found';
+                return;
+            }
+
+            try {
+                const response = await fetch('data/systems.json');
+                const data = await response.json();
+                
+                const system = data.systems.find(s => s.id === systemId);
+                if (system && system.planets) {
+                    const planet = system.planets.find(p => p.id === planetId);
+                    if (planet) {
+                        renderPlanet(planet, system);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading planet data:', error);
+            }
+        }
+
+        function renderPlanet(planet, system) {
+            document.title = `${planet.name} | Pirate Galaxy`;
+            
+            document.getElementById('planet-name').textContent = planet.name;
+            document.getElementById('planet-type').textContent = planet.type.replace('-', ' ');
+            document.getElementById('planet-level').textContent = planet.level;
+            
+            // Breadcrumb
+            const systemLink = document.getElementById('breadcrumb-system');
+            systemLink.textContent = system.name;
+            systemLink.href = `system.html?id=${system.id}`;
+            document.getElementById('breadcrumb-planet').textContent = planet.name;
+
+            // Badges
+            const badges = [];
+            if (planet.hostile) badges.push('<span class="px-2 py-1 bg-red-500/20 text-red-400 rounded text-sm">Hostile</span>');
+            if (planet.hasUnrest) badges.push('<span class="px-2 py-1 bg-orange-500/20 text-orange-400 rounded text-sm">Unrest</span>');
+            if (planet.special) badges.push('<span class="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-sm">Special</span>');
+            
+            document.getElementById('planet-badges').innerHTML = badges.join('');
+
+            lucide.createIcons();
+        }
+
+        // Initialize
+        async function init() {
+            await componentLoader.loadAll({
+                'header': 'components/header.html',
+                'footer': 'components/footer.html'
+            });
+
+            componentLoader.renderAll({
+                'header-placeholder': 'header',
+                'footer-placeholder': 'footer'
+            });
+
+            lucide.createIcons();
+            loadPlanetData();
+        }
+
+        init();
+    </script>
+
+</body>
+</html>

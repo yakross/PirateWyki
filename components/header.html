@@ -1,0 +1,84 @@
+<!-- components/header.html -->
+<header class="game-header sticky top-0 z-50">
+    <div class="px-6 py-4">
+        <div class="flex items-center justify-between">
+            
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center space-x-3">
+                <span class="text-3xl">🏴‍☠️</span>
+                <div>
+                    <div class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                        Pirate Galaxy
+                    </div>
+                    <div class="text-xs text-gray-400">Database & Wiki</div>
+                </div>
+            </a>
+            
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-2xl mx-8">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
+                    <input 
+                        id="global-search"
+                        type="text" 
+                        placeholder="Press / to search ships, planets, equipment..."
+                        class="game-search w-full pl-12 pr-4 py-3 rounded text-sm"
+                    >
+                    <kbd class="absolute right-3 top-3 px-2 py-1 text-xs bg-gray-700 rounded border border-gray-600 text-gray-400">
+                        /
+                    </kbd>
+                </div>
+            </div>
+            
+            <!-- Right Actions -->
+            <div class="flex items-center space-x-2">
+                <!-- Theme Toggle -->
+                <button onclick="toggleTheme()" class="game-nav-item flex items-center space-x-2" title="Toggle theme">
+                    <i data-lucide="moon" id="theme-icon" class="w-5 h-5"></i>
+                </button>
+                
+                <!-- Settings -->
+                <a href="settings.html" class="game-nav-item flex items-center space-x-2">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span class="hidden md:inline">Settings</span>
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</header>
+
+<script>
+    // Search shortcut
+    document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+            e.preventDefault();
+            document.getElementById('global-search').focus();
+        }
+    });
+    
+    // Theme toggle function
+    function toggleTheme() {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        
+        const icon = document.getElementById('theme-icon');
+        if (icon) {
+            icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+    }
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        const icon = document.getElementById('theme-icon');
+        if (icon) {
+            icon.setAttribute('data-lucide', 'sun');
+        }
+    }
+</script>

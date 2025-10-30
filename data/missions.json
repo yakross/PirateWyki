@@ -1,0 +1,377 @@
+{
+  "missions": [
+    {
+      "id": "welcome-pilot",
+      "name": "Welcome, Pilot",
+      "type": "main",
+      "system": "sol",
+      "planet": "earth",
+      "level": 1,
+      "difficulty": "easy",
+      "description": "Completa tu entrenamiento básico y obtén tu primera nave.",
+      "objectives": [
+        "Habla con Commander Steel",
+        "Completa el tutorial de vuelo",
+        "Destruye 5 drones de entrenamiento",
+        "Aterriza en Earth Starbase"
+      ],
+      "rewards": {
+        "credits": 1000,
+        "experience": 500,
+        "items": ["Starblaze Blueprint", "Basic Repair Kit"]
+      },
+      "prerequisites": [],
+      "nextMission": "first-contact"
+    },
+    {
+      "id": "first-contact",
+      "name": "First Contact",
+      "type": "main",
+      "system": "sol",
+      "planet": "mars",
+      "level": 3,
+      "difficulty": "easy",
+      "description": "Investiga la señal de socorro en Marte.",
+      "objectives": [
+        "Viaja a Mars Colony",
+        "Escanea la señal desconocida",
+        "Derrota 10 Mantis Scouts",
+        "Reporta a Engineer Drake"
+      ],
+      "rewards": {
+        "credits": 2500,
+        "experience": 1000,
+        "items": ["Parsec Storm Blueprint", "Energy Cells x10"],
+        "unlocks": ["Parsec Ship Line"]
+      },
+      "prerequisites": ["welcome-pilot"],
+      "nextMission": "parsec-protocol"
+    },
+    {
+      "id": "parsec-protocol",
+      "name": "Parsec Protocol",
+      "type": "main",
+      "system": "sol",
+      "planet": "mars",
+      "level": 5,
+      "difficulty": "medium",
+      "description": "Prueba la nueva tecnología Parsec en combate.",
+      "objectives": [
+        "Construye una nave Parsec (cualquier tipo)",
+        "Completa 3 patrullas en Jupiter",
+        "Derrota al Pirate Captain",
+        "Recolecta 20 Energy Crystals"
+      ],
+      "rewards": {
+        "credits": 5000,
+        "experience": 2500,
+        "items": ["Parsec Tank Blueprint", "Weapon Upgrade Kit"]
+      },
+      "prerequisites": ["first-contact"],
+      "nextMission": "journey-to-tau-ceti"
+    },
+    {
+      "id": "journey-to-tau-ceti",
+      "name": "Journey to Tau Ceti",
+      "type": "main",
+      "system": "tauceti",
+      "planet": "venar",
+      "level": 10,
+      "difficulty": "medium",
+      "description": "Abre la ruta a Tau Ceti y establece contacto con las colonias.",
+      "objectives": [
+        "Alcanza nivel 10",
+        "Viaja al sistema Tau Ceti",
+        "Habla con Governor Hayes en Vénar",
+        "Completa la misión de bienvenida"
+      ],
+      "rewards": {
+        "credits": 15000,
+        "experience": 5000,
+        "items": ["Sirius Storm Blueprint", "Advanced Shield"],
+        "unlocks": ["Tau Ceti System", "Sirius Ship Line"]
+      },
+      "prerequisites": ["parsec-protocol"],
+      "nextMission": "neon-mystery"
+    },
+    {
+      "id": "neon-mystery",
+      "name": "The Neon Mystery",
+      "type": "side",
+      "system": "tauceti",
+      "planet": "cetacea",
+      "level": 14,
+      "difficulty": "hard",
+      "description": "Investiga la misteriosa tecnología Neon en Cetacea.",
+      "objectives": [
+        "Localiza Neon Facility en Cetacea",
+        "Derrota 15 Mantis Elite",
+        "Recolecta 10 Aqua Crystals",
+        "Habla con Neon Engineer Kai"
+      ],
+      "rewards": {
+        "credits": 25000,
+        "experience": 8000,
+        "items": ["Neon Storm Blueprint", "Neon Components x5"],
+        "unlocks": ["Neon Ship Line"]
+      },
+      "prerequisites": ["journey-to-tau-ceti"],
+      "isOptional": true
+    },
+    {
+      "id": "sirius-anomaly",
+      "name": "Sirius Anomaly",
+      "type": "main",
+      "system": "sirius",
+      "planet": "sirius-alpha",
+      "level": 15,
+      "difficulty": "hard",
+      "description": "Explora la singularidad de Sirius y sus secretos.",
+      "objectives": [
+        "Entra al sistema Sirius",
+        "Sobrevive 10 minutos en la singularidad",
+        "Derrota 3 Dimensional Anomalies",
+        "Recolecta Quantum Particles"
+      ],
+      "rewards": {
+        "credits": 30000,
+        "experience": 10000,
+        "items": ["Quantum Shield", "Singularity Key"],
+        "unlocks": ["Sirius Singularity Access"]
+      },
+      "prerequisites": ["journey-to-tau-ceti"],
+      "nextMission": "mantis-threat"
+    },
+    {
+      "id": "mantis-threat",
+      "name": "The Mantis Threat",
+      "type": "main",
+      "system": "draconis",
+      "planet": "gazica",
+      "level": 20,
+      "difficulty": "hard",
+      "description": "Investiga la creciente amenaza Mantis en Draconis.",
+      "objectives": [
+        "Viaja al sistema Draconis",
+        "Establece base en Gazica Outpost",
+        "Derrota 25 Mantis Warriors",
+        "Reporta a Commander Frost"
+      ],
+      "rewards": {
+        "credits": 50000,
+        "experience": 15000,
+        "items": ["Rift Storm Blueprint", "Anti-Mantis Weapon"]
+      },
+      "prerequisites": ["sirius-anomaly"],
+      "nextMission": "hive-assault"
+    },
+    {
+      "id": "hive-assault",
+      "name": "Hive Assault",
+      "type": "main",
+      "system": "draconis",
+      "planet": "mantis-hive",
+      "level": 22,
+      "difficulty": "extreme",
+      "description": "Asalto final a la colmena Mantis principal.",
+      "objectives": [
+        "Reúne un escuadrón de 4 pilotos",
+        "Infiltra Mantis Hive",
+        "Derrota 50 Mantis Swarm",
+        "Derrota a Mantis Queen (Boss)",
+        "Escapa de la colmena"
+      ],
+      "rewards": {
+        "credits": 100000,
+        "experience": 30000,
+        "items": ["Queen's Crown (Trophy)", "Mantis Tech x10", "Legendary Weapon Blueprint"],
+        "title": "Hive Conqueror"
+      },
+      "prerequisites": ["mantis-threat"],
+      "isRaid": true,
+      "recommendedPlayers": 4,
+      "nextMission": "vega-rising"
+    },
+    {
+      "id": "vega-rising",
+      "name": "Vega Rising",
+      "type": "main",
+      "system": "vega",
+      "planet": "axiom",
+      "level": 40,
+      "difficulty": "extreme",
+      "description": "Enfrenta la amenaza Vega definitiva.",
+      "objectives": [
+        "Alcanza nivel 40",
+        "Construye una nave Tier 4",
+        "Infiltra Axiom Fortress",
+        "Derrota a Vega Commander (Boss)"
+      ],
+      "rewards": {
+        "credits": 250000,
+        "experience": 75000,
+        "items": ["Dreadnought Storm Blueprint", "Vega Core", "Elite Weapons Pack"],
+        "unlocks": ["End-game Content"]
+      },
+      "prerequisites": ["hive-assault"],
+      "isBoss": true,
+      "nextMission": "titan-challenge"
+    },
+    {
+      "id": "titan-challenge",
+      "name": "Titan Challenge",
+      "type": "raid",
+      "system": "vega",
+      "planet": "colossus",
+      "level": 42,
+      "difficulty": "legendary",
+      "description": "Derrota al Colossus, el titán mecánico planetario.",
+      "objectives": [
+        "Reúne un raid de 8 pilotos",
+        "Destruye las defensas del Titan (4 torres)",
+        "Derrota al Titan Boss",
+        "Recolecta Titan Core"
+      ],
+      "rewards": {
+        "credits": 500000,
+        "experience": 150000,
+        "items": ["Titan Core (Legendary)", "Elite Ship Parts x20", "Legendary Blueprint Pack"],
+        "title": "Titan Slayer"
+      },
+      "prerequisites": ["vega-rising"],
+      "isRaid": true,
+      "recommendedPlayers": 8,
+      "weeklyReset": true
+    },
+    {
+      "id": "raven-legacy",
+      "name": "Raven Legacy",
+      "type": "side",
+      "system": "oort",
+      "planet": "erebos",
+      "level": 45,
+      "difficulty": "legendary",
+      "description": "Descubre el legado de las legendarias naves Raven.",
+      "objectives": [
+        "Encuentra Hidden Station en Erebos",
+        "Completa 5 misiones elite",
+        "Derrota 100 Void Creatures",
+        "Desbloquea Raven Vault"
+      ],
+      "rewards": {
+        "credits": 750000,
+        "experience": 200000,
+        "items": ["Raven Elite Blueprint", "Dark Matter x50", "Elite Components x30"],
+        "unlocks": ["Raven Ship Line"],
+        "title": "Raven Master"
+      },
+      "prerequisites": ["titan-challenge"],
+      "isOptional": true,
+      "isElite": true
+    },
+    {
+      "id": "daily-patrol",
+      "name": "Daily Patrol",
+      "type": "daily",
+      "system": "any",
+      "planet": "any",
+      "level": 1,
+      "difficulty": "easy",
+      "description": "Completa una patrulla diaria en cualquier sistema.",
+      "objectives": [
+        "Derrota 20 enemigos de tu nivel",
+        "Completa 3 misiones menores"
+      ],
+      "rewards": {
+        "credits": 5000,
+        "experience": 2000,
+        "items": ["Daily Bonus Box"]
+      },
+      "resetDaily": true
+    },
+    {
+      "id": "weekly-challenge",
+      "name": "Weekly Challenge",
+      "type": "weekly",
+      "system": "any",
+      "planet": "any",
+      "level": 10,
+      "difficulty": "medium",
+      "description": "Completa el desafío semanal para grandes recompensas.",
+      "objectives": [
+        "Completa 10 misiones",
+        "Derrota 100 enemigos",
+        "Recolecta 50 recursos raros",
+        "Participa en 3 raids"
+      ],
+      "rewards": {
+        "credits": 50000,
+        "experience": 25000,
+        "items": ["Weekly Premium Box", "Blueprint Token x3"]
+      },
+      "resetWeekly": true
+    },
+    {
+      "id": "pvp-conquest",
+      "name": "Conquest Battle",
+      "type": "pvp",
+      "system": "any",
+      "planet": "conquest-zone",
+      "level": 30,
+      "difficulty": "hard",
+      "description": "Participa en batallas de conquista entre clanes.",
+      "objectives": [
+        "Únete a un clan",
+        "Participa en batalla de conquista",
+        "Captura 3 puntos de control",
+        "Defiende tu base durante 10 minutos"
+      ],
+      "rewards": {
+        "credits": 75000,
+        "experience": 40000,
+        "items": ["Conquest Token x5", "Clan Ship Parts"],
+        "clanReputation": 1000
+      },
+      "isPvP": true,
+      "requiresClan": true
+    }
+  ],
+  
+  "missionTypes": {
+    "main": {
+      "name": "Historia Principal",
+      "color": "yellow",
+      "icon": "star"
+    },
+    "side": {
+      "name": "Misión Secundaria",
+      "color": "blue",
+      "icon": "circle-dot"
+    },
+    "daily": {
+      "name": "Diaria",
+      "color": "green",
+      "icon": "calendar"
+    },
+    "weekly": {
+      "name": "Semanal",
+      "color": "purple",
+      "icon": "calendar-range"
+    },
+    "raid": {
+      "name": "Raid",
+      "color": "red",
+      "icon": "swords"
+    },
+    "pvp": {
+      "name": "PvP",
+      "color": "orange",
+      "icon": "shield-alert"
+    },
+    "event": {
+      "name": "Evento Especial",
+      "color": "pink",
+      "icon": "sparkles"
+    }
+  }
+}

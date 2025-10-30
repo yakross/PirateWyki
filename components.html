@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Database - Pirate Galaxy</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/game-styles.css">
+</head>
+<body class="bg-gray-950 text-gray-100">
+
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Equipment Database
+            </h1>
+            <p class="text-gray-400">Browse all weapons, shields, engines and special equipment</p>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+            <button onclick="filterByCategory('all')" class="category-tab active" data-category="all">
+                <i data-lucide="package" class="w-5 h-5"></i>
+                <span>All Equipment</span>
+            </button>
+            <button onclick="filterByCategory('weapons')" class="category-tab" data-category="weapons">
+                <i data-lucide="crosshair" class="w-5 h-5"></i>
+                <span>Weapons</span>
+            </button>
+            <button onclick="filterByCategory('shields')" class="category-tab" data-category="shields">
+                <i data-lucide="shield" class="w-5 h-5"></i>
+                <span>Shields</span>
+            </button>
+            <button onclick="filterByCategory('engines')" class="category-tab" data-category="engines">
+                <i data-lucide="gauge" class="w-5 h-5"></i>
+                <span>Engines</span>
+            </button>
+            <button onclick="filterByCategory('specials')" class="category-tab" data-category="specials">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                <span>Specials</span>
+            </button>
+            <button onclick="filterByCategory('drones')" class="category-tab" data-category="drones">
+                <i data-lucide="cpu" class="w-5 h-5"></i>
+                <span>Drones</span>
+            </button>
+        </div>
+
+        <!-- Filters Panel -->
+        <div class="content-panel p-6 mb-6">
+            <div class="grid md:grid-cols-4 gap-4">
+                
+                <!-- Search -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm text-gray-400 mb-2">
+                        <i data-lucide="search" class="inline w-4 h-4 mr-1"></i>
+                        Search Equipment
+                    </label>
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        placeholder="Search by name or description..."
+                        class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-purple-500 focus:outline-none"
+                        oninput="filterEquipment()"
+                    >
+                </div>
+
+                <!-- Rarity Filter -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Rarity</label>
+                    <select 
+                        id="rarity-filter"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-purple-500 focus:outline-none"
+                        onchange="filterEquipment()"
+                    >
+                        <option value="all">All Rarities</option>
+                        <option value="common">Common</option>
+                        <option value="uncommon">Uncommon</option>
+                        <option value="rare">Rare</option>
+                        <option value="epic">Epic</option>
+                        <option value="legendary">Legendary</option>
+                    </select>
+                </div>
+
+                <!-- Level Filter -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Min Level</label>
+                    <input 
+                        type="number" 
+                        id="level-filter"
+                        min="1" 
+                        max="50"
+                        placeholder="Any"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-purple-500 focus:outline-none"
+                        oninput="filterEquipment()"
+                    >
+                </div>
+
+            </div>
+
+            <!-- Results Counter -->
+            <div class="mt-4 pt-4 border-t border-gray-700 flex items-center justify-between">
+                <span class="text-sm text-gray-400">
+                    Showing <span id="results-count" class="text-purple-400 font-semibold">0</span> items
+                </span>
+                <button onclick="resetFilters()" class="text-sm text-gray-400 hover:text-purple-400">
+                    <i data-lucide="rotate-ccw" class="inline w-4 h-4 mr-1"></i>
+                    Reset Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center py-12">
+            <div class="loading mx-auto mb-4"></div>
+            <p class="text-gray-400">Loading equipment database...</p>
+        </div>
+
+        <!-- Equipment Grid -->
+        <div id="equipment-grid" class="hidden grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Equipment will be loaded here -->
+        </div>
+
+        <!-- No Results -->
+        <div id="no-results" class="hidden text-center py-12">
+            <i data-lucide="search-x" class="w-16 h-16 mx-auto text-gray-600 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-400 mb-2">No equipment found</h3>
+            <p class="text-gray-500 mb-4">Try adjusting your filters</p>
+        </div>
+
+    </div>
+
+    <!-- Equipment Detail Modal -->
+    <div id="equipment-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="content-panel max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-gray-900 border-b border-gray-700 p-4 flex items-center justify-between">
+                <h2 id="modal-title" class="text-2xl font-bold text-purple-300">Equipment Detail</h2>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="modal-content" class="p-6">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="js/component-loader.js"></script>
+    <script>
+        let allEquipment = [];
+        let filteredEquipment = [];
+        let currentCategory = 'all';
+
+        // Equipment types configuration
+        const equipmentConfig = {
+            weapons: {
+                icon: 'crosshair',
+                color: 'red',
+                items: [
+                    {
+                        id: 'laser-cannon-mk1',
+                        name: 'Laser Cannon Mk1',
+                        type: 'weapons',
+                        subtype: 'cannon',
+                        slot: 'primary',
+                        level: 1,
+                        rarity: 'common',
+                        damage: 45,
+                        fireRate: 2.5,
+                        range: 800,
+                        energyCost: 10,
+                        description: 'Basic laser cannon. Reliable and efficient for early game.',
+                        obtainMethod: 'Starting equipment',
+                        credits: 500
+                    },
+                    {
+                        id: 'plasma-destroyer',
+                        name: 'Plasma Destroyer',
+                        type: 'weapons',
+                        subtype: 'cannon',
+                        slot: 'primary',
+                        level: 20,
+                        rarity: 'rare',
+                        damage: 180,
+                        fireRate: 2.0,
+                        range: 850,
+                        energyCost: 35,
+                        description: 'Advanced plasma weapon with devastating damage output.',
+                        obtainMethod: 'Draconis System - Gazica Colony',
+                        credits: 45000,
+                        specialEffect: 'Burns target for 3s'
+                    },
+                    {
+                        id: 'thermal-ray',
+                        name: 'Thermal Ray',
+                        type: 'weapons',
+                        subtype: 'ray',
+                        slot: 'primary',
+                        level: 15,
+                        rarity: 'uncommon',
+                        damage: 25,
+                        fireRate: 10.0,
+                        range: 600,
+                        energyCost: 15,
+                        description: 'Continuous beam weapon. Excellent for sustained damage.',
+                        obtainMethod: 'Tau Ceti - Blueprint reward',
+                        credits: 18000,
+                        specialEffect: 'Continuous damage'
+                    },
+                    {
+                        id: 'missile-launcher',
+                        name: 'Missile Launcher',
+                        type: 'weapons',
+                        subtype: 'missile',
+                        slot: 'secondary',
+                        level: 10,
+                        rarity: 'uncommon',
+                        damage: 250,
+                        fireRate: 0.5,
+                        range: 1200,
+                        energyCost: 50,
+                        ammo: 20,
+                        description: 'Heavy missiles with area damage. Limited ammunition.',
+                        obtainMethod: 'Sol System - Jupiter Colony',
+                        credits: 12000,
+                        specialEffect: 'Area damage 200m radius'
+                    },
+                    {
+                        id: 'vega-annihilator',
+                        name: 'Vega Annihilator',
+                        type: 'weapons',
+                        subtype: 'cannon',
+                        slot: 'primary',
+                        level: 40,
+                        rarity: 'legendary',
+                        damage: 350,
+                        fireRate: 1.8,
+                        range: 950,
+                        energyCost: 60,
+                        description: 'Legendary Vega technology. Extreme firepower.',
+                        obtainMethod: 'Vega System - Axiom Fortress Boss Drop',
+                        credits: 250000,
+                        specialEffect: 'Chain lightning to nearby enemies'
+                    }
+                ]
+            },
+            shields: {
+                icon: 'shield',
+                color: 'blue',
+                items: [
+                    {
+                        id: 'basic-shield',
+                        name: 'Basic Shield Generator',
+                        type: 'shields',
+                        slot: 'shield',
+                        level: 1,
+                        rarity: 'common',
+                        shieldPoints: 500,
+                        regenRate: 10,
+                        regenDelay: 3,
+                        energyCost: 5,
+                        description: 'Standard shield generator for basic protection.',
+                        obtainMethod: 'Starting equipment',
+                        credits: 800
+                    },
+                    {
+                        id: 'reinforced-shield',
+                        name: 'Reinforced Shield',
+                        type: 'shields',
+                        slot: 'shield',
+                        level: 15,
+                        rarity: 'rare',
+                        shieldPoints: 2500,
+                        regenRate: 35,
+                        regenDelay: 2.5,
+                        energyCost: 18,
+                        description: 'Enhanced shield with faster regeneration.',
+                        obtainMethod: 'Tau Ceti System - Trade',
+                        credits: 25000,
+                        specialEffect: '+20% resistance to energy weapons'
+                    },
+                    {
+                        id: 'adaptive-shield',
+                        name: 'Adaptive Shield Matrix',
+                        type: 'shields',
+                        slot: 'shield',
+                        level: 30,
+                        rarity: 'epic',
+                        shieldPoints: 5000,
+                        regenRate: 60,
+                        regenDelay: 2,
+                        energyCost: 30,
+                        description: 'Advanced shield that adapts to incoming damage types.',
+                        obtainMethod: 'Gemini System - Premium Trade',
+                        credits: 85000,
+                        specialEffect: 'Adapts to last damage type received'
+                    },
+                    {
+                        id: 'titan-barrier',
+                        name: 'Titan Barrier',
+                        type: 'shields',
+                        slot: 'shield',
+                        level: 45,
+                        rarity: 'legendary',
+                        shieldPoints: 10000,
+                        regenRate: 100,
+                        regenDelay: 1.5,
+                        energyCost: 50,
+                        description: 'Legendary shield technology from Vega Titans.',
+                        obtainMethod: 'Vega - Titan Boss Drop',
+                        credits: 300000,
+                        specialEffect: 'Reflects 15% damage back to attacker'
+                    }
+                ]
+            },
+            engines: {
+                icon: 'gauge',
+                color: 'cyan',
+                items: [
+                    {
+                        id: 'standard-engine',
+                        name: 'Standard Engine',
+                        type: 'engines',
+                        slot: 'engine',
+                        level: 1,
+                        rarity: 'common',
+                        speed: 10,
+                        acceleration: 5,
+                        energyCost: 8,
+                        description: 'Basic propulsion system for standard mobility.',
+                        obtainMethod: 'Starting equipment',
+                        credits: 600
+                    },
+                    {
+                        id: 'turbo-booster',
+                        name: 'Turbo Booster',
+                        type: 'engines',
+                        slot: 'engine',
+                        level: 12,
+                        rarity: 'uncommon',
+                        speed: 25,
+                        acceleration: 15,
+                        energyCost: 15,
+                        description: 'High-speed engine for rapid movement.',
+                        obtainMethod: 'Tau Ceti - Vénar Colony',
+                        credits: 15000,
+                        specialEffect: '+30% speed boost for 5s (cooldown 30s)'
+                    },
+                    {
+                        id: 'quantum-drive',
+                        name: 'Quantum Drive',
+                        type: 'engines',
+                        slot: 'engine',
+                        level: 35,
+                        rarity: 'epic',
+                        speed: 45,
+                        acceleration: 30,
+                        energyCost: 25,
+                        description: 'Advanced quantum propulsion system.',
+                        obtainMethod: 'Gemini System - Research',
+                        credits: 95000,
+                        specialEffect: 'Short-range teleport (500m, cooldown 60s)'
+                    }
+                ]
+            },
+            specials: {
+                icon: 'sparkles',
+                color: 'purple',
+                items: [
+                    {
+                        id: 'repair-field',
+                        name: 'Repair Field Generator',
+                        type: 'specials',
+                        slot: 'special',
+                        level: 5,
+                        rarity: 'uncommon',
+                        healAmount: 150,
+                        healRate: 25,
+                        duration: 6,
+                        cooldown: 45,
+                        energyCost: 40,
+                        range: 300,
+                        description: 'Creates healing field that repairs nearby allies.',
+                        obtainMethod: 'Sol System - Engineer Quest',
+                        credits: 8000,
+                        specialEffect: 'Heals all allies in 300m radius'
+                    },
+                    {
+                        id: 'emp-bomb',
+                        name: 'EMP Bomb',
+                        type: 'specials',
+                        slot: 'special',
+                        level: 18,
+                        rarity: 'rare',
+                        damage: 50,
+                        stunDuration: 4,
+                        cooldown: 60,
+                        energyCost: 55,
+                        range: 400,
+                        description: 'Electromagnetic pulse that disables enemy shields.',
+                        obtainMethod: 'Draconis - Mission Reward',
+                        credits: 35000,
+                        specialEffect: 'Disables shields for 4s'
+                    },
+                    {
+                        id: 'damage-inverter',
+                        name: 'Damage Inverter',
+                        type: 'specials',
+                        slot: 'special',
+                        level: 25,
+                        rarity: 'epic',
+                        duration: 5,
+                        cooldown: 90,
+                        energyCost: 70,
+                        description: 'Converts incoming damage to healing for short duration.',
+                        obtainMethod: 'Mizar - Elite Mission',
+                        credits: 75000,
+                        specialEffect: '50% of damage received heals you instead'
+                    },
+                    {
+                        id: 'singularity-bomb',
+                        name: 'Singularity Bomb',
+                        type: 'specials',
+                        slot: 'special',
+                        level: 42,
+                        rarity: 'legendary',
+                        damage: 1000,
+                        pullRadius: 500,
+                        duration: 3,
+                        cooldown: 120,
+                        energyCost: 100,
+                        description: 'Creates miniature black hole that pulls and damages enemies.',
+                        obtainMethod: 'Sirius Singularity - Rare Drop',
+                        credits: 350000,
+                        specialEffect: 'Pulls all enemies within 500m and deals massive damage'
+                    }
+                ]
+            },
+            drones: {
+                icon: 'cpu',
+                color: 'green',
+                items: [
+                    {
+                        id: 'attack-drone',
+                        name: 'Attack Drone Mk1',
+                        type: 'drones',
+                        slot: 'drone',
+                        level: 8,
+                        rarity: 'uncommon',
+                        droneDamage: 35,
+                        droneHealth: 200,
+                        droneSpeed: 60,
+                        energyCost: 25,
+                        description: 'Autonomous attack drone that assists in combat.',
+                        obtainMethod: 'Sol System - Mars Colony',
+                        credits: 10000,
+                        specialEffect: 'Auto-targets nearest enemy'
+                    },
+                    {
+                        id: 'repair-drone',
+                        name: 'Repair Drone',
+                        type: 'drones',
+                        slot: 'drone',
+                        level: 10,
+                        rarity: 'uncommon',
+                        healPerSec: 20,
+                        droneHealth: 150,
+                        droneSpeed: 50,
+                        energyCost: 20,
+                        description: 'Healing drone that repairs your ship continuously.',
+                        obtainMethod: 'Tau Ceti - Engineer Shop',
+                        credits: 12000,
+                        specialEffect: 'Auto-repairs your ship'
+                    },
+                    {
+                        id: 'shield-drone',
+                        name: 'Shield Drone',
+                        type: 'drones',
+                        slot: 'drone',
+                        level: 22,
+                        rarity: 'rare',
+                        shieldBonus: 1000,
+                        droneHealth: 300,
+                        droneSpeed: 55,
+                        energyCost: 30,
+                        description: 'Projects additional shield around your ship.',
+                        obtainMethod: 'Draconis - Blueprint',
+                        credits: 45000,
+                        specialEffect: 'Adds extra shield layer'
+                    }
+                ]
+            }
+        };
+
+        // Generate equipment database from config
+        function generateEquipmentDatabase() {
+            allEquipment = [];
+            Object.values(equipmentConfig).forEach(category => {
+                allEquipment.push(...category.items);
+            });
+            filteredEquipment = [...allEquipment];
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            currentCategory = category;
+            
+            // Update tab styles
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            
+            filterEquipment();
+        }
+
+        // Filter equipment
+        function filterEquipment() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const rarity = document.getElementById('rarity-filter').value;
+            const minLevel = parseInt(document.getElementById('level-filter').value) || 0;
+
+            filteredEquipment = allEquipment.filter(item => {
+                const matchesCategory = currentCategory === 'all' || item.type === currentCategory;
+                const matchesSearch = item.name.toLowerCase().includes(search) || 
+                                    item.description.toLowerCase().includes(search);
+                const matchesRarity = rarity === 'all' || item.rarity === rarity;
+                const matchesLevel = item.level >= minLevel;
+
+                return matchesCategory && matchesSearch && matchesRarity && matchesLevel;
+            });
+
+            renderEquipment();
+        }
+
+        // Render equipment grid
+        function renderEquipment() {
+            const grid = document.getElementById('equipment-grid');
+            const noResults = document.getElementById('no-results');
+            const counter = document.getElementById('results-count');
+
+            counter.textContent = filteredEquipment.length;
+
+            if (filteredEquipment.length === 0) {
+                grid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                lucide.createIcons();
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            noResults.classList.add('hidden');
+
+            grid.innerHTML = filteredEquipment.map(item => createEquipmentCard(item)).join('');
+            lucide.createIcons();
+        }
+
+        // Create equipment card
+        function createEquipmentCard(item) {
+            const config = equipmentConfig[item.type];
+            const rarityColors = {
+                common: 'gray',
+                uncommon: 'green',
+                rare: 'blue',
+                epic: 'purple',
+                legendary: 'orange'
+            };
+            const rarityColor = rarityColors[item.rarity] || 'gray';
+
+            return `
+                <div onclick='showEquipmentDetail(${JSON.stringify(item).replace(/'/g, "&apos;")})' 
+                     class="content-panel p-5 hover:border-${rarityColor}-400 transition cursor-pointer group">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-lg bg-${config.color}-500/20 flex items-center justify-center">
+                                <i data-lucide="${config.icon}" class="w-6 h-6 text-${config.color}-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-${rarityColor}-300 group-hover:text-${rarityColor}-200">
+                                    ${item.name}
+                                </h3>
+                                <p class="text-xs text-gray-500 capitalize">${item.subtype || item.type}</p>
+                            </div>
+                        </div>
+                        <span class="badge badge-${item.rarity} text-xs">${item.rarity}</span>
+                    </div>
+
+                    <p class="text-sm text-gray-400 mb-3 line-clamp-2">${item.description}</p>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+                        <div>
+                            <span class="text-gray-500">Level</span>
+                            <p class="font-medium text-yellow-400">${item.level}</p>
+                        </div>
+                        ${item.damage ? `
+                        <div>
+                            <span class="text-gray-500">Damage</span>
+                            <p class="font-medium text-red-400">${item.damage}</p>
+                        </div>
+                        ` : ''}
+                        ${item.shieldPoints ? `
+                        <div>
+                            <span class="text-gray-500">Shield</span>
+                            <p class="font-medium text-blue-400">${item.shieldPoints}</p>
+                        </div>
+                        ` : ''}
+                        ${item.speed ? `
+                        <div>
+                            <span class="text-gray-500">Speed</span>
+                            <p class="font-medium text-cyan-400">+${item.speed}</p>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="pt-3 border-t border-gray-700 flex items-center justify-between">
+                        <span class="text-xs text-gray-500">
+                            <i data-lucide="coins" class="inline w-3 h-3"></i>
+                            ${item.credits.toLocaleString()}
+                        </span>
+                        <span class="text-xs text-gray-500 group-hover:text-purple-400 transition">
+                            View Details →
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show equipment detail modal
+        function showEquipmentDetail(item) {
+            const modal = document.getElementById('equipment-modal');
+            const title = document.getElementById('modal-title');
+            const content = document.getElementById('modal-content');
+
+            title.textContent = item.name;
+
+            const rarityColors = {
+                common: 'gray',
+                uncommon: 'green',
+                rare: 'blue',
+                epic: 'purple',
+                legendary: 'orange'
+            };
+            const color = rarityColors[item.rarity];
+
+            let statsHTML = '';
+            if (item.damage) statsHTML += `
+                <div class="flex justify-between py-2 border-b border-gray-700">
+                    <span class="text-gray-400">Damage</span>
+                    <span class="text-red-400 font-semibold">${item.damage}</span>
+                </div>`;
+            if (item.fireRate) statsHTML += `
+                <div class="flex justify-between py-2 border-b border-gray-700">
+                    <span class="text-gray-400">Fire Rate</span>
+                    <span class="text-yellow-400 font-semibold">${item.fireRate}/s</span>
+                </div>`;
+            if (item.range) statsHTML += `
+                <div class="flex justify-between py-2 border-b border-gray-700">
+                    <span class="text-gray-400">Range</span>
+                    <span class="text-cyan-400 font-semibold">${item.range}m</span>
+                </div>`;
+            if (item.shieldPoints) statsHTML += `
+                <div class="flex justify-between py-2 border-b border-gray-700">
+                    <span class="text-gray-400">Shield Points</span>
+                    <span class="text-blue-400 font-semibold">${item.shieldPoints}</span>
+                </div>`;
+            if (item.regenRate) statsHTML += `
+                <div class="flex justify-between py-2 border-b border-gray-700">
+                    <span class="text-gray-400">Regen Rate</span>
+                    <span class="text-green-400 font-semibold">${item.regenRate}/s</span>
+                </div>`;
+            if (item.speed) statsHTML += `
+                <div class="flex justify-between py-2 border-b border-gray-700">
+                    <span class="text-gray-400">Speed Bonus</span>
+                    <span class="text-cyan-400 font-semibold">+${item.speed}</span>
+                </div>`;
+            if (item.energyCost) statsHTML += `
+                <div class="flex justify-between py-2 border-b border-gray-700">
+                    <span class="text-gray-400">Energy Cost</span>
+                    <span class="text-purple-400 font-semibold">${item.energyCost}</span>
+                </div>`;
+
+            content.innerHTML = `
+                <div class="mb-6">
+                    <span class="badge badge-${item.rarity} text-sm mb-2 inline-block">${item.rarity}</span>
+                    <p class="text-gray-300 leading-relaxed">${item.description}</p>
+                </div>
+
+                <div class="content-panel p-4 mb-4">
+                    <h3 class="text-lg font-bold text-${color}-300 mb-3">Statistics</h3>
+                    ${statsHTML}
+                </div>
+
+                ${item.specialEffect ? `
+                <div class="content-panel p-4 mb-4 border-purple-500/30">
+                    <h3 class="text-lg font-bold text-purple-300 mb-2">
+                        <i data-lucide="sparkles" class="inline w-5 h-5"></i>
+                        Special Effect
+                    </h3>
+                    <p class="text-purple-200">${item.specialEffect}</p>
+                </div>
+                ` : ''}
+
+                <div class="content-panel p-4 mb-4">
+                    <h3 class="text-lg font-bold text-blue-300 mb-3">Requirements & Obtain</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Level Required</span>
+                            <span class="text-yellow-400 font-semibold">${item.level}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Cost</span>
+                            <span class="text-green-400 font-semibold">
+                                <i data-lucide="coins" class="inline w-4 h-4"></i>
+                                ${item.credits.toLocaleString()}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Obtain Method</span>
+                            <span class="text-gray-300 font-semibold text-right">${item.obtainMethod}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Slot Type</span>
+                            <span class="text-cyan-400 font-semibold capitalize">${item.slot}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button class="flex-1 game-nav-item text-center" onclick="alert('Build calculator coming soon!')">
+                        <i data-lucide="calculator" class="inline w-4 h-4 mr-2"></i>
+                        Add to Build
+                    </button>
+                    <button class="flex-1 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition" onclick="closeModal()">
+                        Close
+                    </button>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('equipment-modal').classList.add('hidden');
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('rarity-filter').value = 'all';
+            document.getElementById('level-filter').value = '';
+            currentCategory = 'all';
+            
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector('[data-category="all"]').classList.add('active');
+            
+            filterEquipment();
+        }
+
+        // Initialize
+        async function init() {
+            await componentLoader.loadAll({
+                'header': 'components/header.html',
+                'footer': 'components/footer.html'
+            });
+
+            componentLoader.renderAll({
+                'header-placeholder': 'header',
+                'footer-placeholder': 'footer'
+            });
+
+            generateEquipmentDatabase();
+            
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('equipment-grid').classList.remove('hidden');
+            
+            filterEquipment();
+            lucide.createIcons();
+        }
+
+        // Close modal on outside click
+        document.getElementById('equipment-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        init();
+    </script>
+
+    <style>
+        .category-tab {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            border-radius: 0.5rem;
+            color: #9CA3AF;
+            transition: all 0.3s;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .category-tab:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: #60A5FA;
+        }
+
+        .category-tab.active {
+            background: linear-gradient(90deg, rgba(147, 51, 234, 0.2), rgba(236, 72, 153, 0.2));
+            border-color: rgba(147, 51, 234, 0.5);
+            color: #E879F9;
+        }
+
+        .badge-common { background: rgba(156, 163, 175, 0.2); color: #D1D5DB; }
+        .badge-uncommon { background: rgba(34, 197, 94, 0.2); color: #86EFAC; }
+        .badge-rare { background: rgba(59, 130, 246, 0.2); color: #93C5FD; }
+        .badge-epic { background: rgba(168, 85, 247, 0.2); color: #C4B5FD; }
+        .badge-legendary { background: rgba(249, 115, 22, 0.2); color: #FDBA74; }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .loading {
+            border: 3px solid rgba(147, 51, 234, 0.2);
+            border-top: 3px solid #9333EA;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+</body>
+</html>

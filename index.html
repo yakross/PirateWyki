@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pirate Galaxy Database - Complete guide for ships, planets, equipment, missions and strategies">
+    <title>Pirate Galaxy Database - Complete Wiki & Guide</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/game-styles.css">
+</head>
+<body class="bg-gray-950 text-gray-100">
+
+    <!-- Header Component -->
+    <div id="header-placeholder"></div>
+
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden">
+        <!-- Background gradient -->
+        <div class="absolute inset-0 bg-gradient-to-b from-blue-900/20 via-purple-900/20 to-transparent"></div>
+        
+        <div class="container mx-auto px-6 py-20 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <h1 class="text-6xl md:text-7xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                        Pirate Galaxy
+                    </span>
+                    <br>
+                    <span class="text-4xl md:text-5xl text-gray-300">Complete Database</span>
+                </h1>
+                <p class="text-xl text-gray-400 mb-8 leading-relaxed">
+                    Your ultimate guide to ships, colonies, systems, equipment, and strategies. 
+                    Everything you need to dominate the galaxy.
+                </p>
+                
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="content-panel p-4">
+                        <div class="text-3xl font-bold text-blue-400 mb-1">150+</div>
+                        <div class="text-sm text-gray-400">Ships</div>
+                    </div>
+                    <div class="content-panel p-4">
+                        <div class="text-3xl font-bold text-green-400 mb-1">50+</div>
+                        <div class="text-sm text-gray-400">Systems</div>
+                    </div>
+                    <div class="content-panel p-4">
+                        <div class="text-3xl font-bold text-purple-400 mb-1">200+</div>
+                        <div class="text-sm text-gray-400">Colonies</div>
+                    </div>
+                    <div class="content-panel p-4">
+                        <div class="text-3xl font-bold text-yellow-400 mb-1">500+</div>
+                        <div class="text-sm text-gray-400">Equipment</div>
+                    </div>
+                </div>
+                
+                <!-- CTA Buttons -->
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <a href="ships.html" class="game-nav-item active px-8 py-4 text-lg">
+                        <i data-lucide="rocket" class="inline w-6 h-6 mr-2"></i>
+                        Browse Ships
+                    </a>
+                    <a href="universe.html" class="game-nav-item px-8 py-4 text-lg">
+                        <i data-lucide="globe" class="inline w-6 h-6 mr-2"></i>
+                        Explore Universe
+                    </a>
+                    <a href="guides.html" class="game-nav-item px-8 py-4 text-lg">
+                        <i data-lucide="book-open" class="inline w-6 h-6 mr-2"></i>
+                        Guides
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Navigation -->
+    <div class="container mx-auto px-6">
+        <div id="main-navbar-placeholder"></div>
+    </div>
+
+    <!-- Featured Ships by Faction -->
+    <section class="container mx-auto px-6 py-12">
+        <h2 class="text-3xl font-bold text-blue-300 mb-8 flex items-center">
+            <i data-lucide="rocket" class="w-8 h-8 mr-3"></i>
+            Featured Ships by Faction
+        </h2>
+        
+        <!-- Storm Ships (Tormenta) -->
+        <div class="mb-12">
+            <div class="flex items-center gap-3 mb-6">
+                <i data-lucide="zap" class="w-6 h-6 text-red-400"></i>
+                <h3 class="text-2xl font-bold text-red-400">Naves Tormenta (DPS)</h3>
+                <span class="text-sm text-gray-500 ml-auto">
+                    <a href="ships.html?type=storm" class="hover:text-blue-400 transition">View all →</a>
+                </span>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Corsair -->
+                <a href="ship-detail.html?ship=corsair" class="content-panel p-4 hover:border-green-400 transition group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i data-lucide="rocket" class="w-10 h-10 text-green-400"></i>
+                        <div>
+                            <h4 class="font-bold text-green-300 group-hover:text-green-200">Corsair</h4>
+                            <p class="text-xs text-gray-400">Corvette • Tier 1</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 text-xs">
+                        <span class="badge badge-tier">Level 1</span>
+                        <span class="px-2 py-1 bg-green-500/20 rounded text-green-300">Starter</span>
+                    </div>
+                </a>
+
+                <!-- Sirius -->
+                <a href="ship-detail.html?ship=sirius" class="content-panel p-4 hover:border-green-400 transition group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i data-lucide="rocket" class="w-10 h-10 text-green-400"></i>
+                        <div>
+                            <h4 class="font-bold text-green-300 group-hover:text-green-200">Sirius</h4>
+                            <p class="text-xs text-gray-400">Frigate • Tier 2</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 text-xs">
+                        <span class="badge badge-tier">Level 12</span>
+                        <span class="px-2 py-1 bg-blue-500/20 rounded text-blue-300">Popular</span>
+                    </div>
+                </a>
+
+                <!-- Dreadnought -->
+                <a href="ship-detail.html?ship=dreadnought" class="content-panel p-4 hover:border-green-400 transition group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i data-lucide="rocket" class="w-10 h-10 text-green-400"></i>
+                        <div>
+                            <h4 class="font-bold text-green-300 group-hover:text-green-200">Dreadnought</h4>
+                            <p class="text-xs text-gray-400">Battleship • Tier 4</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 text-xs">
+                        <span class="badge badge-tier">Level 40</span>
+                        <span class="px-2 py-1 bg-purple-500/20 rounded text-purple-300">End Game</span>
+                    </div>
+                </a>
+
+                <!-- Liberator -->
+                <a href="ship-detail.html?ship=liberator" class="content-panel p-4 hover:border-green-400 transition group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i data-lucide="rocket" class="w-10 h-10 text-green-400"></i>
+                        <div>
+                            <h4 class="font-bold text-green-300 group-hover:text-green-200">Liberator</h4>
+                            <p class="text-xs text-gray-400">Dreadnought • Tier 5</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 text-xs">
+                        <span class="badge badge-tier">Level 50</span>
+                        <span class="px-2 py-1 bg-yellow-500/20 rounded text-yellow-300">Elite</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Mantis Ships -->
+        <div class="mb-12">
+            <div class="flex items-center gap-3 mb-6">
+                <i data-lucide="bug" class="w-6 h-6 text-purple-400"></i>
+                <h3 class="text-2xl font-bold text-purple-400">Mantis Ships</h3>
+                <span class="text-sm text-gray-500 ml-auto">
+                    <a href="ships.html?faction=mantis" class="hover:text-blue-400 transition">View all →</a>
+                </span>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="ship-detail.html?ship=phantom" class="content-panel p-4 hover:border-purple-400 transition group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i data-lucide="ghost" class="w-10 h-10 text-purple-400"></i>
+                        <div>
+                            <h4 class="font-bold text-purple-300 group-hover:text-purple-200">Phantom</h4>
+                            <p class="text-xs text-gray-400">Frigate • Tier 2</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 text-xs">
+                        <span class="badge badge-tier">Level 15</span>
+                    </div>
+                </a>
+
+                <a href="ship-detail.html?ship=reaper" class="content-panel p-4 hover:border-purple-400 transition group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i data-lucide="sword" class="w-10 h-10 text-purple-400"></i>
+                        <div>
+                            <h4 class="font-bold text-purple-300 group-hover:text-purple-200">Reaper</h4>
+                            <p class="text-xs text-gray-400">Destroyer • Tier 3</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 text-xs">
+                        <span class="badge badge-tier">Level 25</span>
+                    </div>
+                </a>
+
+                <a href="ship-detail.html?ship=shadow" class="content-panel p-4 hover:border-purple-400 transition group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i data-lucide="moon" class="w-10 h-10 text-purple-400"></i>
+                        <div>
+                            <h4 class="font-bold text-purple-300 group-hover:text-purple-200">Shadow</h4>
+                            <p class="text-xs text-gray-400">Battleship • Tier 4</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 text-xs">
+                        <span class="badge badge-tier">Level 40</span>
+                    </div>
+                </a>
+
+                <div class="content-panel p-4 flex items-center justify-center border-dashed opacity-50">
+                    <div class="text-center">
+                        <i data-lucide="plus" class="w-8 h-8 mx-auto mb-2 text-gray-600"></i>
+                        <p class="text-xs text-gray-500">More ships...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vega Ships -->
+        <div class="mb-12">
+            <div class="flex items-center gap-3 mb-6">
+                <i data-lucide="skull" class="w-6 h-6 text-red-400"></i>
+                <h3 class="text-2xl font-bold text-red-400">Vega Ships</h3>
+                <span class="text-sm text-gray-500 ml-auto">
+                    <a href="ships.html?faction=vega" class="hover:text-blue-400 transition">View all →</a>
+                </span>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="ship-detail.html?ship=thunderbolt" class="content-panel p-4 hover:border-red-400 transition group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i data-lucide="zap" class="w-10 h-10 text-red-400"></i>
+                        <div>
+                            <h4 class="font-bold text-red-300 group-hover:text-red-200">Thunderbolt</h4>
+                            <p class="text-xs text-gray-400">Destroyer • Tier 3</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 text-xs">
+                        <span class="badge badge-tier">Level 25</span>
+                    </div>
+                </a>
+
+                <a href="ship-detail.html?ship=titan" class="content-panel p-4 hover:border-red-400 transition group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i data-lucide="shield-alert" class="w-10 h-10 text-red-400"></i>
+                        <div>
+                            <h4 class="font-bold text-red-300 group-hover:text-red-200">Titan</h4>
+                            <p class="text-xs text-gray-400">Battleship • Tier 4</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 text-xs">
+                        <span class="badge badge-tier">Level 45</span>
+                    </div>
+                </a>
+
+                <div class="content-panel p-4 flex items-center justify-center border-dashed opacity-50 col-span-2">
+                    <div class="text-center">
+                        <i data-lucide="plus" class="w-8 h-8 mx-auto mb-2 text-gray-600"></i>
+                        <p class="text-xs text-gray-500">More ships...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Access Cards -->
+    <section class="container mx-auto px-6 py-12">
+        <h2 class="text-3xl font-bold text-blue-300 mb-8">Quick Access</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <!-- Universe Map -->
+            <a href="universe.html" class="content-panel p-6 hover:border-blue-400 transition group">
+                <i data-lucide="map" class="w-12 h-12 text-blue-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                <h3 class="text-xl font-bold mb-2 group-hover:text-blue-300">Universe Map</h3>
+                <p class="text-sm text-gray-400 mb-4">
+                    Explore all systems, planets, and colonies across the galaxy.
+                </p>
+                <div class="text-xs text-gray-500">50+ Systems • 200+ Colonies</div>
+            </a>
+
+            <!-- Components Database -->
+            <a href="components.html" class="content-panel p-6 hover:border-purple-400 transition group">
+                <i data-lucide="wrench" class="w-12 h-12 text-purple-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                <h3 class="text-xl font-bold mb-2 group-hover:text-purple-300">Componentes</h3>
+                <p class="text-sm text-gray-400 mb-4">
+                    Browse weapons, shields, engines, and special equipment.
+                </p>
+                <div class="text-xs text-gray-500">500+ Items</div>
+            </a>
+
+            <!-- Missions -->
+            <a href="missions.html" class="content-panel p-6 hover:border-green-400 transition group">
+                <i data-lucide="scroll-text" class="w-12 h-12 text-green-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                <h3 class="text-xl font-bold mb-2 group-hover:text-green-300">Missions</h3>
+                <p class="text-sm text-gray-400 mb-4">
+                    Track story missions, side quests, and special events.
+                </p>
+                <div class="text-xs text-gray-500">Story • Side • Events</div>
+            </a>
+
+            <!-- Guides -->
+            <a href="guides.html" class="content-panel p-6 hover:border-yellow-400 transition group">
+                <i data-lucide="book-open" class="w-12 h-12 text-yellow-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                <h3 class="text-xl font-bold mb-2 group-hover:text-yellow-300">Strategy Guides</h3>
+                <p class="text-sm text-gray-400 mb-4">
+                    Learn strategies, builds, and tips from experienced players.
+                </p>
+                <div class="text-xs text-gray-500">Beginner • Advanced • PvP</div>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Latest Updates -->
+    <section class="container mx-auto px-6 py-12">
+        <h2 class="text-3xl font-bold text-blue-300 mb-8">Latest Updates</h2>
+        <div class="content-panel p-6">
+            <div class="space-y-4">
+                <div class="flex items-start gap-4 pb-4 border-b border-gray-700">
+                    <div class="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="rocket" class="w-6 h-6 text-blue-400"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h4 class="font-bold text-blue-300">New Ship: Liberator Dreadnought</h4>
+                            <span class="text-xs text-gray-500">2 days ago</span>
+                        </div>
+                        <p class="text-sm text-gray-400">Complete stats and build guide added for the new Terran dreadnought.</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-4 pb-4 border-b border-gray-700">
+                    <div class="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="map" class="w-6 h-6 text-purple-400"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h4 class="font-bold text-purple-300">Updated: Draconis System Map</h4>
+                            <span class="text-xs text-gray-500">5 days ago</span>
+                        </div>
+                        <p class="text-sm text-gray-400">All colonies and resources updated with latest game patch.</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="book-open" class="w-6 h-6 text-green-400"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h4 class="font-bold text-green-300">New Guide: Credits Farming 2025</h4>
+                            <span class="text-xs text-gray-500">1 week ago</span>
+                        </div>
+                        <p class="text-sm text-gray-400">Best methods to farm credits efficiently in the current patch.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="js/component-loader.js"></script>
+    <script>
+        // Load components
+        async function loadIndexComponents() {
+            await componentLoader.loadAll({
+                'header': 'components/header.html',
+                'mainNavbar': 'components/main-navbar.html',
+                'footer': 'components/footer.html'
+            });
+
+            componentLoader.renderAll({
+                'header-placeholder': 'header',
+                'main-navbar-placeholder': 'mainNavbar',
+                'footer-placeholder': 'footer'
+            });
+            
+            // Initialize icons
+            lucide.createIcons();
+        }
+        
+        loadIndexComponents();
+    </script>
+
+</body>
+</html>

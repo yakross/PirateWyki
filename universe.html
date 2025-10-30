@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universe Map | Pirate Galaxy</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/game-styles.css">
+</head>
+<body class="bg-gray-950 text-gray-100">
+
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Universe Map
+            </h1>
+            <p class="text-gray-400">Navigate through all known star systems</p>
+        </div>
+
+        <!-- Systems Overview Stats -->
+        <div class="grid md:grid-cols-4 gap-4 mb-8">
+            <div class="content-panel p-4 text-center">
+                <div class="text-3xl font-bold text-blue-400 mb-1">9</div>
+                <div class="text-sm text-gray-400">Star Systems</div>
+            </div>
+            <div class="content-panel p-4 text-center">
+                <div class="text-3xl font-bold text-green-400 mb-1">60+</div>
+                <div class="text-sm text-gray-400">Planets</div>
+            </div>
+            <div class="content-panel p-4 text-center">
+                <div class="text-3xl font-bold text-purple-400 mb-1">200+</div>
+                <div class="text-sm text-gray-400">Colonies</div>
+            </div>
+            <div class="content-panel p-4 text-center">
+                <div class="text-3xl font-bold text-yellow-400 mb-1">1-50</div>
+                <div class="text-sm text-gray-400">Level Range</div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="content-panel p-4 mb-8">
+            <div class="flex flex-wrap items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span class="text-sm text-gray-400">Starter (1-10)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <span class="text-sm text-gray-400">Mid-Game (11-30)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                    <span class="text-sm text-gray-400">Advanced (31-40)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <span class="text-sm text-gray-400">End-Game (41-50)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-cyan-500 animate-pulse"></div>
+                    <span class="text-sm text-gray-400">Singularity</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Systems Grid -->
+        <div class="grid lg:grid-cols-2 gap-6" id="systems-grid">
+            <!-- Systems will be loaded here -->
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="js/component-loader.js"></script>
+    <script>
+        async function loadSystems() {
+            try {
+                const response = await fetch('data/systems.json');
+                const data = await response.json();
+                renderSystems(data.systems);
+            } catch (error) {
+                console.error('Error loading systems:', error);
+            }
+        }
+
+        function getSystemColor(level) {
+            if (level <= 10) return 'green';
+            if (level <= 30) return 'blue';
+            if (level <= 40) return 'purple';
+            return 'red';
+        }
+
+        function getSystemIcon(type) {
+            if (type === 'singularity') return 'disc';
+            return 'circle-dot';
+        }
+
+        function renderSystems(systems) {
+            const grid = document.getElementById('systems-grid');
+            
+            grid.innerHTML = systems.map(system => {
+                const color = getSystemColor(system.level);
+                const icon = getSystemIcon(system.type);
+                const planetCount = Array.isArray(system.planets) ? system.planets.length : system.dynamicPlanets || 0;
+                const isSpecial = system.type === 'singularity';
+
+                return `
+                    <a href="system.html?id=${system.id}" class="content-panel p-6 hover:border-${color}-400 transition group block ${isSpecial ? 'border-cyan-500/50' : ''}">
+                        
+                        <!-- Header -->
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-16 h-16 rounded-full bg-${color}-500/20 flex items-center justify-center ${isSpecial ? 'animate-pulse' : ''}">
+                                    <i data-lucide="${icon}" class="w-8 h-8 text-${color}-400"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-bold text-${color}-300 group-hover:text-${color}-200 mb-1">
+                                        ${system.name}
+                                        ${isSpecial ? '<span class="text-xs ml-2 px-2 py-1 bg-cyan-500/20 text-cyan-300 rounded">SINGULARITY</span>' : ''}
+                                    </h3>
+                                    <p class="text-sm text-gray-400">${system.description}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-yellow-400 mb-1">${system.level}</div>
+                                <div class="text-xs text-gray-500">Min Level</div>
+                            </div>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="grid grid-cols-3 gap-4 mb-4">
+                            <div class="text-center p-3 bg-gray-800/50 rounded">
+                                <div class="text-xl font-bold text-blue-400 mb-1">${planetCount}</div>
+                                <div class="text-xs text-gray-400">${isSpecial ? 'Dynamic Planets' : 'Planets'}</div>
+                            </div>
+                            <div class="text-center p-3 bg-gray-800/50 rounded">
+                                <div class="text-xl font-bold text-green-400 mb-1">${system.stargate ? 'Yes' : 'No'}</div>
+                                <div class="text-xs text-gray-400">Stargate</div>
+                            </div>
+                            <div class="text-center p-3 bg-gray-800/50 rounded">
+                                <div class="text-xl font-bold text-purple-400 mb-1">${system.type === 'normal' ? 'Normal' : 'Special'}</div>
+                                <div class="text-xs text-gray-400">Type</div>
+                            </div>
+                        </div>
+
+                        <!-- Features/Highlights -->
+                        ${system.specialShips || system.features ? `
+                            <div class="pt-4 border-t border-gray-700">
+                                <div class="text-xs text-gray-500 mb-2">Highlights:</div>
+                                <div class="flex flex-wrap gap-2">
+                                    ${system.specialShips ? system.specialShips.map(ship => 
+                                        `<span class="px-2 py-1 bg-pink-500/20 text-pink-300 rounded text-xs">${ship}</span>`
+                                    ).join('') : ''}
+                                    ${system.features ? system.features.slice(0, 2).map(feature => 
+                                        `<span class="px-2 py-1 bg-cyan-500/20 text-cyan-300 rounded text-xs">${feature}</span>`
+                                    ).join('') : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <!-- Call to Action -->
+                        <div class="mt-4 pt-4 border-t border-gray-700 flex items-center justify-between">
+                            <span class="text-sm text-gray-400">
+                                <i data-lucide="map-pin" class="inline w-4 h-4 mr-1"></i>
+                                Click to explore system
+                            </span>
+                            <i data-lucide="arrow-right" class="w-5 h-5 text-gray-600 group-hover:text-${color}-400 group-hover:translate-x-1 transition-all"></i>
+                        </div>
+
+                    </a>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // Initialize
+        async function init() {
+            await componentLoader.loadAll({
+                'header': 'components/header.html',
+                'footer': 'components/footer.html'
+            });
+
+            componentLoader.renderAll({
+                'header-placeholder': 'header',
+                'footer-placeholder': 'footer'
+            });
+
+            lucide.createIcons();
+            loadSystems();
+        }
+
+        init();
+    </script>
+
+</body>
+</html>

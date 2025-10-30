@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ship Detail - Pirate Galaxy</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/game-styles.css">
+</head>
+<body class="bg-gray-950 text-gray-100">
+
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-8">
+        
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center py-12">
+            <div class="loading mx-auto mb-4"></div>
+            <p class="text-gray-400">Loading ship data...</p>
+        </div>
+
+        <!-- Ship Detail Content (hidden until loaded) -->
+        <div id="ship-content" class="hidden">
+            
+            <!-- Breadcrumb -->
+            <div class="mb-6 text-sm">
+                <a href="index.html" class="text-blue-400 hover:text-blue-300">Home</a>
+                <i data-lucide="chevron-right" class="inline w-4 h-4 mx-2 text-gray-600"></i>
+                <a href="ships.html" class="text-blue-400 hover:text-blue-300">Ships</a>
+                <i data-lucide="chevron-right" class="inline w-4 h-4 mx-2 text-gray-600"></i>
+                <span id="breadcrumb-ship" class="text-gray-400">...</span>
+            </div>
+
+            <!-- Header Section -->
+            <div class="content-panel p-6 mb-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <div id="ship-icon" class="w-16 h-16 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                <i data-lucide="rocket" class="w-8 h-8 text-blue-400"></i>
+                            </div>
+                            <div>
+                                <h1 id="ship-name" class="text-4xl font-bold text-blue-300">Loading...</h1>
+                                <p id="ship-class" class="text-gray-400">...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div id="ship-badges" class="flex gap-2 justify-end mb-2">
+                            <!-- Badges will be inserted here -->
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            Required Level: <span id="ship-level" class="text-yellow-400 font-bold">-</span>
+                        </div>
+                    </div>
+                </div>
+                <p id="ship-description" class="text-gray-300 mt-4">...</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-6">
+                
+                <!-- Left Column: 3D Viewer -->
+                <div class="lg:col-span-2">
+                    
+                    <!-- 3D Model Viewer -->
+                    <div class="content-panel mb-6">
+                        <div class="p-4 border-b border-gray-700">
+                            <h2 class="text-xl font-bold text-blue-300">3D Model Viewer</h2>
+                        </div>
+                        
+                        <!-- 3D Canvas -->
+                        <div id="viewer-3d" class="relative bg-gray-900 h-96 flex items-center justify-center">
+                            <div class="text-center">
+                                <i data-lucide="box" class="w-24 h-24 text-blue-400 opacity-50 mx-auto mb-4"></i>
+                                <p class="text-gray-500">3D model viewer</p>
+                                <p class="text-xs text-gray-600 mt-2">(Drag to rotate • Scroll to zoom)</p>
+                            </div>
+                            
+                            <!-- Controls Overlay -->
+                            <div class="absolute bottom-4 right-4 flex gap-2">
+                                <button onclick="resetCamera()" class="px-3 py-2 bg-gray-800/90 rounded-lg hover:bg-gray-700 transition">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="toggleAutoRotate()" id="auto-rotate-btn" class="px-3 py-2 bg-gray-800/90 rounded-lg hover:bg-gray-700 transition">
+                                    <i data-lucide="rotate-3d" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Paint/Skin Selector (Future feature) -->
+                        <div class="p-4 border-t border-gray-700">
+                            <h3 class="text-sm font-bold text-gray-400 mb-3">Ship Skins (Coming Soon)</h3>
+                            <div class="grid grid-cols-6 gap-2">
+                                <button class="w-12 h-12 rounded-lg bg-gray-800 border-2 border-blue-500 hover:border-blue-400 transition"></button>
+                                <button class="w-12 h-12 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 border-2 border-gray-700 hover:border-red-400 transition opacity-50"></button>
+                                <button class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 border-2 border-gray-700 hover:border-green-400 transition opacity-50"></button>
+                                <button class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 border-2 border-gray-700 hover:border-purple-400 transition opacity-50"></button>
+                                <button class="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 border-2 border-gray-700 hover:border-yellow-400 transition opacity-50"></button>
+                                <button class="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-600 to-gray-800 border-2 border-gray-700 hover:border-gray-500 transition opacity-50"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Stats -->
+                    <div class="content-panel p-6">
+                        <h2 class="text-xl font-bold text-blue-300 mb-4">Detailed Statistics</h2>
+                        
+                        <div class="space-y-4">
+                            <!-- Hull -->
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gray-400">Hull Points</span>
+                                    <span id="stat-hull" class="text-green-400 font-bold">-</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <div id="stat-hull-bar" class="stat-fill"></div>
+                                </div>
+                            </div>
+
+                            <!-- Speed -->
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gray-400">Speed</span>
+                                    <span id="stat-speed" class="text-blue-400 font-bold">-</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <div id="stat-speed-bar" class="stat-fill bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                                </div>
+                            </div>
+
+                            <!-- Cargo -->
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gray-400">Cargo Capacity</span>
+                                    <span id="stat-cargo" class="text-yellow-400 font-bold">-</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <div id="stat-cargo-bar" class="stat-fill bg-gradient-to-r from-yellow-500 to-orange-500"></div>
+                                </div>
+                            </div>
+
+                            <!-- Energy -->
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gray-400">Energy</span>
+                                    <span id="stat-energy" class="text-purple-400 font-bold">-</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <div id="stat-energy-bar" class="stat-fill bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Info & Stats -->
+                <div class="space-y-6">
+                    
+                    <!-- Equipment Slots -->
+                    <div class="content-panel p-6">
+                        <h2 class="text-xl font-bold text-purple-300 mb-4">
+                            <i data-lucide="layers" class="inline w-5 h-5"></i>
+                            Equipment Slots
+                        </h2>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="crosshair" class="w-5 h-5 text-red-400"></i>
+                                    <span class="text-gray-300">Weapons</span>
+                                </div>
+                                <span id="slot-weapons" class="font-bold text-red-400">-</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="shield" class="w-5 h-5 text-blue-400"></i>
+                                    <span class="text-gray-300">Shields</span>
+                                </div>
+                                <span id="slot-shields" class="font-bold text-blue-400">-</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="gauge" class="w-5 h-5 text-cyan-400"></i>
+                                    <span class="text-gray-300">Engines</span>
+                                </div>
+                                <span id="slot-engines" class="font-bold text-cyan-400">-</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="sparkles" class="w-5 h-5 text-purple-400"></i>
+                                    <span class="text-gray-300">Specials</span>
+                                </div>
+                                <span id="slot-specials" class="font-bold text-purple-400">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acquisition -->
+                    <div class="content-panel p-6">
+                        <h2 class="text-xl font-bold text-green-300 mb-4">
+                            <i data-lucide="shopping-cart" class="inline w-5 h-5"></i>
+                            How to Obtain
+                        </h2>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="text-sm text-gray-400 mb-1">Cost</div>
+                                <div class="text-2xl font-bold text-yellow-400">
+                                    <i data-lucide="coins" class="inline w-6 h-6"></i>
+                                    <span id="ship-credits">-</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-400 mb-1">Blueprint Location</div>
+                                <div id="ship-blueprint" class="text-gray-300 font-semibold">-</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-400 mb-1">System</div>
+                                <div id="ship-system" class="text-cyan-400 font-semibold capitalize">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="content-panel p-6">
+                        <h2 class="text-xl font-bold text-gray-300 mb-4">Quick Actions</h2>
+                        <div class="space-y-2">
+                            <button onclick="addToBuildCalculator()" class="w-full game-nav-item text-center">
+                                <i data-lucide="calculator" class="inline w-4 h-4 mr-2"></i>
+                                Add to Build Calculator
+                            </button>
+                            <button onclick="compareShips()" class="w-full game-nav-item text-center">
+                                <i data-lucide="git-compare" class="inline w-4 h-4 mr-2"></i>
+                                Compare with Another
+                            </button>
+                            <button onclick="shareShip()" class="w-full game-nav-item text-center">
+                                <i data-lucide="share-2" class="inline w-4 h-4 mr-2"></i>
+                                Share Ship
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="js/component-loader.js"></script>
+    <script src="js/data-loader.js"></script>
+    <script>
+        let currentShip = null;
+        let autoRotate = false;
+
+        // Load ship data
+        async function loadShipData() {
+            const params = new URLSearchParams(window.location.search);
+            const shipId = params.get('ship');
+
+            if (!shipId) {
+                window.location.href = 'ships.html';
+                return;
+            }
+
+            try {
+                currentShip = await dataLoader.getShipById(shipId);
+                
+                if (!currentShip) {
+                    throw new Error('Ship not found');
+                }
+
+                displayShipData();
+                
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('ship-content').classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error loading ship:', error);
+                document.getElementById('loading-state').innerHTML = `
+                    <div class="text-center text-red-500">
+                        <i data-lucide="alert-circle" class="w-16 h-16 mx-auto mb-4"></i>
+                        <p>Ship not found</p>
+                        <a href="ships.html" class="text-blue-400 hover:text-blue-300 mt-4 inline-block">
+                            ← Back to Ships
+                        </a>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+        }
+
+        // Display ship data
+        function displayShipData() {
+            const ship = currentShip;
+            const typeIcon = getShipTypeIcon(ship.type);
+            const typeColor = getShipTypeColor(ship.type);
+
+            // Header
+            document.getElementById('breadcrumb-ship').textContent = ship.name;
+            document.getElementById('ship-name').textContent = ship.name;
+            document.getElementById('ship-class').textContent = `${ship.class} • Tier ${ship.tier} • ${ship.type.toUpperCase()}`;
+            document.getElementById('ship-description').textContent = ship.description;
+            document.getElementById('ship-level').textContent = ship.level;
+
+            // Icon
+            document.getElementById('ship-icon').innerHTML = `
+                <i data-lucide="${typeIcon}" class="w-8 h-8 text-${typeColor}-400"></i>
+            `;
+
+            // Badges
+            let badges = `<span class="badge badge-tier">Tier ${ship.tier}</span>`;
+            if (ship.isHybrid) badges += '<span class="badge badge-cyan">Hybrid</span>';
+            if (ship.isSpecial) badges += '<span class="badge badge-purple">Special</span>';
+            if (ship.isElite) badges += '<span class="badge badge-orange">Elite</span>';
+            document.getElementById('ship-badges').innerHTML = badges;
+
+            // Stats
+            document.getElementById('stat-hull').textContent = ship.hull.toLocaleString();
+            document.getElementById('stat-speed').textContent = ship.speed;
+            document.getElementById('stat-cargo').textContent = ship.cargo;
+            document.getElementById('stat-energy').textContent = ship.energy;
+
+            // Stat bars (animate after a delay)
+            setTimeout(() => {
+                const maxHull = 12000;
+                const maxSpeed = 100;
+                const maxCargo = 600;
+                const maxEnergy = 500;
+
+                document.getElementById('stat-hull-bar').style.width = `${(ship.hull / maxHull) * 100}%`;
+                document.getElementById('stat-speed-bar').style.width = `${ship.speed}%`;
+                document.getElementById('stat-cargo-bar').style.width = `${(ship.cargo / maxCargo) * 100}%`;
+                document.getElementById('stat-energy-bar').style.width = `${(ship.energy / maxEnergy) * 100}%`;
+            }, 100);
+
+            // Slots
+            document.getElementById('slot-weapons').textContent = ship.weaponSlots;
+            document.getElementById('slot-shields').textContent = ship.shieldSlots;
+            document.getElementById('slot-engines').textContent = ship.engineSlots;
+            document.getElementById('slot-specials').textContent = ship.specialSlots;
+
+            // Acquisition
+            document.getElementById('ship-credits').textContent = ship.credits.toLocaleString();
+            document.getElementById('ship-blueprint').textContent = ship.blueprint;
+            document.getElementById('ship-system').textContent = ship.system;
+
+            lucide.createIcons();
+        }
+
+        // 3D Viewer functions (placeholder for now)
+        function resetCamera() {
+            console.log('Reset camera position');
+            // TODO: Implement with Three.js
+        }
+
+        function toggleAutoRotate() {
+            autoRotate = !autoRotate;
+            const btn = document.getElementById('auto-rotate-btn');
+            if (autoRotate) {
+                btn.classList.add('bg-blue-600');
+            } else {
+                btn.classList.remove('bg-blue-600');
+            }
+            console.log('Auto-rotate:', autoRotate);
+            // TODO: Implement with Three.js
+        }
+
+        // Quick actions
+        function addToBuildCalculator() {
+            alert('Build calculator coming soon! This will calculate resource costs and build requirements.');
+        }
+
+        function compareShips() {
+            const currentId = new URLSearchParams(window.location.search).get('ship');
+            window.location.href = `ship-comparison.html?ship1=${currentId}`;
+        }
+
+        function shareShip() {
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: currentShip.name,
+                    text: currentShip.description,
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url);
+                alert('Link copied to clipboard!');
+            }
+        }
+
+        // Initialize
+        async function init() {
+            await componentLoader.loadAll({
+                'header': 'components/header.html',
+                'footer': 'components/footer.html'
+            });
+
+            componentLoader.renderAll({
+                'header-placeholder': 'header',
+                'footer-placeholder': 'footer'
+            });
+
+            lucide.createIcons();
+            loadShipData();
+        }
+
+        init();
+    </script>
+
+    <style>
+        .loading {
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top: 3px solid #3B82F6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stat-bar {
+            height: 8px;
+            background: rgba(55, 65, 81, 0.5);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10B981, #34D399);
+            border-radius: 9999px;
+            transition: width 0.5s ease-out;
+            width: 0%;
+        }
+
+        .badge-tier { background: rgba(234, 179, 8, 0.2); color: #FDE047; }
+        .badge-cyan { background: rgba(6, 182, 212, 0.2); color: #67E8F9; }
+        .badge-purple { background: rgba(168, 85, 247, 0.2); color: #C4B5FD; }
+        .badge-orange { background: rgba(249, 115, 22, 0.2); color: #FDBA74; }
+    </style>
+
+</body>
+</html>

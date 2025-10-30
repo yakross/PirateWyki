@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ships Database | Pirate Galaxy</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/game-styles.css">
+</head>
+<body class="bg-gray-950 text-gray-100">
+
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Ships Database
+            </h1>
+            <p class="text-gray-400">Browse all ships across all systems and classes</p>
+        </div>
+
+        <!-- Filters Panel -->
+        <div class="content-panel p-6 mb-8">
+            <div class="grid md:grid-cols-4 gap-4 mb-4">
+                
+                <!-- Search -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm text-gray-400 mb-2">
+                        <i data-lucide="search" class="inline w-4 h-4 mr-1"></i>
+                        Search Ships
+                    </label>
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        placeholder="Search by name..."
+                        class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
+                        oninput="filterShips()"
+                    >
+                </div>
+
+                <!-- Class Filter -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">
+                        <i data-lucide="filter" class="inline w-4 h-4 mr-1"></i>
+                        Class
+                    </label>
+                    <select 
+                        id="class-filter"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
+                        onchange="filterShips()"
+                    >
+                        <option value="all">All Classes</option>
+                        <option value="raider">Raider</option>
+                        <option value="storm">Storm</option>
+                        <option value="shock">Shock</option>
+                        <option value="tank">Tank</option>
+                        <option value="engineer">Engineer</option>
+                        <option value="defender">Defender</option>
+                        <option value="sniper">Sniper</option>
+                        <option value="clan">Clan Ship</option>
+                    </select>
+                </div>
+
+                <!-- System Filter -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">
+                        <i data-lucide="globe" class="inline w-4 h-4 mr-1"></i>
+                        System
+                    </label>
+                    <select 
+                        id="system-filter"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
+                        onchange="filterShips()"
+                    >
+                        <option value="all">All Systems</option>
+                        <option value="sol">Sol</option>
+                        <option value="tauceti">Tau Ceti</option>
+                        <option value="sirius">Sirius</option>
+                        <option value="draconis">Draconis</option>
+                        <option value="mizar">Mizar</option>
+                        <option value="gemini">Gemini</option>
+                        <option value="antares">Antares</option>
+                        <option value="vega">Vega</option>
+                        <option value="oort">Oort</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- Advanced Filters Row -->
+            <div class="grid md:grid-cols-5 gap-4 pt-4 border-t border-gray-700">
+                
+                <!-- Level Range -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Min Level</label>
+                    <input 
+                        type="number" 
+                        id="min-level"
+                        min="1" 
+                        max="50"
+                        placeholder="1"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
+                        oninput="filterShips()"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Max Level</label>
+                    <input 
+                        type="number" 
+                        id="max-level"
+                        min="1" 
+                        max="50"
+                        placeholder="50"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
+                        oninput="filterShips()"
+                    >
+                </div>
+
+                <!-- Tier Filter -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Tier</label>
+                    <select 
+                        id="tier-filter"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
+                        onchange="filterShips()"
+                    >
+                        <option value="all">All Tiers</option>
+                        <option value="1">Tier 1</option>
+                        <option value="2">Tier 2</option>
+                        <option value="3">Tier 3</option>
+                        <option value="4">Tier 4</option>
+                        <option value="5">Tier 5</option>
+                    </select>
+                </div>
+
+                <!-- Sort -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Sort By</label>
+                    <select 
+                        id="sort-by"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
+                        onchange="filterShips()"
+                    >
+                        <option value="name">Name</option>
+                        <option value="level">Level</option>
+                        <option value="tier">Tier</option>
+                        <option value="hull">Hull</option>
+                        <option value="speed">Speed</option>
+                    </select>
+                </div>
+
+                <!-- Reset Button -->
+                <div class="flex items-end">
+                    <button 
+                        onclick="resetFilters()"
+                        class="w-full game-nav-item text-center"
+                    >
+                        <i data-lucide="rotate-ccw" class="inline w-4 h-4 mr-1"></i>
+                        Reset
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Results Counter -->
+            <div class="mt-4 pt-4 border-t border-gray-700 flex items-center justify-between">
+                <span class="text-sm text-gray-400">
+                    Showing <span id="results-count" class="text-blue-400 font-semibold">0</span> ships
+                </span>
+                <div class="flex gap-2">
+                    <button class="px-3 py-1 text-sm border border-gray-700 rounded hover:border-blue-500 transition" onclick="setView('grid')">
+                        <i data-lucide="grid-3x3" class="inline w-4 h-4"></i>
+                    </button>
+                    <button class="px-3 py-1 text-sm border border-gray-700 rounded hover:border-blue-500 transition" onclick="setView('list')">
+                        <i data-lucide="list" class="inline w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center py-12">
+            <div class="loading mx-auto mb-4"></div>
+            <p class="text-gray-400">Loading ships database...</p>
+        </div>
+
+        <!-- Ships Grid -->
+        <div id="ships-grid" class="hidden grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Ships will be loaded here -->
+        </div>
+
+        <!-- No Results -->
+        <div id="no-results" class="hidden text-center py-12">
+            <i data-lucide="search-x" class="w-16 h-16 mx-auto text-gray-600 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-400 mb-2">No ships found</h3>
+            <p class="text-gray-500 mb-4">Try adjusting your filters</p>
+            <button onclick="resetFilters()" class="game-nav-item">
+                <i data-lucide="rotate-ccw" class="inline w-4 h-4 mr-2"></i>
+                Reset Filters
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="js/component-loader.js"></script>
+    <script>
+        let allShips = [];
+        let filteredShips = [];
+        let currentView = 'grid';
+
+        // Class icons and colors
+        const classConfig = {
+            raider: { icon: 'user', color: 'gray' },
+            storm: { icon: 'zap', color: 'red' },
+            shock: { icon: 'activity', color: 'purple' },
+            tank: { icon: 'shield', color: 'blue' },
+            engineer: { icon: 'wrench', color: 'green' },
+            defender: { icon: 'shield-check', color: 'cyan' },
+            sniper: { icon: 'crosshair', color: 'orange' },
+            clan: { icon: 'users', color: 'yellow' }
+        };
+
+        // Load ships from JSON
+        async function loadShips() {
+            try {
+                const response = await fetch('data/ships.json');
+                const data = await response.json();
+                allShips = data.ships;
+                filteredShips = [...allShips];
+                
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('ships-grid').classList.remove('hidden');
+                
+                // Check URL params
+                loadFiltersFromURL();
+                filterShips();
+            } catch (error) {
+                console.error('Error loading ships:', error);
+                document.getElementById('loading-state').innerHTML = `
+                    <div class="text-center text-red-500">
+                        <i data-lucide="alert-circle" class="w-16 h-16 mx-auto mb-4"></i>
+                        <p>Error loading ships database</p>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+        }
+
+        // Load filters from URL
+        function loadFiltersFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('class')) document.getElementById('class-filter').value = params.get('class');
+            if (params.get('system')) document.getElementById('system-filter').value = params.get('system');
+            if (params.get('tier')) document.getElementById('tier-filter').value = params.get('tier');
+        }
+
+        // Filter ships
+        function filterShips() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const classFilter = document.getElementById('class-filter').value;
+            const systemFilter = document.getElementById('system-filter').value;
+            const tierFilter = document.getElementById('tier-filter').value;
+            const minLevel = parseInt(document.getElementById('min-level').value) || 0;
+            const maxLevel = parseInt(document.getElementById('max-level').value) || 999;
+            const sortBy = document.getElementById('sort-by').value;
+
+            filteredShips = allShips.filter(ship => {
+                const matchesSearch = ship.name.toLowerCase().includes(search);
+                const matchesClass = classFilter === 'all' || ship.type === classFilter;
+                const matchesSystem = systemFilter === 'all' || ship.system === systemFilter;
+                const matchesTier = tierFilter === 'all' || ship.tier === parseInt(tierFilter);
+                const matchesLevel = ship.level >= minLevel && ship.level <= maxLevel;
+
+                return matchesSearch && matchesClass && matchesSystem && matchesTier && matchesLevel;
+            });
+
+            // Sort
+            filteredShips.sort((a, b) => {
+                switch (sortBy) {
+                    case 'name': return a.name.localeCompare(b.name);
+                    case 'level': return a.level - b.level;
+                    case 'tier': return a.tier - b.tier;
+                    case 'hull': return b.hull - a.hull;
+                    case 'speed': return b.speed - a.speed;
+                    default: return 0;
+                }
+            });
+
+            renderShips();
+        }
+
+        // Render ships
+        function renderShips() {
+            const grid = document.getElementById('ships-grid');
+            const noResults = document.getElementById('no-results');
+            const counter = document.getElementById('results-count');
+
+            counter.textContent = filteredShips.length;
+
+            if (filteredShips.length === 0) {
+                grid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                lucide.createIcons();
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            noResults.classList.add('hidden');
+
+            grid.innerHTML = filteredShips.map(ship => {
+                const config = classConfig[ship.type] || classConfig.raider;
+                return `
+                    <a href="ship-detail.html?ship=${ship.id}" class="content-panel p-5 hover:border-${config.color}-400 transition group block">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-lg bg-${config.color}-500/20 flex items-center justify-center">
+                                <i data-lucide="${config.icon}" class="w-6 h-6 text-${config.color}-400"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-${config.color}-300 group-hover:text-${config.color}-200 truncate">
+                                    ${ship.name}
+                                </h3>
+                                <p class="text-xs text-gray-500 capitalize">${ship.class || 'Unknown'}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+                            <div>
+                                <span class="text-gray-500">System</span>
+                                <p class="font-medium capitalize">${ship.system}</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Level</span>
+                                <p class="font-medium text-yellow-400">${ship.level}</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Hull</span>
+                                <p class="font-medium text-green-400">${ship.hull.toLocaleString()}</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Speed</span>
+                                <p class="font-medium text-blue-400">${ship.speed}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-3 border-t border-gray-700">
+                            <span class="badge badge-tier text-xs">Tier ${ship.tier}</span>
+                            <span class="text-xs text-gray-500 group-hover:text-blue-400 transition">
+                                View Details →
+                            </span>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('class-filter').value = 'all';
+            document.getElementById('system-filter').value = 'all';
+            document.getElementById('tier-filter').value = 'all';
+            document.getElementById('min-level').value = '';
+            document.getElementById('max-level').value = '';
+            document.getElementById('sort-by').value = 'name';
+            filterShips();
+        }
+
+        // Set view (grid/list)
+        function setView(view) {
+            currentView = view;
+            const grid = document.getElementById('ships-grid');
+            if (view === 'list') {
+                grid.classList.remove('md:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+                grid.classList.add('grid-cols-1');
+            } else {
+                grid.classList.add('md:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+                grid.classList.remove('grid-cols-1');
+            }
+        }
+
+        // Initialize
+        async function init() {
+            await componentLoader.loadAll({
+                'header': 'components/header.html',
+                'footer': 'components/footer.html'
+            });
+
+            componentLoader.renderAll({
+                'header-placeholder': 'header',
+                'footer-placeholder': 'footer'
+            });
+
+            lucide.createIcons();
+            loadShips();
+        }
+
+        init();
+    </script>
+
+</body>
+</html>
