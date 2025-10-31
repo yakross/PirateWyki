@@ -1,10 +1,19 @@
 // js/data-loader.js
 // Sistema centralizado para cargar y cachear datos JSON del juego
+// ✨ Ahora soporta datos dinámicos del Admin Panel (localStorage)
 
 class DataLoader {
     constructor() {
         this.cache = {};
         this.loading = {};
+        
+        // 🔥 NUEVO: Keys para localStorage del admin panel
+        this.STORAGE_KEYS = {
+            ships: 'pirate-ships-db',
+            components: 'pirate-components-db',
+            planets: 'pirate-planets-db',
+            systems: 'pirate-systems-db'
+        };
     }
 
     // Cargar archivo JSON con caché
@@ -43,11 +52,51 @@ class DataLoader {
         }
     }
 
+    // 🔥 NUEVO: Combina datos base (JSON) con datos del admin (localStorage)
+    mergeWithLocalStorage(baseData, storageKey) {
+        try {
+            const storedData = localStorage.getItem(storageKey);
+            if (!storedData) return baseData;
+
+            const parsed = JSON.parse(storedData);
+            if (!Array.isArray(parsed)) return baseData;
+
+            // Filtrar solo datos válidos
+            const validData = parsed.filter(item => item && item.id && item.name);
+            
+            if (validData.length > 0) {
+                console.log(`[DataLoader] Mezclando ${baseData.length} base + ${validData.length} admin (${storageKey})`);
+            }
+            
+            return [...baseData, ...validData];
+        } catch (error) {
+            console.warn('[DataLoader] Error al mezclar datos:', error);
+            return baseData;
+        }
+    }
+
+    // 🔥 NUEVO: Obtener datos solo de localStorage (fallback)
+    getFromStorage(storageKey) {
+        try {
+            const stored = localStorage.getItem(storageKey);
+            return stored ? JSON.parse(stored) : [];
+        } catch {
+            return [];
+        }
+    }
+
     // ===== SHIPS =====
     
+    // 🔥 MODIFICADO: Ahora mezcla JSON + localStorage
     async getShips() {
-        const data = await this.loadJSON('ships.json');
-        return data.ships;
+        try {
+            const data = await this.loadJSON('ships.json');
+            const baseShips = data.ships || [];
+            return this.mergeWithLocalStorage(baseShips, this.STORAGE_KEYS.ships);
+        } catch (error) {
+            console.warn('[DataLoader] Usando solo localStorage para ships');
+            return this.getFromStorage(this.STORAGE_KEYS.ships);
+        }
     }
 
     async getShipById(id) {
@@ -85,7 +134,7 @@ class DataLoader {
         const q = query.toLowerCase();
         return ships.filter(ship => 
             ship.name.toLowerCase().includes(q) ||
-            ship.description.toLowerCase().includes(q) ||
+            (ship.description && ship.description.toLowerCase().includes(q)) ||
             ship.type.toLowerCase().includes(q) ||
             ship.class.toLowerCase().includes(q)
         );
@@ -98,9 +147,16 @@ class DataLoader {
 
     // ===== SYSTEMS =====
     
+    // 🔥 MODIFICADO: Ahora mezcla JSON + localStorage
     async getSystems() {
-        const data = await this.loadJSON('systems.json');
-        return data.systems;
+        try {
+            const data = await this.loadJSON('systems.json');
+            const baseSystems = data.systems || [];
+            return this.mergeWithLocalStorage(baseSystems, this.STORAGE_KEYS.systems);
+        } catch (error) {
+            console.warn('[DataLoader] Usando solo localStorage para systems');
+            return this.getFromStorage(this.STORAGE_KEYS.systems);
+        }
     }
 
     async getSystemById(id) {
@@ -117,14 +173,27 @@ class DataLoader {
 
     async getPlanetsBySystem(systemId) {
         const system = await this.getSystemById(systemId);
-        return system ? system.planets : [];
+        if (system && system.planets) {
+            return system.planets;
+        }
+        
+        // 🔥 NUEVO: Fallback a lista de planetas mezclada
+        const allPlanets = await this.getPlanets();
+        return allPlanets.filter(p => p.system === systemId);
     }
 
     // ===== PLANETS =====
     
+    // 🔥 MODIFICADO: Ahora mezcla JSON + localStorage
     async getPlanets() {
-        const data = await this.loadJSON('planets.json');
-        return data.planets || [];
+        try {
+            const data = await this.loadJSON('planets.json');
+            const basePlanets = data.planets || [];
+            return this.mergeWithLocalStorage(basePlanets, this.STORAGE_KEYS.planets);
+        } catch (error) {
+            console.warn('[DataLoader] Usando solo localStorage para planets');
+            return this.getFromStorage(this.STORAGE_KEYS.planets);
+        }
     }
 
     async getPlanetById(id) {
@@ -149,11 +218,22 @@ class DataLoader {
         return missions.filter(m => m.system === system);
     }
 
-    // ===== EQUIPMENT =====
+    // ===== EQUIPMENT / COMPONENTS =====
+    
+    // 🔥 NUEVO: Alias para componentes (usa el mismo que equipment)
+    async getComponents() {
+        try {
+            const data = await this.loadJSON('equipment.json');
+            const baseComponents = data.equipment || data.components || [];
+            return this.mergeWithLocalStorage(baseComponents, this.STORAGE_KEYS.components);
+        } catch (error) {
+            console.warn('[DataLoader] Usando solo localStorage para components');
+            return this.getFromStorage(this.STORAGE_KEYS.components);
+        }
+    }
     
     async getEquipment() {
-        const data = await this.loadJSON('equipment.json');
-        return data.equipment || [];
+        return this.getComponents(); // Alias
     }
 
     async getEquipmentByType(type) {
@@ -181,19 +261,23 @@ class DataLoader {
     async preloadAll() {
         const files = ['ships.json', 'systems.json', 'planets.json'];
         await Promise.all(files.map(file => this.loadJSON(file)));
-        console.log('All data preloaded successfully');
+        console.log('[DataLoader] All data preloaded successfully');
     }
 
     // Obtener estadísticas generales
     async getStats() {
-        const [ships, systems] = await Promise.all([
+        const [ships, systems, planets, components] = await Promise.all([
             this.getShips(),
-            this.getSystems()
+            this.getSystems(),
+            this.getPlanets(),
+            this.getComponents()
         ]);
 
         return {
             totalShips: ships.length,
             totalSystems: systems.length,
+            totalPlanets: planets.length,
+            totalComponents: components.length,
             shipsByType: this._countByProperty(ships, 'type'),
             shipsByTier: this._countByProperty(ships, 'tier'),
             shipsByClass: this._countByProperty(ships, 'class')
@@ -242,6 +326,20 @@ class DataLoader {
             percentage: val2 !== 0 ? ((diff / val2) * 100).toFixed(1) : 0,
             winner: diff > 0 ? 'ship1' : diff < 0 ? 'ship2' : 'tie'
         };
+    }
+
+    // 🔥 NUEVO: Filtrar con múltiples criterios
+    async filterShips(filters = {}) {
+        const ships = await this.getShips();
+        return ships.filter(ship => {
+            if (filters.class && ship.class !== filters.class) return false;
+            if (filters.type && ship.type !== filters.type) return false;
+            if (filters.tier && ship.tier !== filters.tier) return false;
+            if (filters.minLevel && ship.level < filters.minLevel) return false;
+            if (filters.maxLevel && ship.level > filters.maxLevel) return false;
+            if (filters.system && ship.system !== filters.system) return false;
+            return true;
+        });
     }
 }
 

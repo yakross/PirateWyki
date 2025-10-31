@@ -1,13 +1,13 @@
 <!-- components/header.html -->
 <header class="game-header sticky top-0 z-50">
-    <div class="px-6 py-4">
-        <div class="flex items-center justify-between">
+    <div class="px-4 sm:px-6 py-4">
+        <div class="flex items-center justify-between gap-4 sm:gap-6">
             
             <!-- Logo -->
-            <a href="index.html" class="flex items-center space-x-3">
-                <span class="text-3xl">🏴‍☠️</span>
-                <div>
-                    <div class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <a href="index.html" class="flex items-center space-x-2 sm:space-x-3 flex-shrink-0 min-w-fit">
+                <span class="text-2xl sm:text-3xl">🏴‍☠️</span>
+                <div class="hidden sm:block">
+                    <div class="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                         Pirate Galaxy
                     </div>
                     <div class="text-xs text-gray-400">Database & Wiki</div>
@@ -15,70 +15,154 @@
             </a>
             
             <!-- Search Bar -->
-            <div class="flex-1 max-w-2xl mx-8">
-                <div class="relative">
-                    <i data-lucide="search" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
+            <div id="search-container" class="flex-1 max-w-2xl hidden">
+                <div class="relative flex items-center">
+                    <i data-lucide="search" class="absolute left-3 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none"></i>
                     <input 
                         id="global-search"
                         type="text" 
-                        placeholder="Press / to search ships, planets, equipment..."
-                        class="game-search w-full pl-12 pr-4 py-3 rounded text-sm"
+                        placeholder="Search ships, planets, equipment..."
+                        class="game-search w-full pl-10 pr-12 py-2 sm:py-3 rounded text-xs sm:text-sm"
                     >
-                    <kbd class="absolute right-3 top-3 px-2 py-1 text-xs bg-gray-700 rounded border border-gray-600 text-gray-400">
+                    <kbd class="absolute right-3 px-2 py-1 text-xs font-semibold bg-gray-700 rounded border border-gray-600 text-gray-300 pointer-events-none hidden sm:block">
                         /
                     </kbd>
                 </div>
             </div>
             
             <!-- Right Actions -->
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+                <!-- Profile Badge (if logged in) -->
+                <div id="profile-badge-header"></div>
+                
                 <!-- Theme Toggle -->
-                <button onclick="toggleTheme()" class="game-nav-item flex items-center space-x-2" title="Toggle theme">
-                    <i data-lucide="moon" id="theme-icon" class="w-5 h-5"></i>
+                <button 
+                    id="theme-toggle-btn"
+                    onclick="toggleTheme()" 
+                    class="game-nav-item flex items-center justify-center p-2 sm:p-3 w-10 h-10 sm:w-11 sm:h-11"
+                    title="Toggle theme"
+                >
+                    <i data-lucide="moon" id="theme-icon" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                 </button>
                 
                 <!-- Settings -->
-                <a href="settings.html" class="game-nav-item flex items-center space-x-2">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
-                    <span class="hidden md:inline">Settings</span>
+                <a href="settings.html" class="game-nav-item flex items-center justify-center p-2 sm:p-3 w-10 h-10 sm:w-11 sm:h-11" title="Settings">
+                    <i data-lucide="settings" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                 </a>
             </div>
-            
         </div>
     </div>
 </header>
 
 <script>
+    // Show/hide search based on current page
+    function updateSearchVisibility() {
+        const searchContainer = document.getElementById('search-container');
+        const path = window.location.pathname;
+        const showSearch = !path.includes('login') && !path.includes('register') && !path.includes('admin-panel');
+        
+        if (showSearch) {
+            searchContainer.classList.remove('hidden');
+        } else {
+            searchContainer.classList.add('hidden');
+        }
+    }
+    
+    function toggleTheme() {
+        const html = document.documentElement;
+        const isDark = html.getAttribute('data-theme') === 'dark';
+        const newTheme = isDark ? 'light' : 'dark';
+        
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('pirate-wyki-theme', newTheme);
+        updateThemeIcon(newTheme);
+    }
+    
+    function updateThemeIcon(theme) {
+        const icon = document.getElementById('theme-icon');
+        if (icon) {
+            icon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+    }
+    
+    function initTheme() {
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem('pirate-wyki-theme');
+        let theme = savedTheme;
+        
+        if (!theme) {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        
+        html.setAttribute('data-theme', theme);
+        updateThemeIcon(theme);
+    }
+    
+    // Load profile badge
+    function loadProfileBadgeInHeader() {
+        const container = document.getElementById('profile-badge-header');
+        
+        if (typeof auth !== 'undefined' && auth.isLoggedIn()) {
+            const user = auth.getCurrentUser();
+            const isAdmin = user.role === 'admin';
+            
+            container.innerHTML = `
+                <div class="profile-badge">
+                    <div class="profile-badge-avatar">
+                        <i data-lucide="user" style="width: 1rem; height: 1rem;"></i>
+                    </div>
+                    <div class="profile-badge-info hidden sm:flex">
+                        <div class="profile-badge-name text-xs sm:text-sm">${user.username}</div>
+                    </div>
+                    ${isAdmin ? '<i data-lucide="shield" style="width: 1rem; height: 1rem; color: #ef4444;"></i>' : ''}
+                    
+                    <!-- Dropdown Menu -->
+                    <div class="profile-dropdown">
+                        <a href="profile.html" class="profile-dropdown-item">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                            <span>Mi Perfil</span>
+                        </a>
+                        <a href="settings.html" class="profile-dropdown-item">
+                            <i data-lucide="settings" class="w-5 h-5"></i>
+                            <span>Configuración</span>
+                        </a>
+                        ${isAdmin ? `
+                        <a href="admin-panel.html" class="profile-dropdown-item">
+                            <i data-lucide="shield" class="w-5 h-5"></i>
+                            <span>Panel Admin</span>
+                        </a>
+                        ` : ''}
+                        <button onclick="auth.logout()" class="profile-dropdown-item w-full text-left">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            updateSearchVisibility();
+            loadProfileBadgeInHeader();
+        });
+    } else {
+        initTheme();
+        updateSearchVisibility();
+        loadProfileBadgeInHeader();
+    }
+    
     // Search shortcut
     document.addEventListener('keydown', (e) => {
         if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
             e.preventDefault();
-            document.getElementById('global-search').focus();
+            const search = document.getElementById('global-search');
+            if (search) search.focus();
         }
     });
-    
-    // Theme toggle function
-    function toggleTheme() {
-        document.documentElement.classList.toggle('dark');
-        const isDark = document.documentElement.classList.contains('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        
-        const icon = document.getElementById('theme-icon');
-        if (icon) {
-            icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        }
-    }
-    
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-        const icon = document.getElementById('theme-icon');
-        if (icon) {
-            icon.setAttribute('data-lucide', 'sun');
-        }
-    }
 </script>

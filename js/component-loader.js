@@ -70,6 +70,14 @@ class ComponentLoader {
 // Instancia global
 const componentLoader = new ComponentLoader();
 
+if (!window.location.pathname.includes('admin-panel.html')) {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initComponents);
+    } else {
+        initComponents();
+    }
+}
+
 // Función helper para inicializar componentes en una página
 async function initComponents() {
     // Definir qué componentes cargar

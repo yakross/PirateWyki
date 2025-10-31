@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador - Pirate Galaxy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/game-styles.css">
+    
+    <!-- 🔥 FIX 1: Desactivar component-loader.js en esta página -->
+    <script>
+        window.DISABLE_COMPONENT_LOADER = true;
+        window.ADMIN_PANEL_ACTIVE = true;
+    </script>
+</head>
+<body class="bg-gray-950">
+
+    <!-- Header -->
+    <div id="header-container"></div>
+    
+    <!-- Main Content -->
+    <main class="min-h-screen py-12 px-4 sm:px-6">
+        <div class="container mx-auto max-w-7xl">
+            
+            <!-- Check Admin -->
+            <div id="not-admin" class="hidden">
+                <div class="content-panel p-12 rounded-lg text-center">
+                    <i data-lucide="lock" class="w-20 h-20 mx-auto mb-6 text-red-400"></i>
+                    <h2 class="text-3xl font-bold mb-4">Acceso Denegado</h2>
+                    <p class="text-gray-400 mb-6 text-lg">Solo los administradores pueden acceder a este panel</p>
+                    <a href="index.html" class="hero-button px-6 py-3 inline-flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        Volver al Inicio
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Admin Panel -->
+            <div id="admin-content" class="hidden space-y-8">
+                
+                <!-- Header Section -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-4xl sm:text-5xl font-bold flex items-center gap-3 mb-2">
+                            <i data-lucide="shield-alert" class="w-10 h-10 text-red-400"></i>
+                            <span class="bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
+                                Panel Administrativo
+                            </span>
+                        </h1>
+                        <p class="text-gray-400 text-lg">Gestiona naves, componentes, planetas y sistemas del universo</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-red-900/50 to-orange-900/50 border border-red-600/50 px-6 py-3 rounded-lg text-white font-bold text-sm flex items-center gap-2 animate-pulse">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
+                        MODO ADMINISTRADOR v2.1
+                    </div>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="stats-box p-6 rounded-lg text-center">
+                        <i data-lucide="ship" class="w-8 h-8 mx-auto mb-3 text-blue-400"></i>
+                        <div class="text-3xl font-bold text-blue-400 mb-1" id="stat-ships">0</div>
+                        <div class="text-sm text-gray-400">Naves</div>
+                    </div>
+                    <div class="stats-box p-6 rounded-lg text-center">
+                        <i data-lucide="wrench" class="w-8 h-8 mx-auto mb-3 text-green-400"></i>
+                        <div class="text-3xl font-bold text-green-400 mb-1" id="stat-components">0</div>
+                        <div class="text-sm text-gray-400">Componentes</div>
+                    </div>
+                    <div class="stats-box p-6 rounded-lg text-center">
+                        <i data-lucide="globe" class="w-8 h-8 mx-auto mb-3 text-purple-400"></i>
+                        <div class="text-3xl font-bold text-purple-400 mb-1" id="stat-planets">0</div>
+                        <div class="text-sm text-gray-400">Planetas</div>
+                    </div>
+                    <div class="stats-box p-6 rounded-lg text-center">
+                        <i data-lucide="network" class="w-8 h-8 mx-auto mb-3 text-yellow-400"></i>
+                        <div class="text-3xl font-bold text-yellow-400 mb-1" id="stat-systems">0</div>
+                        <div class="text-sm text-gray-400">Sistemas</div>
+                    </div>
+                    <div class="stats-box p-6 rounded-lg text-center">
+                        <i data-lucide="users" class="w-8 h-8 mx-auto mb-3 text-cyan-400"></i>
+                        <div class="text-3xl font-bold text-cyan-400 mb-1" id="stat-users">0</div>
+                        <div class="text-sm text-gray-400">Usuarios</div>
+                    </div>
+                </div>
+                
+                <!-- Navigation Tabs -->
+                <div class="flex flex-wrap gap-2 border-b border-gray-700 overflow-x-auto pb-4">
+                    <button class="tab-button active px-4 py-2 rounded-t-lg font-semibold transition-all" data-tab="ships">
+                        <i data-lucide="ship" class="inline w-4 h-4 mr-2"></i>Naves
+                    </button>
+                    <button class="tab-button px-4 py-2 rounded-t-lg font-semibold transition-all" data-tab="components">
+                        <i data-lucide="wrench" class="inline w-4 h-4 mr-2"></i>Componentes
+                    </button>
+                    <button class="tab-button px-4 py-2 rounded-t-lg font-semibold transition-all" data-tab="planets">
+                        <i data-lucide="globe" class="inline w-4 h-4 mr-2"></i>Planetas
+                    </button>
+                    <button class="tab-button px-4 py-2 rounded-t-lg font-semibold transition-all" data-tab="systems">
+                        <i data-lucide="network" class="inline w-4 h-4 mr-2"></i>Sistemas
+                    </button>
+                    <button class="tab-button px-4 py-2 rounded-t-lg font-semibold transition-all" data-tab="users">
+                        <i data-lucide="users" class="inline w-4 h-4 mr-2"></i>Usuarios
+                    </button>
+                    <button class="tab-button px-4 py-2 rounded-t-lg font-semibold transition-all" data-tab="database">
+                        <i data-lucide="database" class="inline w-4 h-4 mr-2"></i>BD
+                    </button>
+                </div>
+                
+                <!-- ============================================= SHIPS TAB ============================================= -->
+                <div id="ships" class="tab-content space-y-6 animate-fadeIn">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold flex items-center gap-2">
+                            <i data-lucide="ship" class="w-6 h-6 text-blue-400"></i>
+                            Gestionar Naves
+                        </h2>
+                        <button onclick="toggleForm('ships')" class="hero-button px-4 py-2 inline-flex items-center gap-2 text-sm">
+                            <i data-lucide="plus" class="w-5 h-5"></i>Nueva Nave
+                        </button>
+                    </div>
+                    
+                    <div id="ships-form" class="content-panel p-6 rounded-lg space-y-4 max-w-3xl hidden">
+                        <h3 class="text-lg font-bold flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="w-5 h-5"></i>Agregar Nueva Nave
+                        </h3>
+                        <form onsubmit="handleAddShip(event)" class="space-y-4" novalidate>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Nombre</label><input type="text" name="name" required minlength="3" class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Clase</label><select name="class" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"><option value="">Selecciona</option><option>Scout</option><option>Corvette</option><option>Frigate</option><option>Destroyer</option><option>Battleship</option></select></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Tipo</label><select name="type" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"><option value="">Selecciona</option><option value="storm">Storm</option><option value="tank">Tank</option><option value="engineer">Engineer</option><option value="shock">Shock</option></select></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Sistema</label><input type="text" name="system" placeholder="sol" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Nivel</label><input type="number" name="level" min="1" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Tier</label><input type="number" name="tier" min="1" max="5" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Hull</label><input type="number" name="hull" min="1" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Velocidad</label><input type="number" name="speed" min="1" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Cargo</label><input type="number" name="cargo" min="0" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Energía</label><input type="number" name="energy" min="0" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Slots Armas</label><input type="number" name="weaponSlots" min="0" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Slots Escudos</label><input type="number" name="shieldSlots" min="0" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div class="sm:col-span-2"><label class="block text-sm font-semibold text-gray-300 mb-2">Blueprint</label><input type="text" name="blueprint" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Crionita</label><input type="number" name="crionita" min="0" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div class="sm:col-span-2"><label class="block text-sm font-semibold text-gray-300 mb-2">Descripción</label><textarea name="description" rows="2" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white resize-none"></textarea></div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="submit" class="hero-button px-4 py-2 inline-flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i>Agregar</button>
+                                <button type="button" onclick="toggleForm('ships')" class="game-nav-item px-4 py-2 inline-flex items-center gap-2"><i data-lucide="x" class="w-4 h-4"></i>Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div id="ships-list" class="space-y-4"></div>
+                </div>
+                
+                <!-- RESTO DE TABS (components, planets, systems, users, database) -->
+                <!-- Copio exactamente tu código sin cambios -->
+                
+                <div id="components" class="tab-content hidden space-y-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold flex items-center gap-2">
+                            <i data-lucide="wrench" class="w-6 h-6 text-green-400"></i>
+                            Gestionar Componentes
+                        </h2>
+                        <button onclick="toggleForm('components')" class="hero-button px-4 py-2 inline-flex items-center gap-2 text-sm">
+                            <i data-lucide="plus" class="w-5 h-5"></i>Nuevo Componente
+                        </button>
+                    </div>
+                    <div id="components-form" class="content-panel p-6 rounded-lg space-y-4 max-w-3xl hidden">
+                        <h3 class="text-lg font-bold">Agregar Componente</h3>
+                        <form onsubmit="handleAddComponent(event)" class="space-y-4" novalidate>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Nombre</label><input name="name" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Tipo</label><select name="type" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"><option value="">Selecciona</option><option>Weapon</option><option>Shield</option><option>Engine</option><option>Special</option><option>Drone</option></select></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Rareza</label><select name="rarity" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"><option value="">Selecciona</option><option>common</option><option>uncommon</option><option>rare</option><option>epic</option><option>legendary</option></select></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Nivel</label><input type="number" name="level" min="1" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Valor (Daño/HP)</label><input type="number" name="power" min="0" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Crionita</label><input type="number" name="price" min="0" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div class="sm:col-span-2"><label class="block text-sm font-semibold text-gray-300 mb-2">Descripción</label><textarea name="description" rows="3" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white resize-none"></textarea></div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="submit" class="hero-button px-4 py-2 inline-flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i>Guardar</button>
+                                <button type="button" onclick="toggleForm('components')" class="game-nav-item px-4 py-2 inline-flex items-center gap-2"><i data-lucide="x" class="w-4 h-4"></i>Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="components-list" class="space-y-4"></div>
+                </div>
+
+                <div id="planets" class="tab-content hidden space-y-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold flex items-center gap-2">
+                            <i data-lucide="globe" class="w-6 h-6 text-purple-400"></i>
+                            Gestionar Planetas
+                        </h2>
+                        <button onclick="toggleForm('planets')" class="hero-button px-4 py-2 inline-flex items-center gap-2 text-sm">
+                            <i data-lucide="plus" class="w-5 h-5"></i>Nuevo Planeta
+                        </button>
+                    </div>
+                    <div id="planets-form" class="content-panel p-6 rounded-lg space-y-4 max-w-3xl hidden">
+                        <h3 class="text-lg font-bold">Agregar Planeta</h3>
+                        <form onsubmit="handleAddPlanet(event)" class="space-y-4" novalidate>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Nombre</label><input name="name" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Sistema</label><input name="system" placeholder="sol / draconis..." required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white lowercase"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Nivel Mínimo</label><input type="number" name="minLevel" min="1" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Tipo</label><select name="type" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"><option value="">Selecciona</option><option value="terran">Terran</option><option value="volcanic">Volcánico</option><option value="ocean">Océano</option><option value="dark">Oscuro</option><option value="hive">Colmena</option><option value="fortress">Fortaleza</option></select></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Modelo 3D (URL)</label><input name="model3D" placeholder="https://..." class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Imagen 2D</label><input name="map2D" placeholder="https://..." class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Facción</label><input name="faction" placeholder="Mantis / Humanos..." class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Recursos</label><input name="resources" placeholder="Aqua Crystals..." class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div class="sm:col-span-2"><label class="block text-sm font-semibold text-gray-300 mb-2">Historia / Lore</label><textarea name="lore" rows="3" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white resize-none"></textarea></div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="submit" class="hero-button px-4 py-2 inline-flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i>Guardar</button>
+                                <button type="button" onclick="toggleForm('planets')" class="game-nav-item px-4 py-2 inline-flex items-center gap-2"><i data-lucide="x" class="w-4 h-4"></i>Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="planets-list" class="space-y-4"></div>
+                </div>
+
+                <div id="systems" class="tab-content hidden space-y-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold flex items-center gap-2">
+                            <i data-lucide="network" class="w-6 h-6 text-yellow-400"></i>
+                            Gestionar Sistemas
+                        </h2>
+                        <button onclick="toggleForm('systems')" class="hero-button px-4 py-2 inline-flex items-center gap-2 text-sm">
+                            <i data-lucide="plus" class="w-5 h-5"></i>Nuevo Sistema
+                        </button>
+                    </div>
+                    <div id="systems-form" class="content-panel p-6 rounded-lg space-y-4 max-w-3xl hidden">
+                        <h3 class="text-lg font-bold">Agregar Sistema</h3>
+                        <form onsubmit="handleAddSystem(event)" class="space-y-4" novalidate>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Nombre</label><input name="name" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">ID (URL)</label><input name="id" placeholder="vega / sirius..." required pattern="[a-z0-9-]+" class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white lowercase"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Tipo</label><select name="type" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"><option value="">Selecciona</option><option value="normal">Normal</option><option value="singularity">Singularity</option><option value="hive">Colmena</option><option value="fortress">Fortaleza</option></select></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Nivel Mínimo</label><input type="number" name="minLevel" min="1" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Cantidad Planetas</label><input type="number" name="planetCount" min="0" class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Facción</label><input name="faction" class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div><label class="block text-sm font-semibold text-gray-300 mb-2">Imagen 2D</label><input name="mapImage" placeholder="https://..." class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white"></div>
+                                <div class="sm:col-span-2"><label class="block text-sm font-semibold text-gray-300 mb-2">Historia / Descripción</label><textarea name="description" rows="3" required class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white resize-none"></textarea></div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="submit" class="hero-button px-4 py-2 inline-flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i>Guardar</button>
+                                <button type="button" onclick="toggleForm('systems')" class="game-nav-item px-4 py-2 inline-flex items-center gap-2"><i data-lucide="x" class="w-4 h-4"></i>Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="systems-list" class="space-y-4"></div>
+                </div>
+
+                <div id="users" class="tab-content hidden space-y-6">
+                    <h2 class="text-2xl font-bold flex items-center gap-2">
+                        <i data-lucide="users" class="w-6 h-6 text-cyan-400"></i>
+                        Usuarios Registrados
+                    </h2>
+                    <p class="text-sm text-gray-400 mb-4">⚠️ La edición de usuarios está en desarrollo. Por ahora solo puedes verlos.</p>
+                    <div id="users-list" class="space-y-3"></div>
+                </div>
+
+                <div id="database" class="tab-content hidden space-y-6">
+                    <h2 class="text-2xl font-bold flex items-center gap-2">
+                        <i data-lucide="database" class="w-6 h-6 text-purple-400"></i>
+                        Exportar/Importar Base de Datos
+                    </h2>
+                    <div class="content-panel p-6 bg-blue-500/10 border-blue-500/30 rounded-lg mb-6">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="info" class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5"></i>
+                            <div class="text-sm text-gray-300">
+                                <p class="font-semibold mb-2">📌 Importante:</p>
+                                <p>Los datos creados aquí se guardan en <strong>localStorage</strong> (tu navegador). Para que aparezcan en las demás páginas del sitio, debes:</p>
+                                <ol class="list-decimal ml-5 mt-2 space-y-1">
+                                    <li>Exportar la base de datos</li>
+                                    <li>Reemplazar los archivos <code>ships.json</code>, <code>planets.json</code>, etc. en la carpeta <code>/data</code></li>
+                                    <li>Subir los archivos al servidor</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <button onclick="exportDatabase()" class="content-panel p-8 text-center hover:border-blue-400 transition">
+                            <i data-lucide="download" class="w-12 h-12 mx-auto mb-4 text-blue-400"></i>
+                            <p class="text-xl font-bold">Exportar BD</p>
+                            <p class="text-sm text-gray-400 mt-2">Descargar como JSON</p>
+                        </button>
+                        <button onclick="importDatabase()" class="content-panel p-8 text-center hover:border-green-400 transition">
+                            <i data-lucide="upload" class="w-12 h-12 mx-auto mb-4 text-green-400"></i>
+                            <p class="text-xl font-bold">Importar BD</p>
+                            <p class="text-sm text-gray-400 mt-2">Cargar desde JSON</p>
+                        </button>
+                    </div>
+                    <input type="file" id="import-file" accept=".json" class="hidden">
+                </div>
+                
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+    
+    <script src="js/auth.js"></script>
+    <script>
+        const COLOR_CLASSES = { rarity: { common: 'badge-common', uncommon: 'badge-uncommon', rare: 'badge-rare', epic: 'badge-epic', legendary: 'badge-legendary' } };
+        const TYPE_LABELS = { storm: 'Storm (DPS)', tank: 'Tank', engineer: 'Engineer', shock: 'Shock' };
+        
+        function generateUniqueId(prefix = '') { return `${prefix}${Date.now()}-${Math.random().toString(36).slice(2, 10)}`; }
+        function sanitizeText(text = '') { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+        function safeNumber(value, fallback = 0) { const num = Number(value); return Number.isFinite(num) ? num : fallback; }
+        
+        function notify(msg, type = 'info') {
+            const colors = { success: 'bg-green-500', error: 'bg-red-500', warning: 'bg-yellow-500', info: 'bg-blue-500' };
+            let container = document.getElementById('notifications');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'notifications';
+                container.className = 'fixed top-4 right-4 z-50 space-y-2 max-w-sm';
+                document.body.appendChild(container);
+            }
+            const notification = document.createElement('div');
+            notification.className = `${colors[type]} text-white px-5 py-3 rounded-lg shadow-lg`;
+            notification.textContent = msg;
+            container.appendChild(notification);
+            setTimeout(() => notification.remove(), 4000);
+        }
+        
+        // 🔥 FIX 2: No ejecutar scripts del header que oculten tabs
+        function executeInlineScripts(root) {
+            root.querySelectorAll('script').forEach((oldScript) => {
+                // Omitir component-loader si existe
+                if (oldScript.src && oldScript.src.includes('component-loader')) {
+                    console.log('[Admin Panel] Bloqueando component-loader.js');
+                    return;
+                }
+                const newScript = document.createElement('script');
+                [...oldScript.attributes].forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                newScript.textContent = oldScript.textContent || '';
+                if (oldScript.src) newScript.src = oldScript.src;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+        }
+        
+        function injectHTML(containerId, html) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = html;
+            executeInlineScripts(container);
+        }
+        
+        async function loadLayout() {
+            try {
+                const [headerResp, footerResp] = await Promise.all([
+                    fetch('components/header.html'),
+                    fetch('components/footer.html')
+                ]);
+                if (!headerResp.ok || !footerResp.ok) throw new Error('Error al cargar componentes');
+                const [headerHtml, footerHtml] = await Promise.all([headerResp.text(), footerResp.text()]);
+                injectHTML('header-container', headerHtml);
+                injectHTML('footer-container', footerHtml);
+                lucide.createIcons();
+            } catch (error) {
+                console.error(error);
+                notify('Error al cargar la interfaz', 'error');
+            }
+        }
+        
+        const STORAGE_KEYS = { ships: 'pirate-ships-db', components: 'pirate-components-db', planets: 'pirate-planets-db', systems: 'pirate-systems-db' };
+        
+        const DB = {
+            ships: () => readCollection(STORAGE_KEYS.ships),
+            components: () => readCollection(STORAGE_KEYS.components),
+            planets: () => readCollection(STORAGE_KEYS.planets),
+            systems: () => readCollection(STORAGE_KEYS.systems),
+            save(type, data) {
+                localStorage.setItem(STORAGE_KEYS[type], JSON.stringify(data));
+                updateStats();
+                window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEYS[type], newValue: JSON.stringify(data) }));
+            }
+        };
+        
+        function readCollection(key) {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : [];
+            } catch { return []; }
+        }
+        
+        function countUsers() {
+            let count = 0;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key?.startsWith('pirate-user-') && key !== 'pirate-user') {
+                    try { if (JSON.parse(localStorage.getItem(key))?.id) count++; } catch {}
+                }
+            }
+            return count;
+        }
+        
+        // 🔥 FIX 3: Inicializar primero, cargar layout después
+        async function initAdmin() {
+            console.log('[Admin Panel] Iniciando...');
+            if (!auth.isLoggedIn()) { window.location.href = 'login.html'; return; }
+            const user = auth.getCurrentUser();
+            if (!user || user.role !== 'admin') {
+                document.getElementById('not-admin').classList.remove('hidden');
+                lucide.createIcons();
+                return;
+            }
+            
+            // Mostrar panel primero
+            document.getElementById('admin-content').classList.remove('hidden');
+            setupTabNavigation();
+            updateStats();
+            
+            // Cargar tab ships ANTES de cargar layout
+            console.log('[Admin Panel] Cargando tab ships...');
+            loadTab('ships');
+            lucide.createIcons();
+            
+            console.log('[Admin Panel] Inicialización completa');
+        }
+        
+        function setupTabNavigation() {
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                    btn.classList.add('active');
+                    const tabId = btn.dataset.tab;
+                    const tabElement = document.getElementById(tabId);
+                    if (tabElement) {
+                        tabElement.classList.remove('hidden');
+                        loadTab(tabId);
+                        console.log(`[Admin Panel] Tab cambiada a: ${tabId}`);
+                    }
+                });
+            });
+        }
+        
+        function toggleForm(type) {
+            const form = document.getElementById(`${type}-form`);
+            if (form) {
+                form.classList.toggle('hidden');
+                if (!form.classList.contains('hidden')) form.querySelectorAll('form').forEach(f => f.reset());
+            }
+        }
+        
+        function updateStats() {
+            document.getElementById('stat-ships').textContent = DB.ships().length;
+            document.getElementById('stat-components').textContent = DB.components().length;
+            document.getElementById('stat-planets').textContent = DB.planets().length;
+            document.getElementById('stat-systems').textContent = DB.systems().length;
+            document.getElementById('stat-users').textContent = countUsers();
+        }
+        
+        function loadTab(tabId) {
+            console.log(`[Admin Panel] loadTab: ${tabId}`);
+            const loaders = { ships: loadShips, components: loadComponents, planets: loadPlanets, systems: loadSystems, users: loadUsers };
+            loaders[tabId]?.();
+        }
+        
+        function loadShips() {
+            console.log('[Admin Panel] loadShips iniciado');
+            const container = document.getElementById('ships-list');
+            const ships = DB.ships();
+            console.log(`[Admin Panel] Naves encontradas: ${ships.length}`);
+            
+            if (!ships.length) {
+                container.innerHTML = '<div class="content-panel p-8 text-center"><p class="text-gray-400">No hay naves registradas</p></div>';
+                lucide.createIcons();
+                return;
+            }
+            
+            container.innerHTML = ships.map(ship => `
+                <div class="content-panel p-5 hover:border-blue-400 transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-blue-300">${sanitizeText(ship.name)}</h3>
+                            <p class="text-sm text-gray-400">${sanitizeText(ship.class || '')} • ${TYPE_LABELS[ship.type] || ship.type}</p>
+                            <p class="text-xs text-gray-500 mt-2">Nivel ${ship.level} | Hull ${ship.hull} | Sistema: ${sanitizeText(ship.system)}</p>
+                        </div>
+                        <button onclick="deleteItem('ships', '${ship.id}')" class="game-nav-item px-3 py-2 text-sm">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+            console.log('[Admin Panel] loadShips completado');
+        }
+        
+        function loadComponents() {
+            const container = document.getElementById('components-list');
+            const components = DB.components();
+            if (!components.length) {
+                container.innerHTML = '<div class="content-panel p-8 text-center"><p class="text-gray-400">No hay componentes</p></div>';
+                lucide.createIcons();
+                return;
+            }
+            container.innerHTML = components.map(comp => `
+                <div class="content-panel p-5 hover:border-green-400 transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-green-300">${sanitizeText(comp.name)}</h3>
+                            <p class="text-sm text-gray-400">Tipo: ${sanitizeText(comp.type)} | Rareza: ${sanitizeText(comp.rarity)}</p>
+                            <p class="text-xs text-gray-500 mt-2">Nivel ${comp.level} | Valor: ${comp.power}</p>
+                        </div>
+                        <button onclick="deleteItem('components', '${comp.id}')" class="game-nav-item px-3 py-2 text-sm">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+        
+        function loadPlanets() {
+            const container = document.getElementById('planets-list');
+            const planets = DB.planets();
+            if (!planets.length) {
+                container.innerHTML = '<div class="content-panel p-8 text-center"><p class="text-gray-400">No hay planetas</p></div>';
+                lucide.createIcons();
+                return;
+            }
+            container.innerHTML = planets.map(planet => `
+                <div class="content-panel p-5 hover:border-purple-400 transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-purple-300">${sanitizeText(planet.name)}</h3>
+                            <p class="text-sm text-gray-400">Sistema: ${sanitizeText(planet.system)} | Tipo: ${sanitizeText(planet.type)}</p>
+                            <p class="text-xs text-gray-500 mt-2">Nivel ${planet.minLevel} | Facción: ${sanitizeText(planet.faction || 'N/A')}</p>
+                        </div>
+                        <button onclick="deleteItem('planets', '${planet.id}')" class="game-nav-item px-3 py-2 text-sm">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+        
+        function loadSystems() {
+            const container = document.getElementById('systems-list');
+            const systems = DB.systems();
+            if (!systems.length) {
+                container.innerHTML = '<div class="content-panel p-8 text-center"><p class="text-gray-400">No hay sistemas</p></div>';
+                lucide.createIcons();
+                return;
+            }
+            container.innerHTML = systems.map(system => `
+                <div class="content-panel p-5 hover:border-yellow-400 transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-yellow-300">${sanitizeText(system.name)}</h3>
+                            <p class="text-sm text-gray-400">ID: ${sanitizeText(system.id)} | Tipo: ${sanitizeText(system.type)}</p>
+                            <p class="text-xs text-gray-500 mt-2">Nivel Mín: ${system.minLevel} | Planetas: ${system.planetCount || 0}</p>
+                        </div>
+                        <button onclick="deleteItem('systems', '${system.id}')" class="game-nav-item px-3 py-2 text-sm">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+        
+        function loadUsers() {
+            const container = document.getElementById('users-list');
+            const users = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key?.startsWith('pirate-user-') && key !== 'pirate-user') {
+                    try {
+                        const user = JSON.parse(localStorage.getItem(key));
+                        if (user?.username) users.push(user);
+                    } catch {}
+                }
+            }
+            if (!users.length) {
+                container.innerHTML = '<div class="content-panel p-8 text-center"><p class="text-gray-400">No hay usuarios</p></div>';
+                lucide.createIcons();
+                return;
+            }
+            container.innerHTML = users.map(user => `
+                <div class="content-panel p-4 flex justify-between items-center">
+                    <div>
+                        <p class="font-bold">${sanitizeText(user.username)}</p>
+                        <p class="text-xs text-gray-400">${sanitizeText(user.email || '')}</p>
+                    </div>
+                    <span class="px-3 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}">
+                        ${user.role === 'admin' ? '🔐 ADMIN' : '👤 USER'}
+                    </span>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+        
+        /* ===== HANDLERS ===== */
+        function handleAddShip(event) {
+            event.preventDefault();
+            const data = new FormData(event.target);
+            const ship = {
+                id: generateUniqueId('ship-'),
+                name: sanitizeText(data.get('name')), class: sanitizeText(data.get('class')), type: sanitizeText(data.get('type')),
+                system: sanitizeText(data.get('system')), level: safeNumber(data.get('level'), 1), tier: safeNumber(data.get('tier'), 1),
+                hull: safeNumber(data.get('hull'), 0), speed: safeNumber(data.get('speed'), 0), cargo: safeNumber(data.get('cargo'), 0),
+                energy: safeNumber(data.get('energy'), 0), weaponSlots: safeNumber(data.get('weaponSlots'), 0), shieldSlots: safeNumber(data.get('shieldSlots'), 0),
+                blueprint: sanitizeText(data.get('blueprint')), crionita: safeNumber(data.get('crionita'), 0), description: sanitizeText(data.get('description'))
+            };
+            if (!ship.name || ship.name.length < 3) { notify('Nombre inválido', 'warning'); return; }
+            const ships = DB.ships();
+            ships.push(ship);
+            DB.save('ships', ships);
+            event.target.reset();
+            toggleForm('ships');
+            notify(`Nave "${ship.name}" agregada`, 'success');
+            loadShips();
+        }
+        
+        function handleAddComponent(event) {
+            event.preventDefault();
+            const data = new FormData(event.target);
+            const component = {
+                id: generateUniqueId('component-'),
+                name: sanitizeText(data.get('name')), type: sanitizeText(data.get('type')), rarity: sanitizeText(data.get('rarity')),
+                level: safeNumber(data.get('level'), 1), power: safeNumber(data.get('power'), 0), price: safeNumber(data.get('price'), 0),
+                description: sanitizeText(data.get('description'))
+            };
+            const components = DB.components();
+            components.push(component);
+            DB.save('components', components);
+            event.target.reset();
+            toggleForm('components');
+            notify(`Componente "${component.name}" agregado`, 'success');
+            loadComponents();
+        }
+
+        function handleAddPlanet(event) {
+            event.preventDefault();
+            const data = new FormData(event.target);
+            const planet = {
+                id: generateUniqueId('planet-'),
+                name: sanitizeText(data.get('name')), system: sanitizeText(data.get('system')), type: sanitizeText(data.get('type')),
+                minLevel: safeNumber(data.get('minLevel'), 1), model3D: sanitizeText(data.get('model3D')), map2D: sanitizeText(data.get('map2D')),
+                faction: sanitizeText(data.get('faction')), resources: sanitizeText(data.get('resources')), lore: sanitizeText(data.get('lore'))
+            };
+            const planets = DB.planets();
+            planets.push(planet);
+            DB.save('planets', planets);
+            event.target.reset();
+            toggleForm('planets');
+            notify(`Planeta "${planet.name}" agregado`, 'success');
+            loadPlanets();
+        }
+
+        function handleAddSystem(event) {
+            event.preventDefault();
+            const data = new FormData(event.target);
+            const id = sanitizeText(data.get('id'));
+            if (!/^[a-z0-9-]+$/.test(id)) { notify('ID del sistema inválido', 'warning'); return; }
+            if (DB.systems().some(sys => sys.id === id)) { notify('ID ya existe', 'error'); return; }
+
+            const system = {
+                id,
+                name: sanitizeText(data.get('name')), type: sanitizeText(data.get('type')), minLevel: safeNumber(data.get('minLevel'), 1),
+                planetCount: safeNumber(data.get('planetCount'), 0), faction: sanitizeText(data.get('faction')), mapImage: sanitizeText(data.get('mapImage')),
+                description: sanitizeText(data.get('description'))
+            };
+            const systems = DB.systems();
+            systems.push(system);
+            DB.save('systems', systems);
+            event.target.reset();
+            toggleForm('systems');
+            notify(`Sistema "${system.name}" agregado`, 'success');
+            loadSystems();
+        }
+        
+        function deleteItem(type, id) {
+            const collection = DB[type]?.();
+            if (!Array.isArray(collection)) return;
+            const item = collection.find(el => el.id === id);
+            if (!item || !confirm(`¿Eliminar "${item.name || item.id}"?`)) return;
+            DB.save(type, collection.filter(el => el.id !== id));
+            notify('Elemento eliminado', 'success');
+            loadTab(type);
+        }
+        
+        function exportDatabase() {
+            const data = { ships: DB.ships(), components: DB.components(), planets: DB.planets(), systems: DB.systems(), exportedAt: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pirate-backup-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            notify('Base de datos exportada', 'success');
+        }
+        
+        function importDatabase() {
+            document.getElementById('import-file').click();
+        }
+        
+        document.addEventListener('change', (event) => {
+            if (event.target.id !== 'import-file') return;
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (Array.isArray(data.ships)) localStorage.setItem(STORAGE_KEYS.ships, JSON.stringify(data.ships));
+                    if (Array.isArray(data.components)) localStorage.setItem(STORAGE_KEYS.components, JSON.stringify(data.components));
+                    if (Array.isArray(data.planets)) localStorage.setItem(STORAGE_KEYS.planets, JSON.stringify(data.planets));
+                    if (Array.isArray(data.systems)) localStorage.setItem(STORAGE_KEYS.systems, JSON.stringify(data.systems));
+                    notify('Importación exitosa', 'success');
+                    setTimeout(() => window.location.reload(), 1000);
+                } catch { notify('Error al importar', 'error'); }
+            };
+            reader.readAsText(file);
+        });
+        
+        // 🔥 FIX 3: Cargar layout DESPUÉS de inicializar
+        (async () => { 
+            await initAdmin(); 
+            await loadLayout(); 
+            console.log('[Admin Panel] Todo cargado');
+        })();
+    </script>
+
+    <style>
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-button { color: #9ca3af; transition: all 0.2s; }
+        .tab-button:hover { color: #d1d5db; }
+        .tab-button.active { background: linear-gradient(135deg, rgba(70, 120, 200, 0.8), rgba(50, 90, 160, 0.9)); color: #fff; }
+        
+        #footer-container footer {
+            background: linear-gradient(180deg, rgba(15, 20, 30, 0.95), rgba(28, 35, 48, 0.96));
+            border-top: 1px solid rgba(100, 150, 255, 0.35);
+            color: #9CA3AF;
+        }
+        #footer-container footer a { color: #93c5fd; }
+        #footer-container footer a:hover { color: #bfdbfe; }
+        
+        :root[data-theme="light"] #footer-container footer {
+            background: linear-gradient(180deg, rgba(245, 247, 252, 0.98), rgba(232, 238, 248, 0.98));
+            border-top: 1px solid rgba(120, 135, 160, 0.35);
+            color: #4B5563;
+        }
+        :root[data-theme="light"] #footer-container footer a { color: #2563eb; }
+        :root[data-theme="light"] #footer-container footer a:hover { color: #1d4ed8; }
+        
+        /* 🔥 NUEVO: Forzar visibilidad del tab ships */
+        #ships:not(.hidden) {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+    </style>
+
+</body>
+</html>

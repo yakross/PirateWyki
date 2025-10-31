@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Pirate Galaxy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/game-styles.css">
+</head>
+<body class="bg-gray-950">
+    <!-- Header -->
+    <div id="header-container"></div>
+    
+    <!-- Main Content -->
+    <main class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6">
+        <div class="w-full max-w-md">
+            <!-- Card -->
+            <div class="content-panel p-6 sm:p-8 rounded-xl">
+                
+                <!-- Icon & Title -->
+                <div class="text-center mb-8">
+                    <div class="text-6xl sm:text-7xl mb-4 animate-bounce">🚀</div>
+                    <h1 class="text-2xl sm:text-3xl font-bold mb-2">
+                        <span class="bg-gradient-to-r from-green-400 via-emerald-400 to-green-400 bg-clip-text text-transparent">
+                            Únete a la Aventura
+                        </span>
+                    </h1>
+                    <p class="text-gray-400 text-sm">Crea tu cuenta como Piloto</p>
+                </div>
+                
+                <!-- Form -->
+                <form id="register-form" class="space-y-5">
+                    
+                    <!-- Username Field -->
+                    <div>
+                        <label for="username" class="block text-sm font-semibold text-gray-300 mb-2">
+                            <i data-lucide="user" class="inline w-4 h-4 mr-1"></i>
+                            Nombre de Piloto
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            placeholder="Tu nombre de capitán"
+                            class="w-full px-4 py-3 rounded-lg border-1.5 bg-gray-900 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500/30 focus:ring-offset-0 transition-all"
+                            required
+                            minlength="3"
+                        >
+                        <p class="text-xs text-gray-500 mt-1.5">Mínimo 3 caracteres, sin espacios</p>
+                    </div>
+                    
+                    <!-- Email Field -->
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-gray-300 mb-2">
+                            <i data-lucide="mail" class="inline w-4 h-4 mr-1"></i>
+                            Correo Electrónico
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            placeholder="tu@email.com"
+                            class="w-full px-4 py-3 rounded-lg border-1.5 bg-gray-900 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500/30 focus:ring-offset-0 transition-all"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-gray-300 mb-2">
+                            <i data-lucide="lock" class="inline w-4 h-4 mr-1"></i>
+                            Contraseña
+                        </label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            placeholder="Mínimo 6 caracteres"
+                            class="w-full px-4 py-3 rounded-lg border-1.5 bg-gray-900 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500/30 focus:ring-offset-0 transition-all"
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                        >
+                    </div>
+                    
+                    <!-- Confirm Password Field -->
+                    <div>
+                        <label for="confirm-password" class="block text-sm font-semibold text-gray-300 mb-2">
+                            <i data-lucide="lock" class="inline w-4 h-4 mr-1"></i>
+                            Confirmar Contraseña
+                        </label>
+                        <input 
+                            type="password" 
+                            id="confirm-password" 
+                            placeholder="Repite tu contraseña"
+                            class="w-full px-4 py-3 rounded-lg border-1.5 bg-gray-900 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500/30 focus:ring-offset-0 transition-all"
+                            required
+                            autocomplete="new-password"
+                        >
+                    </div>
+                    
+                    <!-- Pilot Info Box -->
+                    <div class="p-4 rounded-lg bg-gradient-to-br from-cyan-900/30 to-blue-900/20 border border-cyan-600/40 backdrop-blur-sm">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="user-check" class="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5"></i>
+                            <div>
+                                <p class="text-xs font-bold text-cyan-300 uppercase tracking-wide mb-1">
+                                    👤 Registro como Piloto
+                                </p>
+                                <p class="text-xs text-cyan-200">
+                                    Acceso a naves, misiones, estadísticas y comunidad
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Terms Checkbox -->
+                    <label class="flex items-start gap-3 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            id="terms"
+                            class="w-4 h-4 rounded cursor-pointer mt-1"
+                            required
+                        >
+                        <span class="text-sm text-gray-400">
+                            Acepto los 
+                            <a href="#" class="text-blue-400 hover:text-blue-300 transition font-medium">
+                                términos y condiciones
+                            </a>
+                            {" "} y la{" "}
+                            <a href="#" class="text-blue-400 hover:text-blue-300 transition font-medium">
+                                política de privacidad
+                            </a>
+                        </span>
+                    </label>
+                    
+                    <!-- Error Alert -->
+                    <div id="error-alert" class="hidden p-4 rounded-lg bg-red-900/20 border border-red-600/40 text-red-200 text-sm flex items-start gap-3 animate-slideDown">
+                        <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <p class="font-semibold">Error</p>
+                            <p id="error-text" class="text-xs mt-0.5"></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Success Alert -->
+                    <div id="success-alert" class="hidden p-4 rounded-lg bg-green-900/20 border border-green-600/40 text-green-200 text-sm flex items-start gap-3 animate-slideDown">
+                        <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <p class="font-semibold">¡Cuenta creada!</p>
+                            <p id="success-text" class="text-xs mt-0.5">Redirigiendo...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        class="w-full hero-button py-3 px-4 rounded-lg font-bold text-base justify-center gap-2 mt-6"
+                    >
+                        <i data-lucide="user-plus" class="w-5 h-5"></i>
+                        Crear Cuenta
+                    </button>
+                </form>
+                
+                <!-- Divider -->
+                <div class="my-6 flex items-center gap-4">
+                    <div class="flex-1 h-px bg-gray-700"></div>
+                    <span class="text-gray-500 text-xs font-medium px-2">O</span>
+                    <div class="flex-1 h-px bg-gray-700"></div>
+                </div>
+                
+                <!-- Login CTA -->
+                <div class="text-center">
+                    <p class="text-gray-400 text-sm mb-4">
+                        ¿Ya tienes cuenta?
+                    </p>
+                    <a href="login.html" class="game-nav-item w-full py-3 px-4 rounded-lg font-bold inline-flex items-center justify-center gap-2">
+                        <i data-lucide="log-in" class="w-5 h-5"></i>
+                        Iniciar Sesión
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Footer Text -->
+            <p class="text-center text-xs text-gray-600 mt-6">
+                🔒 Tus datos están seguros • 
+                <a href="#" class="text-gray-500 hover:text-gray-400 transition">
+                    Seguridad
+                </a>
+            </p>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+    
+    <script src="js/auth.js"></script>
+    <script src="js/ships-database.js"></script>
+    <script>
+        // Load header and footer
+        Promise.all([
+            fetch('components/header.html').then(r => r.text()),
+            fetch('components/footer.html').then(r => r.text())
+        ]).then(([header, footer]) => {
+            document.getElementById('header-container').innerHTML = header;
+            document.getElementById('footer-container').innerHTML = footer;
+            lucide.createIcons();
+        });
+        
+        // Form submit
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            const errorAlert = document.getElementById('error-alert');
+            const successAlert = document.getElementById('success-alert');
+            const errorText = document.getElementById('error-text');
+            
+            // Clear previous alerts
+            errorAlert.classList.add('hidden');
+            successAlert.classList.add('hidden');
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorText.textContent = 'Las contraseñas no coinciden';
+                errorAlert.classList.remove('hidden');
+                return;
+            }
+            
+            const result = auth.register(username, email, password);
+            
+            if (result.success) {
+                successAlert.classList.remove('hidden');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                window.location.href = 'index.html';
+            } else {
+                errorText.textContent = result.message;
+                errorAlert.classList.remove('hidden');
+                
+                // Auto hide after 5 seconds
+                setTimeout(() => {
+                    errorAlert.classList.add('hidden');
+                }, 5000);
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-slideDown {
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        .animate-bounce {
+            animation: bounce 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</body>
+</html>

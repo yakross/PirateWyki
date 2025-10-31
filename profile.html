@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - Pirate Galaxy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/game-styles.css">
+    <link rel="stylesheet" href="css/auth-pages.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-container"></div>
+    
+    <!-- Main Content -->
+    <main class="min-h-screen py-8 sm:py-12">
+        <div class="container mx-auto px-4 max-w-5xl">
+            
+            <!-- Not Logged In -->
+            <div id="not-logged-in" class="hidden">
+                <div class="content-panel text-center py-12 sm:py-20">
+                    <i data-lucide="lock" class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 text-red-400"></i>
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-2">Acceso Requerido</h2>
+                    <p class="text-gray-400 mb-6">Debes iniciar sesión para ver tu perfil</p>
+                    <div class="flex gap-3 justify-center flex-wrap">
+                        <a href="login.html" class="game-nav-item inline-flex items-center gap-2">
+                            <i data-lucide="log-in" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">Iniciar Sesión</span>
+                            <span class="sm:hidden">Login</span>
+                        </a>
+                        <a href="register.html" class="game-nav-item inline-flex items-center gap-2" style="background: linear-gradient(135deg, rgba(155, 165, 180, 0.4) 0%, rgba(135, 145, 165, 0.35) 100%); border: 2px solid rgba(120, 135, 160, 0.65); color: #2d3748;">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">Registrarse</span>
+                            <span class="sm:hidden">Register</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Content -->
+            <div id="profile-content" class="hidden space-y-6">
+                
+                <!-- Profile Header Card -->
+                <div class="content-panel">
+                    <div class="flex flex-col sm:flex-row gap-6">
+                        <!-- Avatar -->
+                        <div class="profile-avatar mx-auto sm:mx-0" style="width: 120px; height: 120px; min-width: 120px;">
+                            <i data-lucide="user" style="width: 60px; height: 60px;"></i>
+                        </div>
+                        
+                        <!-- Info -->
+                        <div class="flex-1 text-center sm:text-left">
+                            <div class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 mb-4">
+                                <div>
+                                    <h1 class="profile-name text-3xl sm:text-4xl" id="profile-username"></h1>
+                                    <div class="flex gap-2 justify-center sm:justify-start mt-2 flex-wrap">
+                                        <span class="profile-title text-lg" id="profile-title"></span>
+                                        <span id="admin-badge" class="hidden inline-flex items-center gap-1 px-3 py-1 rounded-full bg-red-900/30 border border-red-600/50 text-red-300 text-sm font-semibold">
+                                            <i data-lucide="shield" style="width: 1rem; height: 1rem;"></i>
+                                            ADMIN
+                                        </span>
+                                    </div>
+                                </div>
+                                <div id="action-buttons" class="flex gap-2 flex-wrap justify-center sm:flex-col"></div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm text-gray-400 mt-4">
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase">Facción</p>
+                                    <p class="font-semibold text-gray-100" id="profile-faction"></p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase">Nivel</p>
+                                    <p class="font-semibold text-blue-400 text-lg" id="profile-level"></p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase">Miembro desde</p>
+                                    <p class="font-semibold text-gray-100 text-sm" id="profile-date"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                    <div class="profile-stat text-center">
+                        <div class="profile-stat-value text-2xl sm:text-3xl text-blue-400" id="profile-level-stat">5</div>
+                        <div class="profile-stat-label">Nivel</div>
+                    </div>
+                    <div class="profile-stat text-center">
+                        <div class="profile-stat-value text-2xl sm:text-3xl text-green-400">0</div>
+                        <div class="profile-stat-label">Naves</div>
+                    </div>
+                    <div class="profile-stat text-center">
+                        <div class="profile-stat-value text-2xl sm:text-3xl text-purple-400">0</div>
+                        <div class="profile-stat-label">Logros</div>
+                    </div>
+                    <div class="profile-stat text-center">
+                        <div class="profile-stat-value text-2xl sm:text-3xl text-yellow-400">0</div>
+                        <div class="profile-stat-label">Victorias</div>
+                    </div>
+                </div>
+                
+                <!-- Tabs -->
+                <div class="profile-tabs border-b border-gray-700 overflow-x-auto">
+                    <button class="profile-tab-btn active" data-tab="overview">
+                        <i data-lucide="info" class="inline mr-2 w-4 h-4"></i>
+                        <span class="hidden sm:inline">Información</span>
+                        <span class="sm:hidden">Info</span>
+                    </button>
+                    <button class="profile-tab-btn" data-tab="ships">
+                        <i data-lucide="ship" class="inline mr-2 w-4 h-4"></i>
+                        Naves
+                    </button>
+                    <button class="profile-tab-btn" data-tab="achievements">
+                        <i data-lucide="trophy" class="inline mr-2 w-4 h-4"></i>
+                        <span class="hidden sm:inline">Logros</span>
+                        <span class="sm:hidden">Awards</span>
+                    </button>
+                    <button class="profile-tab-btn" data-tab="activity">
+                        <i data-lucide="activity" class="inline mr-2 w-4 h-4"></i>
+                        <span class="hidden sm:inline">Actividad</span>
+                        <span class="sm:hidden">Activity</span>
+                    </button>
+                </div>
+                
+                <!-- Tab: Overview -->
+                <div id="overview" class="profile-tab-content active content-panel">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <i data-lucide="info" class="w-5 h-5"></i>
+                        Información del Perfil
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-3 border-b border-gray-700">
+                            <span class="text-gray-400">Correo Electrónico:</span>
+                            <span class="text-gray-100 font-semibold" id="profile-email">oculto</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b border-gray-700">
+                            <span class="text-gray-400">Facción:</span>
+                            <span class="badge badge-tier" id="profile-faction-badge"></span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b border-gray-700">
+                            <span class="text-gray-400">Clase:</span>
+                            <span class="badge badge-rare" id="profile-class-badge"></span>
+                        </div>
+                        <div class="flex justify-between items-center py-3">
+                            <span class="text-gray-400">Cuenta Creada:</span>
+                            <span class="text-gray-100 font-semibold" id="profile-created"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab: Ships -->
+                <div id="ships" class="profile-tab-content content-panel hidden">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <i data-lucide="ship" class="w-5 h-5"></i>
+                        Naves Adquiridas
+                    </h2>
+                    <div class="profile-empty">
+                        <i data-lucide="ship" style="width: 3rem; height: 3rem; opacity: 0.5; margin: 0 auto 1rem;"></i>
+                        <p class="mb-3">Aún no hay naves adquiridas</p>
+                        <a href="ships.html" class="text-blue-400 hover:text-blue-300 inline-flex items-center gap-2">
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            Explorar tienda de naves
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Tab: Achievements -->
+                <div id="achievements" class="profile-tab-content content-panel hidden">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <i data-lucide="trophy" class="w-5 h-5"></i>
+                        Logros Desbloqueados
+                    </h2>
+                    <div class="profile-empty">
+                        <i data-lucide="trophy" style="width: 3rem; height: 3rem; opacity: 0.5; margin: 0 auto 1rem;"></i>
+                        <p>Sin logros desbloqueados aún</p>
+                    </div>
+                </div>
+                
+                <!-- Tab: Activity -->
+                <div id="activity" class="profile-tab-content content-panel hidden">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <i data-lucide="activity" class="w-5 h-5"></i>
+                        Actividad Reciente
+                    </h2>
+                    <div class="profile-empty">
+                        <i data-lucide="clock" style="width: 3rem; height: 3rem; opacity: 0.5; margin: 0 auto 1rem;"></i>
+                        <p>Sin actividad reciente</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+    
+    <script src="js/auth.js"></script>
+    <script src="js/ships-database.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const profileUsername = urlParams.get('user');
+        
+        Promise.all([
+            fetch('components/header.html').then(r => r.text()),
+            fetch('components/footer.html').then(r => r.text())
+        ]).then(([header, footer]) => {
+            document.getElementById('header-container').innerHTML = header;
+            document.getElementById('footer-container').innerHTML = footer;
+            lucide.createIcons();
+            initProfile();
+        });
+        
+        function initProfile() {
+            let profile = null;
+            let isOwnProfile = false;
+            let profileData = null;
+            
+            if (profileUsername) {
+                profile = auth.getPublicProfile(profileUsername);
+                isOwnProfile = auth.currentUser && auth.currentUser.username === profileUsername;
+            } else if (auth.isLoggedIn()) {
+                const currentUser = auth.getCurrentUser();
+                profile = auth.getPublicProfile(currentUser.username);
+                isOwnProfile = true;
+            } else {
+                document.getElementById('not-logged-in').classList.remove('hidden');
+                return;
+            }
+            
+            if (!profile) {
+                document.querySelector('#profile-content').innerHTML = `
+                    <div class="content-panel text-center py-12">
+                        <i data-lucide="user-x" class="w-16 h-16 mx-auto mb-4 text-red-400"></i>
+                        <p class="text-xl">Jugador no encontrado</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+            
+            // Get full user data
+            profileData = JSON.parse(localStorage.getItem(`pirate-user-${profile.username}`));
+            const isAdmin = profileData?.role === 'admin';
+            
+            document.getElementById('profile-content').classList.remove('hidden');
+            
+            // Fill data
+            document.getElementById('profile-username').textContent = profile.username;
+            document.getElementById('profile-title').textContent = profile.titleClass;
+            document.getElementById('profile-faction').textContent = profile.faction;
+            document.getElementById('profile-level').textContent = profile.level;
+            document.getElementById('profile-level-stat').textContent = profile.level;
+            document.getElementById('profile-faction-badge').textContent = profile.faction;
+            document.getElementById('profile-class-badge').textContent = profile.titleClass;
+            
+            // Show admin badge
+            if (isAdmin) {
+                document.getElementById('admin-badge').classList.remove('hidden');
+            }
+            
+            // Email - only for own profile
+            if (isOwnProfile) {
+                document.getElementById('profile-email').textContent = profileData.email;
+            }
+            
+            const date = new Date(profile.createdAt);
+            document.getElementById('profile-date').textContent = date.toLocaleDateString('es-ES', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: '2-digit'
+            });
+            document.getElementById('profile-created').textContent = date.toLocaleDateString('es-ES', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // Action buttons
+            const actionButtons = document.getElementById('action-buttons');
+            if (isOwnProfile) {
+                actionButtons.innerHTML = `
+                    <a href="settings.html" class="game-nav-item flex items-center justify-center gap-2 text-center">
+                        <i data-lucide="edit-2" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Editar Perfil</span>
+                        <span class="sm:hidden">Editar</span>
+                    </a>
+                    ${isAdmin ? `<a href="admin-panel.html" class="game-nav-item flex items-center justify-center gap-2 text-center" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(249, 115, 22, 0.2) 100%); border: 1.5px solid rgba(239, 68, 68, 0.5); color: #fca5a5;">
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Panel Admin</span>
+                        <span class="sm:hidden">Admin</span>
+                    </a>` : ''}
+                `;
+            } else {
+                actionButtons.innerHTML = `
+                    <button class="game-nav-item flex items-center justify-center gap-2 text-center" onclick="alert('Pronto: agregar a amigos')">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Agregar Amigo</span>
+                        <span class="sm:hidden">+Amigo</span>
+                    </button>
+                `;
+            }
+            
+            // Tab switching
+            document.querySelectorAll('.profile-tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.profile-tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.profile-tab-content').forEach(c => c.classList.add('hidden'));
+                    
+                    btn.classList.add('active');
+                    document.getElementById(btn.dataset.tab).classList.remove('hidden');
+                });
+            });
+            
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>

@@ -9,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/auth.js"></script>
     <link rel="stylesheet" href="css/game-styles.css">
 </head>
 <body class="bg-gray-950 text-gray-100">
@@ -597,6 +598,47 @@
             border-radius: 0.25rem;
             font-size: 0.75rem;
             font-weight: 600;
+        }
+
+        /* Corrección específica para el formulario */
+        .game-search {
+            /* Corrección específica para el formulario */
+            background: #2d3748 !important;
+            border: 1.5px solid rgba(100, 120, 150, 0.3) !important;
+            color: #e0e0e0 !important;
+            padding: 10px 12px 10px 40px !important;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease !important;
+            width: 100%;
+        }
+        
+        .game-search::placeholder {
+            color: #9ca3af !important;
+        }
+        
+        .game-search:focus {
+            border-color: #9ca3af !important;
+            box-shadow: 0 0 20px rgba(150, 150, 150, 0.25) !important;
+            outline: none;
+        }
+        
+        input, textarea, select {
+            background: #1a1a2e !important;
+            border: 1.5px solid rgba(100, 120, 150, 0.3) !important;
+            color: #e0e0e0 !important;
+            padding: 10px 12px !important;
+            border-radius: 6px;
+        }
+        
+        input::placeholder, textarea::placeholder, select::placeholder {
+            color: #9ca3af !important;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: #9ca3af !important;
+            box-shadow: 0 0 20px rgba(150, 150, 150, 0.25) !important;
+            outline: none;
         }
     </style>
 
