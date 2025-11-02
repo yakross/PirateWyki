@@ -1233,3 +1233,200 @@ footer a:hover {
 :root[data-theme="light"] .stats-box {
     background: linear-gradient(135deg, rgba(175, 180, 195, 0.15) 0%, rgba(160, 170, 185, 0.1) 100%) !important;
 }
+
+/* ============================================
+   ICONOS DE MONEDA EN ADMIN PANEL
+   ============================================ */
+
+/* Labels con iconos */
+.currency-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.currency-label img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+/* Ajuste para inputs con iconos internos */
+.relative input[type="number"] {
+    padding-left: 2.5rem !important;
+}
+
+/* Modo claro - ajustar brillo de iconos */
+:root[data-theme="light"] .currency-label img,
+:root[data-theme="light"] .absolute img {
+    filter: brightness(0.7) contrast(1.2);
+}
+
+/* Ajustar opacity de iconos de venta */
+.opacity-70 {
+    opacity: 0.7;
+}
+
+/* Preview de imagen 2D */
+#image2d-preview img {
+    max-height: 128px;
+    object-fit: contain;
+    border-radius: 0.5rem;
+}
+
+/* Info de modelo 3D */
+#model3d-info {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+}
+
+/* ============================================
+   CARDS DE COMPONENTES CON IMAGEN
+   ============================================ */
+#components-list .content-panel {
+    position: relative;
+}
+
+#components-list img {
+    transition: transform 0.3s ease;
+}
+
+#components-list .content-panel:hover img {
+    transform: scale(1.05);
+}
+
+/* Preview de imagen de componente */
+#comp-image-preview img {
+    max-height: 96px;
+    object-fit: contain;
+    border-radius: 0.5rem;
+}
+
+/* Badges de tipo de plano */
+.badge-blueprint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Colores según tipo de plano */
+.badge-basico {
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    color: #60A5FA;
+}
+
+.badge-dorado {
+    background: rgba(251, 191, 36, 0.2);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    color: #FCD34D;
+}
+
+.badge-celeste {
+    background: rgba(6, 182, 212, 0.2);
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    color: #22D3EE;
+}
+
+.badge-encriptado {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #F87171;
+}
+
+/* ============================================
+   COMPONENTES - ICONOS Y VISUALES
+   ============================================ */
+
+/* Labels con iconos */
+.currency-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.currency-label img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+/* Inputs con iconos internos */
+.relative input[type="number"] {
+    padding-left: 2.75rem !important;
+}
+
+/* Cards de componentes */
+#components-list .content-panel {
+    position: relative;
+    overflow: hidden;
+}
+
+#components-list img:not([data-lucide]) {
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+#components-list .content-panel:hover img:not([data-lucide]) {
+    transform: scale(1.08);
+    filter: brightness(1.1);
+}
+
+/* Preview imagen 2D componente */
+#comp-image2d-preview img {
+    max-height: 96px;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    background: rgba(30, 41, 59, 0.5);
+    padding: 0.5rem;
+}
+
+/* Info modelo 3D componente */
+#comp-model3d-info {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+}
+
+/* Radio buttons con iconos de planos */
+label:has(input[type="radio"][name="comp_blueprint_type"]) {
+    transition: all 0.2s ease;
+}
+
+label:has(input[type="radio"][name="comp_blueprint_type"]:checked) {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(99, 102, 241, 0.15));
+    border-color: rgba(59, 130, 246, 0.5) !important;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+label:has(input[type="radio"][name="comp_blueprint_type"]) img {
+    filter: grayscale(0.8) opacity(0.6);
+    transition: filter 0.2s ease;
+}
+
+label:has(input[type="radio"][name="comp_blueprint_type"]:checked) img {
+    filter: grayscale(0) opacity(1);
+}
+
+/* Iconos de lock para encriptados */
+label:has(input[type="radio"][name="comp_blueprint_type"]) [data-lucide="lock"] {
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+label:has(input[type="radio"][name="comp_blueprint_type"]:checked) [data-lucide="lock"] {
+    opacity: 1;
+}
+
+/* Modo claro */
+:root[data-theme="light"] .currency-label img,
+:root[data-theme="light"] .absolute img {
+    filter: brightness(0.7) contrast(1.2);
+}
+
+:root[data-theme="light"] label:has(input[type="radio"][name="comp_blueprint_type"]:checked) {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.12));
+    border-color: rgba(99, 102, 241, 0.4) !important;
+}

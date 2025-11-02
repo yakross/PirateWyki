@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ships Database | Pirate Galaxy</title>
+    <title>Base de Datos de Naves | Pirate Galaxy</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -15,30 +15,54 @@
     <div id="header-placeholder"></div>
 
     <!-- Main Content -->
-    <div class="container mx-auto px-6 py-8">
+    <div class="container mx-auto px-4 sm:px-6 py-8">
         
         <!-- Page Header -->
         <div class="mb-8">
-            <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Ships Database
+            <h1 class="text-4xl sm:text-5xl font-bold mb-3 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Base de Datos de Naves
             </h1>
-            <p class="text-gray-400">Browse all ships across all systems and classes</p>
+            <p class="text-gray-400 text-lg">Explora todas las naves disponibles en el universo de Pirate Galaxy</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <div class="stats-box p-4 rounded-lg text-center">
+                <i data-lucide="ship" class="w-6 h-6 mx-auto mb-2 text-blue-400"></i>
+                <div class="text-2xl font-bold text-blue-400" id="total-ships">0</div>
+                <div class="text-xs text-gray-500">Total Naves</div>
+            </div>
+            <div class="stats-box p-4 rounded-lg text-center">
+                <i data-lucide="layers" class="w-6 h-6 mx-auto mb-2 text-purple-400"></i>
+                <div class="text-2xl font-bold text-purple-400" id="total-classes">0</div>
+                <div class="text-xs text-gray-500">Clases</div>
+            </div>
+            <div class="stats-box p-4 rounded-lg text-center">
+                <i data-lucide="network" class="w-6 h-6 mx-auto mb-2 text-yellow-400"></i>
+                <div class="text-2xl font-bold text-yellow-400" id="total-systems">0</div>
+                <div class="text-xs text-gray-500">Sistemas</div>
+            </div>
+            <div class="stats-box p-4 rounded-lg text-center">
+                <i data-lucide="star" class="w-6 h-6 mx-auto mb-2 text-orange-400"></i>
+                <div class="text-2xl font-bold text-orange-400" id="featured-ships">0</div>
+                <div class="text-xs text-gray-500">Destacadas</div>
+            </div>
         </div>
 
         <!-- Filters Panel -->
         <div class="content-panel p-6 mb-8">
-            <div class="grid md:grid-cols-4 gap-4 mb-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 
                 <!-- Search -->
-                <div class="md:col-span-2">
+                <div class="sm:col-span-2">
                     <label class="block text-sm text-gray-400 mb-2">
                         <i data-lucide="search" class="inline w-4 h-4 mr-1"></i>
-                        Search Ships
+                        Buscar Nave
                     </label>
                     <input 
                         type="text" 
                         id="search-input"
-                        placeholder="Search by name..."
+                        placeholder="Buscar por nombre, clase o descripción..."
                         class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
                         oninput="filterShips()"
                     >
@@ -47,23 +71,15 @@
                 <!-- Class Filter -->
                 <div>
                     <label class="block text-sm text-gray-400 mb-2">
-                        <i data-lucide="filter" class="inline w-4 h-4 mr-1"></i>
-                        Class
+                        <i data-lucide="layers" class="inline w-4 h-4 mr-1"></i>
+                        Clase
                     </label>
                     <select 
                         id="class-filter"
                         class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
                         onchange="filterShips()"
                     >
-                        <option value="all">All Classes</option>
-                        <option value="raider">Raider</option>
-                        <option value="storm">Storm</option>
-                        <option value="shock">Shock</option>
-                        <option value="tank">Tank</option>
-                        <option value="engineer">Engineer</option>
-                        <option value="defender">Defender</option>
-                        <option value="sniper">Sniper</option>
-                        <option value="clan">Clan Ship</option>
+                        <option value="all">Todas las Clases</option>
                     </select>
                 </div>
 
@@ -71,39 +87,30 @@
                 <div>
                     <label class="block text-sm text-gray-400 mb-2">
                         <i data-lucide="globe" class="inline w-4 h-4 mr-1"></i>
-                        System
+                        Sistema
                     </label>
                     <select 
                         id="system-filter"
                         class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
                         onchange="filterShips()"
                     >
-                        <option value="all">All Systems</option>
-                        <option value="sol">Sol</option>
-                        <option value="tauceti">Tau Ceti</option>
-                        <option value="sirius">Sirius</option>
-                        <option value="draconis">Draconis</option>
-                        <option value="mizar">Mizar</option>
-                        <option value="gemini">Gemini</option>
-                        <option value="antares">Antares</option>
-                        <option value="vega">Vega</option>
-                        <option value="oort">Oort</option>
+                        <option value="all">Todos los Sistemas</option>
                     </select>
                 </div>
 
             </div>
 
             <!-- Advanced Filters Row -->
-            <div class="grid md:grid-cols-5 gap-4 pt-4 border-t border-gray-700">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 pt-4 border-t border-gray-700">
                 
                 <!-- Level Range -->
                 <div>
-                    <label class="block text-sm text-gray-400 mb-2">Min Level</label>
+                    <label class="block text-sm text-gray-400 mb-2">Nivel Mín</label>
                     <input 
                         type="number" 
                         id="min-level"
                         min="1" 
-                        max="50"
+                        max="100"
                         placeholder="1"
                         class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
                         oninput="filterShips()"
@@ -111,13 +118,13 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm text-gray-400 mb-2">Max Level</label>
+                    <label class="block text-sm text-gray-400 mb-2">Nivel Máx</label>
                     <input 
                         type="number" 
                         id="max-level"
                         min="1" 
-                        max="50"
-                        placeholder="50"
+                        max="100"
+                        placeholder="100"
                         class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
                         oninput="filterShips()"
                     >
@@ -131,7 +138,7 @@
                         class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
                         onchange="filterShips()"
                     >
-                        <option value="all">All Tiers</option>
+                        <option value="all">Todos</option>
                         <option value="1">Tier 1</option>
                         <option value="2">Tier 2</option>
                         <option value="3">Tier 3</option>
@@ -142,17 +149,18 @@
 
                 <!-- Sort -->
                 <div>
-                    <label class="block text-sm text-gray-400 mb-2">Sort By</label>
+                    <label class="block text-sm text-gray-400 mb-2">Ordenar</label>
                     <select 
                         id="sort-by"
                         class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-900 text-gray-100 focus:border-blue-500 focus:outline-none"
                         onchange="filterShips()"
                     >
-                        <option value="name">Name</option>
-                        <option value="level">Level</option>
+                        <option value="name">Nombre</option>
+                        <option value="level">Nivel</option>
                         <option value="tier">Tier</option>
-                        <option value="hull">Hull</option>
-                        <option value="speed">Speed</option>
+                        <option value="armor">Armor</option>
+                        <option value="speed">Velocidad</option>
+                        <option value="price">Precio</option>
                     </select>
                 </div>
 
@@ -160,9 +168,9 @@
                 <div class="flex items-end">
                     <button 
                         onclick="resetFilters()"
-                        class="w-full game-nav-item text-center"
+                        class="w-full game-nav-item text-center inline-flex items-center justify-center gap-2"
                     >
-                        <i data-lucide="rotate-ccw" class="inline w-4 h-4 mr-1"></i>
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                         Reset
                     </button>
                 </div>
@@ -170,15 +178,15 @@
             </div>
 
             <!-- Results Counter -->
-            <div class="mt-4 pt-4 border-t border-gray-700 flex items-center justify-between">
+            <div class="mt-4 pt-4 border-t border-gray-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <span class="text-sm text-gray-400">
-                    Showing <span id="results-count" class="text-blue-400 font-semibold">0</span> ships
+                    Mostrando <span id="results-count" class="text-blue-400 font-semibold">0</span> de <span id="total-count" class="text-blue-400 font-semibold">0</span> naves
                 </span>
                 <div class="flex gap-2">
-                    <button class="px-3 py-1 text-sm border border-gray-700 rounded hover:border-blue-500 transition" onclick="setView('grid')">
+                    <button class="px-3 py-1 text-sm border border-gray-700 rounded hover:border-blue-500 transition" onclick="setView('grid')" id="view-grid">
                         <i data-lucide="grid-3x3" class="inline w-4 h-4"></i>
                     </button>
-                    <button class="px-3 py-1 text-sm border border-gray-700 rounded hover:border-blue-500 transition" onclick="setView('list')">
+                    <button class="px-3 py-1 text-sm border border-gray-700 rounded hover:border-blue-500 transition" onclick="setView('list')" id="view-list">
                         <i data-lucide="list" class="inline w-4 h-4"></i>
                     </button>
                 </div>
@@ -188,22 +196,22 @@
         <!-- Loading State -->
         <div id="loading-state" class="text-center py-12">
             <div class="loading mx-auto mb-4"></div>
-            <p class="text-gray-400">Loading ships database...</p>
+            <p class="text-gray-400">Cargando base de datos de naves...</p>
         </div>
 
         <!-- Ships Grid -->
-        <div id="ships-grid" class="hidden grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div id="ships-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <!-- Ships will be loaded here -->
         </div>
 
         <!-- No Results -->
         <div id="no-results" class="hidden text-center py-12">
             <i data-lucide="search-x" class="w-16 h-16 mx-auto text-gray-600 mb-4"></i>
-            <h3 class="text-xl font-bold text-gray-400 mb-2">No ships found</h3>
-            <p class="text-gray-500 mb-4">Try adjusting your filters</p>
-            <button onclick="resetFilters()" class="game-nav-item">
-                <i data-lucide="rotate-ccw" class="inline w-4 h-4 mr-2"></i>
-                Reset Filters
+            <h3 class="text-xl font-bold text-gray-400 mb-2">No se encontraron naves</h3>
+            <p class="text-gray-500 mb-4">Intenta ajustar tus filtros</p>
+            <button onclick="resetFilters()" class="game-nav-item inline-flex items-center gap-2">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                Resetear Filtros
             </button>
         </div>
 
@@ -213,61 +221,150 @@
     <div id="footer-placeholder"></div>
 
     <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/data-sync.js"></script>
+    <script src="js/ships-database.js"></script>
     <script src="js/component-loader.js"></script>
+    
     <script>
+        // ============================================
+        // VARIABLES GLOBALES
+        // ============================================
+        
         let allShips = [];
         let filteredShips = [];
         let currentView = 'grid';
+        let availableClasses = [];
+        let availableSystems = [];
 
-        // Class icons and colors
-        const classConfig = {
-            raider: { icon: 'user', color: 'gray' },
-            storm: { icon: 'zap', color: 'red' },
-            shock: { icon: 'activity', color: 'purple' },
-            tank: { icon: 'shield', color: 'blue' },
-            engineer: { icon: 'wrench', color: 'green' },
-            defender: { icon: 'shield-check', color: 'cyan' },
-            sniper: { icon: 'crosshair', color: 'orange' },
-            clan: { icon: 'users', color: 'yellow' }
-        };
-
-        // Load ships from JSON
-        async function loadShips() {
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        
+        async function init() {
+            console.log('[Ships Page] Iniciando...');
+            
             try {
-                const response = await fetch('data/ships.json');
-                const data = await response.json();
-                allShips = data.ships;
-                filteredShips = [...allShips];
-                
-                document.getElementById('loading-state').classList.add('hidden');
-                document.getElementById('ships-grid').classList.remove('hidden');
-                
-                // Check URL params
-                loadFiltersFromURL();
-                filterShips();
-            } catch (error) {
-                console.error('Error loading ships:', error);
-                document.getElementById('loading-state').innerHTML = `
-                    <div class="text-center text-red-500">
-                        <i data-lucide="alert-circle" class="w-16 h-16 mx-auto mb-4"></i>
-                        <p>Error loading ships database</p>
-                    </div>
-                `;
+                // Cargar componentes HTML
+                await componentLoader.loadAll({
+                    'header': 'components/header.html',
+                    'footer': 'components/footer.html'
+                });
+
+                componentLoader.renderAll({
+                    'header-placeholder': 'header',
+                    'footer-placeholder': 'footer'
+                });
+
                 lucide.createIcons();
+                
+                // Cargar naves
+                await loadShips();
+                
+            } catch (error) {
+                console.error('[Ships Page] Error en inicialización:', error);
+                showError('Error al cargar la página');
             }
         }
 
-        // Load filters from URL
+        // ============================================
+        // CARGAR NAVES
+        // ============================================
+        
+        async function loadShips() {
+            try {
+                console.log('[Ships Page] Cargando naves...');
+                
+                // Obtener naves desde DataSync
+                allShips = await shipsDB.getAllShips();
+                filteredShips = [...allShips];
+                
+                console.log(`[Ships Page] ✅ ${allShips.length} naves cargadas`);
+                
+                // Obtener clases y sistemas disponibles
+                availableClasses = await dataSync.getClassesInfo();
+                availableSystems = await dataSync.getSystemsInfo();
+                
+                // Poblar filtros dinámicamente
+                populateFilters();
+                
+                // Actualizar estadísticas
+                updateQuickStats();
+                
+                // Ocultar loading y mostrar grid
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('ships-grid').classList.remove('hidden');
+                
+                // Cargar filtros desde URL si existen
+                loadFiltersFromURL();
+                
+                // Renderizar naves
+                filterShips();
+                
+            } catch (error) {
+                console.error('[Ships Page] Error cargando naves:', error);
+                showError('Error al cargar la base de datos de naves');
+            }
+        }
+
+        // ============================================
+        // POBLAR FILTROS DINÁMICAMENTE
+        // ============================================
+        
+        function populateFilters() {
+            // Poblar filtro de clases
+            const classFilter = document.getElementById('class-filter');
+            classFilter.innerHTML = '<option value="all">Todas las Clases</option>';
+            availableClasses.forEach(className => {
+                const icon = shipsDB.getClassIcon(className);
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = `${icon} ${className.charAt(0).toUpperCase() + className.slice(1)}`;
+                classFilter.appendChild(option);
+            });
+            
+            // Poblar filtro de sistemas
+            const systemFilter = document.getElementById('system-filter');
+            systemFilter.innerHTML = '<option value="all">Todos los Sistemas</option>';
+            availableSystems.forEach(system => {
+                const option = document.createElement('option');
+                option.value = system;
+                option.textContent = system.charAt(0).toUpperCase() + system.slice(1);
+                systemFilter.appendChild(option);
+            });
+        }
+
+        // ============================================
+        // ACTUALIZAR ESTADÍSTICAS
+        // ============================================
+        
+        function updateQuickStats() {
+            document.getElementById('total-ships').textContent = allShips.length;
+            document.getElementById('total-classes').textContent = availableClasses.length;
+            document.getElementById('total-systems').textContent = availableSystems.length;
+            
+            const featured = allShips.filter(s => s.metadata?.featured === true).length;
+            document.getElementById('featured-ships').textContent = featured;
+        }
+
+        // ============================================
+        // CARGAR FILTROS DESDE URL
+        // ============================================
+        
         function loadFiltersFromURL() {
             const params = new URLSearchParams(window.location.search);
             if (params.get('class')) document.getElementById('class-filter').value = params.get('class');
             if (params.get('system')) document.getElementById('system-filter').value = params.get('system');
             if (params.get('tier')) document.getElementById('tier-filter').value = params.get('tier');
+            if (params.get('search')) document.getElementById('search-input').value = params.get('search');
         }
 
-        // Filter ships
-        function filterShips() {
-            const search = document.getElementById('search-input').value.toLowerCase();
+        // ============================================
+        // FILTRAR NAVES
+        // ============================================
+        
+        async function filterShips() {
+            const search = document.getElementById('search-input').value;
             const classFilter = document.getElementById('class-filter').value;
             const systemFilter = document.getElementById('system-filter').value;
             const tierFilter = document.getElementById('tier-filter').value;
@@ -275,38 +372,50 @@
             const maxLevel = parseInt(document.getElementById('max-level').value) || 999;
             const sortBy = document.getElementById('sort-by').value;
 
-            filteredShips = allShips.filter(ship => {
-                const matchesSearch = ship.name.toLowerCase().includes(search);
-                const matchesClass = classFilter === 'all' || ship.type === classFilter;
-                const matchesSystem = systemFilter === 'all' || ship.system === systemFilter;
-                const matchesTier = tierFilter === 'all' || ship.tier === parseInt(tierFilter);
-                const matchesLevel = ship.level >= minLevel && ship.level <= maxLevel;
-
-                return matchesSearch && matchesClass && matchesSystem && matchesTier && matchesLevel;
+            // Usar el sistema de búsqueda de DataSync
+            filteredShips = await dataSync.searchShips(search, {
+                class: classFilter,
+                system: systemFilter,
+                tier: tierFilter,
+                minLevel: minLevel,
+                maxLevel: maxLevel
             });
 
-            // Sort
+            // Ordenar
             filteredShips.sort((a, b) => {
                 switch (sortBy) {
-                    case 'name': return a.name.localeCompare(b.name);
-                    case 'level': return a.level - b.level;
-                    case 'tier': return a.tier - b.tier;
-                    case 'hull': return b.hull - a.hull;
-                    case 'speed': return b.speed - a.speed;
-                    default: return 0;
+                    case 'name': 
+                        return a.name.localeCompare(b.name);
+                    case 'level': 
+                        return a.level - b.level;
+                    case 'tier': 
+                        return (a.metadata?.tier || 0) - (b.metadata?.tier || 0);
+                    case 'armor': 
+                        return (b.armorIndex || 0) - (a.armorIndex || 0);
+                    case 'speed': 
+                        return (b.speed || 0) - (a.speed || 0);
+                    case 'price':
+                        return (b.crionita || 0) - (a.crionita || 0);
+                    default: 
+                        return 0;
                 }
             });
 
             renderShips();
         }
 
-        // Render ships
+        // ============================================
+        // RENDERIZAR NAVES
+        // ============================================
+        
         function renderShips() {
             const grid = document.getElementById('ships-grid');
             const noResults = document.getElementById('no-results');
             const counter = document.getElementById('results-count');
+            const totalCounter = document.getElementById('total-count');
 
             counter.textContent = filteredShips.length;
+            totalCounter.textContent = allShips.length;
 
             if (filteredShips.length === 0) {
                 grid.classList.add('hidden');
@@ -319,44 +428,68 @@
             noResults.classList.add('hidden');
 
             grid.innerHTML = filteredShips.map(ship => {
-                const config = classConfig[ship.type] || classConfig.raider;
+                // Obtener primera clase para el color
+                const mainClass = Array.isArray(ship.classes) && ship.classes.length > 0 
+                    ? ship.classes[0] 
+                    : 'flota';
+                
+                const color = shipsDB.getClassColor(mainClass);
+                const icon = shipsDB.getClassIcon(mainClass);
+                
+                // Formatear clases
+                const classesStr = Array.isArray(ship.classes)
+                    ? ship.classes.map(c => `${shipsDB.getClassIcon(c)} ${c.charAt(0).toUpperCase() + c.slice(1)}`).join(' ')
+                    : (ship.type || 'N/A');
+                
                 return `
-                    <a href="ship-detail.html?ship=${ship.id}" class="content-panel p-5 hover:border-${config.color}-400 transition group block">
+                    <a href="ship-detail.html?id=${ship.id}" class="content-panel p-5 hover:border-${color}-400 transition group block">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-12 h-12 rounded-lg bg-${config.color}-500/20 flex items-center justify-center">
-                                <i data-lucide="${config.icon}" class="w-6 h-6 text-${config.color}-400"></i>
+                            <div class="w-12 h-12 rounded-lg bg-${color}-500/20 flex items-center justify-center text-2xl">
+                                ${icon}
                             </div>
                             <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-${config.color}-300 group-hover:text-${config.color}-200 truncate">
+                                <h3 class="font-bold text-${color}-300 group-hover:text-${color}-200 truncate">
                                     ${ship.name}
                                 </h3>
-                                <p class="text-xs text-gray-500 capitalize">${ship.class || 'Unknown'}</p>
+                                <p class="text-xs text-gray-500">${ship.metadata?.class || 'Unknown'}</p>
                             </div>
+                        </div>
+
+                        <div class="text-xs text-gray-400 mb-3">
+                            ${classesStr}
                         </div>
 
                         <div class="grid grid-cols-2 gap-2 text-xs mb-3">
                             <div>
-                                <span class="text-gray-500">System</span>
+                                <span class="text-gray-500">Sistema</span>
                                 <p class="font-medium capitalize">${ship.system}</p>
                             </div>
                             <div>
-                                <span class="text-gray-500">Level</span>
+                                <span class="text-gray-500">Nivel</span>
                                 <p class="font-medium text-yellow-400">${ship.level}</p>
                             </div>
                             <div>
-                                <span class="text-gray-500">Hull</span>
-                                <p class="font-medium text-green-400">${ship.hull.toLocaleString()}</p>
+                                <span class="text-gray-500">Armor</span>
+                                <p class="font-medium text-green-400">${shipsDB.formatNumber(ship.armorIndex || 0)}</p>
                             </div>
                             <div>
                                 <span class="text-gray-500">Speed</span>
-                                <p class="font-medium text-blue-400">${ship.speed}</p>
+                                <p class="font-medium text-blue-400">${ship.speed || 0}</p>
                             </div>
                         </div>
 
+                        ${ship.crionita || ship.oro ? `
+                            <div class="flex gap-2 text-xs mb-3">
+                                ${ship.crionita ? `<span class="flex items-center gap-1">💎 <span class="text-yellow-400">${shipsDB.formatNumber(ship.crionita)}</span></span>` : ''}
+                                ${ship.oro ? `<span class="flex items-center gap-1">🪙 <span class="text-orange-400">${shipsDB.formatNumber(ship.oro)}</span></span>` : ''}
+                            </div>
+                        ` : ''}
+
                         <div class="flex items-center justify-between pt-3 border-t border-gray-700">
-                            <span class="badge badge-tier text-xs">Tier ${ship.tier}</span>
-                            <span class="text-xs text-gray-500 group-hover:text-blue-400 transition">
-                                View Details →
+                            <span class="badge badge-tier text-xs">Tier ${ship.metadata?.tier || 1}</span>
+                            <span class="text-xs text-gray-500 group-hover:text-blue-400 transition flex items-center gap-1">
+                                Ver Detalles
+                                <i data-lucide="arrow-right" class="w-3 h-3"></i>
                             </span>
                         </div>
                     </a>
@@ -366,7 +499,10 @@
             lucide.createIcons();
         }
 
-        // Reset filters
+        // ============================================
+        // UTILIDADES
+        // ============================================
+        
         function resetFilters() {
             document.getElementById('search-input').value = '';
             document.getElementById('class-filter').value = 'all';
@@ -375,38 +511,56 @@
             document.getElementById('min-level').value = '';
             document.getElementById('max-level').value = '';
             document.getElementById('sort-by').value = 'name';
+            
+            // Limpiar URL
+            window.history.pushState({}, '', window.location.pathname);
+            
             filterShips();
         }
 
-        // Set view (grid/list)
         function setView(view) {
             currentView = view;
             const grid = document.getElementById('ships-grid');
+            
+            // Actualizar botones
+            document.getElementById('view-grid').classList.toggle('border-blue-500', view === 'grid');
+            document.getElementById('view-list').classList.toggle('border-blue-500', view === 'list');
+            
             if (view === 'list') {
-                grid.classList.remove('md:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+                grid.classList.remove('sm:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
                 grid.classList.add('grid-cols-1');
             } else {
-                grid.classList.add('md:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+                grid.classList.add('sm:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
                 grid.classList.remove('grid-cols-1');
             }
+            
+            // Guardar preferencia
+            localStorage.setItem('ships-view-preference', view);
         }
-
-        // Initialize
-        async function init() {
-            await componentLoader.loadAll({
-                'header': 'components/header.html',
-                'footer': 'components/footer.html'
-            });
-
-            componentLoader.renderAll({
-                'header-placeholder': 'header',
-                'footer-placeholder': 'footer'
-            });
-
+        
+        function showError(message) {
+            const loadingState = document.getElementById('loading-state');
+            loadingState.innerHTML = `
+                <div class="text-center text-red-500">
+                    <i data-lucide="alert-circle" class="w-16 h-16 mx-auto mb-4"></i>
+                    <p class="text-lg font-semibold mb-2">Error</p>
+                    <p class="text-sm text-gray-400">${message}</p>
+                    <button onclick="window.location.reload()" class="mt-4 game-nav-item inline-flex items-center gap-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        Reintentar
+                    </button>
+                </div>
+            `;
             lucide.createIcons();
-            loadShips();
+        }
+        
+        // Restaurar vista guardada
+        const savedView = localStorage.getItem('ships-view-preference');
+        if (savedView) {
+            setView(savedView);
         }
 
+        // Iniciar
         init();
     </script>
 

@@ -1,399 +1,471 @@
 {
+  "version": "3.0",
+  "lastUpdated": "2025-01-01T00:00:00.000Z",
   "ships": [
     {
-    "id": "starblaze",
-    "name": "Starblaze",
-    "type": "storm",
-    "class": "Scout",
-    "system": "sol",
-    "tier": 1,
-    "level": 1,
-    "hull": 800,
-    "speed": 95,
-    "cargo": 30,
-    "energy": 80,
-    "description": "Nave scout básica de tipo Tormenta. Rápida y ágil para reconocimiento inicial.",
-    "weaponSlots": 1,
-    "shieldSlots": 1,
-    "engineSlots": 1,
-    "specialSlots": 0,
-    "credits": 2000,
-    "blueprint": "Sol System - Earth Starbase"
+      "id": "ship-starblaze-001",
+      "name": "Starblaze",
+      "classes": ["flota", "tormenta"],
+      "level": 1,
+      "system": "sol",
+      
+      "armorIndex": 800,
+      "speed": 95,
+      "performance": 7.0,
+      
+      "armors": [
+        {
+          "name": "Basic Hull Plating",
+          "level": 1,
+          "price": 1000,
+          "sellPrice": 500
+        }
+      ],
+      
+      "componentSlots": 3,
+      "slotComponents": ["basic-laser", "energy-shield"],
+      
+      "crionita": 2000,
+      "oro": 0,
+      "sellPrice": 1000,
+      
+      "cortexSlots": [
+        {"slot": 1, "buyPrice": 5000, "sellPrice": 2500}
+      ],
+      
+      "droneSlots": [
+        {"slot": 1, "buyPrice": 8000, "sellPrice": 4000}
+      ],
+      
+      "paintCost": 1000,
+      "renameCost": 500,
+      
+      "obtainMethod": "tienda",
+      "obtainLocation": "Sol System - Earth Starbase",
+      "blueprintsRequired": 0,
+      "requirements": [],
+      
+      "image2D": "/assets/ships/starblaze.png",
+      "model3D": null,
+      "description": "Nave scout básica de tipo Tormenta. Rápida y ágil para reconocimiento inicial.",
+      "lore": "La Starblaze es la nave inicial que todos los pilotos reciben al unirse a la flota.",
+      
+      "metadata": {
+        "tier": 1,
+        "class": "Scout",
+        "featured": true,
+        "popular": true,
+        "createdAt": "2025-01-01T00:00:00.000Z"
+      }
     },
     {
-      "id": "parsec-storm",
+      "id": "ship-parsec-storm-002",
       "name": "Parsec Storm",
-      "type": "parsec",
-      "subtype": "storm",
-      "class": "Corvette",
-      "system": "sol",
-      "tier": 1,
+      "classes": ["parsec", "tormenta"],
       "level": 3,
-      "hull": 1200,
+      "system": "sol",
+      
+      "armorIndex": 1200,
       "speed": 85,
-      "cargo": 50,
-      "energy": 100,
+      "performance": 7.5,
+      
+      "armors": [
+        {
+          "name": "Parsec Reinforced Hull",
+          "level": 3,
+          "price": 3000,
+          "sellPrice": 1500
+        },
+        {
+          "name": "Energy Dampener",
+          "level": 5,
+          "price": 5000,
+          "sellPrice": 2500
+        }
+      ],
+      
+      "componentSlots": 4,
+      "slotComponents": ["parsec-laser-mk1", "energy-shield-alpha"],
+      
+      "crionita": 5000,
+      "oro": 0,
+      "sellPrice": 2500,
+      
+      "cortexSlots": [
+        {"slot": 1, "buyPrice": 8000, "sellPrice": 4000},
+        {"slot": 2, "buyPrice": 12000, "sellPrice": 6000}
+      ],
+      
+      "droneSlots": [
+        {"slot": 1, "buyPrice": 10000, "sellPrice": 5000}
+      ],
+      
+      "paintCost": 2000,
+      "renameCost": 1000,
+      
+      "obtainMethod": "tienda",
+      "obtainLocation": "Sol System - Mars Colony",
+      "blueprintsRequired": 0,
+      "requirements": [],
+      
+      "image2D": "/assets/ships/parsec-storm.png",
+      "model3D": null,
       "description": "Primera nave Parsec híbrida. Versión Tormenta optimizada para DPS.",
-      "weaponSlots": 2,
-      "shieldSlots": 1,
-      "engineSlots": 1,
-      "specialSlots": 0,
-      "credits": 5000,
-      "blueprint": "Sol System - Mars Colony",
-      "isHybrid": true
+      "lore": "Las naves Parsec son el resultado de años de investigación en tecnología híbrida.",
+      
+      "metadata": {
+        "tier": 1,
+        "class": "Corvette",
+        "featured": true,
+        "popular": true,
+        "isHybrid": true,
+        "createdAt": "2025-01-01T00:00:00.000Z"
+      }
     },
     {
-      "id": "parsec-tank",
-      "name": "Parsec Tank",
-      "type": "parsec",
-      "subtype": "tank",
-      "class": "Corvette",
-      "system": "sol",
-      "tier": 1,
-      "level": 3,
-      "hull": 1500,
-      "speed": 70,
-      "cargo": 50,
-      "energy": 100,
-      "description": "Primera nave Parsec híbrida. Versión Tanque con mayor resistencia.",
-      "weaponSlots": 2,
-      "shieldSlots": 2,
-      "engineSlots": 1,
-      "specialSlots": 0,
-      "credits": 5000,
-      "blueprint": "Sol System - Mars Colony",
-      "isHybrid": true
-    },
-    {
-      "id": "parsec-engineer",
-      "name": "Parsec Engineer",
-      "type": "parsec",
-      "subtype": "engineer",
-      "class": "Corvette",
-      "system": "sol",
-      "tier": 1,
-      "level": 3,
-      "hull": 1100,
-      "speed": 75,
-      "cargo": 60,
-      "energy": 120,
-      "description": "Primera nave Parsec híbrida. Versión Ingeniera con capacidad de reparación.",
-      "weaponSlots": 1,
-      "shieldSlots": 1,
-      "engineSlots": 1,
-      "specialSlots": 1,
-      "credits": 5000,
-      "blueprint": "Sol System - Mars Colony",
-      "isHybrid": true
-    },
-    {
-      "id": "parsec-shock",
-      "name": "Parsec Shock",
-      "type": "parsec",
-      "subtype": "shock",
-      "class": "Corvette",
-      "system": "sol",
-      "tier": 1,
-      "level": 3,
-      "hull": 1100,
-      "speed": 80,
-      "cargo": 50,
-      "energy": 110,
-      "description": "Primera nave Parsec híbrida. Versión Shock con habilidades de control.",
-      "weaponSlots": 2,
-      "shieldSlots": 1,
-      "engineSlots": 1,
-      "specialSlots": 0,
-      "credits": 5000,
-      "blueprint": "Sol System - Mars Colony",
-      "isHybrid": true
-    },
-    {
-      "id": "corsair-storm",
-      "name": "Corsair Storm",
-      "type": "storm",
-      "class": "Corvette",
-      "system": "sol",
-      "tier": 1,
-      "level": 5,
-      "hull": 1400,
-      "speed": 85,
-      "cargo": 55,
-      "energy": 110,
-      "description": "Corvette Tormenta estándar. Balance entre velocidad y poder de fuego.",
-      "weaponSlots": 2,
-      "shieldSlots": 1,
-      "engineSlots": 1,
-      "specialSlots": 0,
-      "credits": 8000,
-      "blueprint": "Sol System - Jupiter Colony"
-    },
-    {
-      "id": "corsair-tank",
-      "name": "Corsair Tank",
-      "type": "tank",
-      "class": "Corvette",
-      "system": "sol",
-      "tier": 1,
-      "level": 5,
-      "hull": 1800,
-      "speed": 70,
-      "cargo": 55,
-      "energy": 110,
-      "description": "Corvette Tanque con mayor resistencia al daño.",
-      "weaponSlots": 2,
-      "shieldSlots": 2,
-      "engineSlots": 1,
-      "specialSlots": 0,
-      "credits": 8000,
-      "blueprint": "Sol System - Jupiter Colony"
-    },
-    {
-      "id": "sirius-storm",
+      "id": "ship-sirius-storm-003",
       "name": "Sirius Storm",
-      "type": "storm",
-      "class": "Frigate",
-      "system": "tauceti",
-      "tier": 2,
+      "classes": ["flota", "tormenta"],
       "level": 12,
-      "hull": 2200,
+      "system": "tauceti",
+      
+      "armorIndex": 2200,
       "speed": 75,
-      "cargo": 90,
-      "energy": 140,
+      "performance": 8.2,
+      
+      "armors": [
+        {
+          "name": "Advanced Sirius Plating",
+          "level": 12,
+          "price": 15000,
+          "sellPrice": 7500
+        },
+        {
+          "name": "Quantum Shields",
+          "level": 14,
+          "price": 20000,
+          "sellPrice": 10000
+        },
+        {
+          "name": "Reinforced Core",
+          "level": 15,
+          "price": 25000,
+          "sellPrice": 12500
+        }
+      ],
+      
+      "componentSlots": 6,
+      "slotComponents": ["laser-cannon-mk2", "plasma-shield", "turbo-engine"],
+      
+      "crionita": 25000,
+      "oro": 0,
+      "sellPrice": 12500,
+      
+      "cortexSlots": [
+        {"slot": 1, "buyPrice": 15000, "sellPrice": 7500},
+        {"slot": 2, "buyPrice": 22500, "sellPrice": 11250},
+        {"slot": 3, "buyPrice": 30000, "sellPrice": 15000}
+      ],
+      
+      "droneSlots": [
+        {"slot": 1, "buyPrice": 20000, "sellPrice": 10000},
+        {"slot": 2, "buyPrice": 40000, "sellPrice": 20000}
+      ],
+      
+      "paintCost": 5000,
+      "renameCost": 2500,
+      
+      "obtainMethod": "tienda",
+      "obtainLocation": "Tau Ceti - Main Starbase",
+      "blueprintsRequired": 0,
+      "requirements": [],
+      
+      "image2D": "/assets/ships/sirius-storm.png",
+      "model3D": null,
       "description": "Fragata Tormenta popular. Excelente balance para mid-game.",
-      "weaponSlots": 3,
-      "shieldSlots": 2,
-      "engineSlots": 1,
-      "specialSlots": 1,
-      "credits": 25000,
-      "blueprint": "Tau Ceti - Starbase"
+      "lore": "La serie Sirius representa un salto tecnológico importante en el diseño de naves.",
+      
+      "metadata": {
+        "tier": 2,
+        "class": "Frigate",
+        "featured": true,
+        "popular": true,
+        "createdAt": "2025-01-01T00:00:00.000Z"
+      }
     },
     {
-      "id": "sirius-tank",
-      "name": "Sirius Tank",
-      "type": "tank",
-      "class": "Frigate",
-      "system": "tauceti",
-      "tier": 2,
-      "level": 12,
-      "hull": 2800,
-      "speed": 65,
-      "cargo": 90,
-      "energy": 140,
-      "description": "Fragata Tanque con gran capacidad defensiva.",
-      "weaponSlots": 3,
-      "shieldSlots": 3,
-      "engineSlots": 1,
-      "specialSlots": 1,
-      "credits": 25000,
-      "blueprint": "Tau Ceti - Starbase"
-    },
-    {
-      "id": "neon-storm",
-      "name": "Neon Storm",
-      "type": "neon",
-      "subtype": "storm",
-      "class": "Frigate",
-      "system": "tauceti",
-      "tier": 2,
-      "level": 15,
-      "hull": 2400,
-      "speed": 80,
-      "cargo": 95,
-      "energy": 150,
-      "description": "Serie especial Neon de Tau Ceti. Mejoras en todas las estadísticas.",
-      "weaponSlots": 3,
-      "shieldSlots": 2,
-      "engineSlots": 2,
-      "specialSlots": 1,
-      "credits": 35000,
-      "blueprint": "Tau Ceti - Special Colony",
-      "isSpecial": true
-    },
-    {
-      "id": "vanguard-storm",
-      "name": "Vanguard Storm",
-      "type": "storm",
-      "class": "Frigate",
-      "system": "tauceti",
-      "tier": 2,
-      "level": 14,
-      "hull": 2300,
-      "speed": 70,
-      "cargo": 100,
-      "energy": 145,
-      "description": "Fragata Tormenta versátil para misiones variadas.",
-      "weaponSlots": 3,
-      "shieldSlots": 2,
-      "engineSlots": 1,
-      "specialSlots": 1,
-      "credits": 28000,
-      "blueprint": "Tau Ceti - Secondary Starbase"
-    },
-    {
-      "id": "rift-storm",
-      "name": "Rift Storm",
-      "type": "storm",
-      "class": "Destroyer",
-      "system": "draconis",
-      "tier": 3,
+      "id": "ship-mantis-destroyer-004",
+      "name": "Mantis Destroyer",
+      "classes": ["mantis", "tanque", "shock"],
       "level": 25,
-      "hull": 4200,
+      "system": "draconis",
+      
+      "armorIndex": 4200,
       "speed": 60,
-      "cargo": 180,
-      "energy": 230,
-      "description": "Destructor Tormenta pesado. Alto DPS para end-game.",
-      "weaponSlots": 4,
-      "shieldSlots": 3,
-      "engineSlots": 2,
-      "specialSlots": 2,
-      "credits": 95000,
-      "blueprint": "Draconis System - Main Station"
+      "performance": 8.8,
+      
+      "armors": [
+        {
+          "name": "Mantis Carapace",
+          "level": 25,
+          "price": 50000,
+          "sellPrice": 25000
+        },
+        {
+          "name": "Bio-Reactive Hull",
+          "level": 27,
+          "price": 75000,
+          "sellPrice": 37500
+        },
+        {
+          "name": "Organic Shielding",
+          "level": 30,
+          "price": 100000,
+          "sellPrice": 50000
+        }
+      ],
+      
+      "componentSlots": 8,
+      "slotComponents": ["mantis-cannon", "bio-shield", "plasma-engine", "shock-emitter"],
+      
+      "crionita": 95000,
+      "oro": 0,
+      "sellPrice": 47500,
+      
+      "cortexSlots": [
+        {"slot": 1, "buyPrice": 30000, "sellPrice": 15000},
+        {"slot": 2, "buyPrice": 45000, "sellPrice": 22500},
+        {"slot": 3, "buyPrice": 60000, "sellPrice": 30000},
+        {"slot": 4, "buyPrice": 75000, "sellPrice": 37500}
+      ],
+      
+      "droneSlots": [
+        {"slot": 1, "buyPrice": 50000, "sellPrice": 25000},
+        {"slot": 2, "buyPrice": 100000, "sellPrice": 50000},
+        {"slot": 3, "buyPrice": 150000, "sellPrice": 75000}
+      ],
+      
+      "paintCost": 15000,
+      "renameCost": 7500,
+      
+      "obtainMethod": "planos",
+      "obtainLocation": "Draconis System - Venar Planet - Mantis Commander Boss",
+      "blueprintsRequired": 50,
+      "requirements": [
+        {"ship": "Sirius Storm", "amount": 1},
+        {"ship": "Vanguard Tank", "amount": 1}
+      ],
+      
+      "image2D": "/assets/ships/mantis-destroyer.png",
+      "model3D": "/assets/ships/mantis-destroyer.glb",
+      "description": "Destructor Tormenta pesado. Alto DPS para end-game. Tecnología Mantis capturada.",
+      "lore": "Durante la invasión Mantis a Draconis, varios de estos destructores fueron capturados y adaptados para uso humano.",
+      
+      "metadata": {
+        "tier": 3,
+        "class": "Destroyer",
+        "featured": true,
+        "popular": true,
+        "isSpecial": true,
+        "createdAt": "2025-01-01T00:00:00.000Z"
+      }
     },
     {
-      "id": "rift-tank",
-      "name": "Rift Tank",
-      "type": "tank",
-      "class": "Destroyer",
-      "system": "draconis",
-      "tier": 3,
-      "level": 25,
-      "hull": 5500,
-      "speed": 50,
-      "cargo": 180,
-      "energy": 230,
-      "description": "Destructor Tanque con resistencia extrema.",
-      "weaponSlots": 4,
-      "shieldSlots": 4,
-      "engineSlots": 2,
-      "specialSlots": 2,
-      "credits": 95000,
-      "blueprint": "Draconis System - Main Station"
-    },
-    {
-      "id": "dreadnought-storm",
+      "id": "ship-dreadnought-storm-005",
       "name": "Dreadnought Storm",
-      "type": "storm",
-      "class": "Battleship",
-      "system": "vega",
-      "tier": 4,
+      "classes": ["flota", "tormenta"],
       "level": 40,
-      "hull": 7500,
+      "system": "vega",
+      
+      "armorIndex": 7500,
       "speed": 45,
-      "cargo": 450,
-      "energy": 380,
-      "description": "Acorazado Tormenta de alto nivel. Poder de fuego devastador.",
-      "weaponSlots": 6,
-      "shieldSlots": 4,
-      "engineSlots": 2,
-      "specialSlots": 3,
-      "credits": 450000,
-      "blueprint": "Vega System - Capital Station"
-    },
-    {
-      "id": "dreadnought-tank",
-      "name": "Dreadnought Tank",
-      "type": "tank",
-      "class": "Battleship",
-      "system": "vega",
-      "tier": 4,
-      "level": 40,
-      "hull": 9500,
-      "speed": 35,
-      "cargo": 450,
-      "energy": 380,
-      "description": "Acorazado Tanque casi indestructible.",
-      "weaponSlots": 6,
-      "shieldSlots": 5,
-      "engineSlots": 2,
-      "specialSlots": 3,
-      "credits": 450000,
-      "blueprint": "Vega System - Capital Station"
-    },
-    {
-      "id": "raven-elite",
-      "name": "Raven Elite",
-      "type": "raven",
-      "class": "Special",
-      "system": "erebos",
-      "tier": 5,
-      "level": 45,
-      "hull": 8500,
-      "speed": 55,
-      "cargo": 500,
-      "energy": 420,
-      "description": "Nave especial Raven. Estadísticas superiores y habilidades únicas.",
-      "weaponSlots": 7,
-      "shieldSlots": 5,
-      "engineSlots": 3,
-      "specialSlots": 4,
-      "credits": 750000,
-      "blueprint": "Erebos System - Hidden Station",
-      "isSpecial": true,
-      "isElite": true
+      "performance": 9.5,
+      
+      "armors": [
+        {
+          "name": "Dreadnought Primary Hull",
+          "level": 40,
+          "price": 150000,
+          "sellPrice": 75000
+        },
+        {
+          "name": "Reactive Armor Plating",
+          "level": 42,
+          "price": 200000,
+          "sellPrice": 100000
+        },
+        {
+          "name": "Ablative Shielding",
+          "level": 45,
+          "price": 250000,
+          "sellPrice": 125000
+        },
+        {
+          "name": "Quantum Field Generator",
+          "level": 48,
+          "price": 300000,
+          "sellPrice": 150000
+        }
+      ],
+      
+      "componentSlots": 12,
+      "slotComponents": [
+        "heavy-plasma-cannon-mk5",
+        "capital-shield-generator",
+        "quantum-engine",
+        "emp-emitter",
+        "repair-drone-bay",
+        "missile-launcher"
+      ],
+      
+      "crionita": 450000,
+      "oro": 1000,
+      "sellPrice": 225000,
+      
+      "cortexSlots": [
+        {"slot": 1, "buyPrice": 100000, "sellPrice": 50000},
+        {"slot": 2, "buyPrice": 150000, "sellPrice": 75000},
+        {"slot": 3, "buyPrice": 200000, "sellPrice": 100000},
+        {"slot": 4, "buyPrice": 250000, "sellPrice": 125000},
+        {"slot": 5, "buyPrice": 300000, "sellPrice": 150000}
+      ],
+      
+      "droneSlots": [
+        {"slot": 1, "buyPrice": 150000, "sellPrice": 75000},
+        {"slot": 2, "buyPrice": 300000, "sellPrice": 150000},
+        {"slot": 3, "buyPrice": 450000, "sellPrice": 225000},
+        {"slot": 4, "buyPrice": 600000, "sellPrice": 300000}
+      ],
+      
+      "paintCost": 50000,
+      "renameCost": 25000,
+      
+      "obtainMethod": "planos",
+      "obtainLocation": "Vega System - Capital Station - Elite Boss Drops",
+      "blueprintsRequired": 150,
+      "requirements": [
+        {"ship": "Rift Storm", "amount": 1},
+        {"ship": "Mantis Destroyer", "amount": 2}
+      ],
+      
+      "image2D": "/assets/ships/dreadnought-storm.png",
+      "model3D": "/assets/ships/dreadnought-storm.glb",
+      "description": "Acorazado Tormenta de alto nivel. Poder de fuego devastador para end-game content.",
+      "lore": "El Dreadnought Storm es el resultado de décadas de ingeniería militar. Solo los pilotos más experimentados pueden dominar su poder.",
+      
+      "metadata": {
+        "tier": 4,
+        "class": "Battleship",
+        "featured": true,
+        "popular": true,
+        "isElite": true,
+        "createdAt": "2025-01-01T00:00:00.000Z"
+      }
     }
   ],
   
-  "shipTypes": {
-    "storm": {
-      "name": "Tormenta",
-      "role": "DPS / Ataque",
-      "color": "red",
-      "icon": "zap",
-      "description": "Especializadas en causar el máximo daño posible"
-    },
-    "tank": {
-      "name": "Tanque",
-      "role": "Defensa / Resistencia",
+  "shipClasses": {
+    "flota": {
+      "name": "Flota",
+      "icon": "🚢",
       "color": "blue",
-      "icon": "shield",
-      "description": "Alta resistencia y capacidad para absorber daño"
+      "description": "Naves estándar de la flota"
     },
-    "engineer": {
+    "raider": {
+      "name": "Raider",
+      "icon": "⚔️",
+      "color": "red",
+      "description": "Naves de asalto rápido"
+    },
+    "tormenta": {
+      "name": "Tormenta",
+      "icon": "⚡",
+      "color": "yellow",
+      "description": "Especializadas en DPS"
+    },
+    "tanque": {
+      "name": "Tanque",
+      "icon": "🛡️",
+      "color": "cyan",
+      "description": "Alta resistencia"
+    },
+    "ingeniera": {
       "name": "Ingeniera",
-      "role": "Soporte / Reparación",
+      "icon": "🔧",
       "color": "green",
-      "icon": "wrench",
-      "description": "Capacidad de reparar y dar soporte al equipo"
+      "description": "Soporte y reparación"
     },
     "shock": {
       "name": "Shock",
-      "role": "Control / Stun",
+      "icon": "💥",
       "color": "purple",
-      "icon": "activity",
-      "description": "Habilidades de control y aturdimiento"
+      "description": "Control y aturdimiento"
+    },
+    "sniper": {
+      "name": "Sniper",
+      "icon": "🎯",
+      "color": "orange",
+      "description": "Daño a larga distancia"
+    },
+    "minadora": {
+      "name": "Minadora",
+      "icon": "⛏️",
+      "color": "gray",
+      "description": "Extracción de recursos"
     },
     "parsec": {
       "name": "Parsec",
-      "role": "Híbrida",
-      "color": "cyan",
-      "icon": "sparkles",
-      "description": "Naves híbridas disponibles en todos los tipos"
+      "icon": "🌌",
+      "color": "indigo",
+      "description": "Naves híbridas avanzadas"
+    },
+    "rdx": {
+      "name": "RDX",
+      "icon": "💣",
+      "color": "red",
+      "description": "Explosivos y área"
+    },
+    "mantis": {
+      "name": "Mantis",
+      "icon": "🦗",
+      "color": "lime",
+      "description": "Tecnología alienígena"
     },
     "neon": {
-      "name": "Neon",
-      "role": "Especial - Tau Ceti",
+      "name": "NeOn",
+      "icon": "💡",
       "color": "pink",
-      "icon": "lightbulb",
-      "description": "Serie especial mejorada de Tau Ceti"
+      "description": "Serie especial mejorada"
     },
-    "raven": {
-    "name": "Raven",
-    "role": "Elite",
-    "color": "orange",
-    "icon": "bird",
-    "description": "Naves de categoría elite con stats superiores"
+    "tr": {
+      "name": "TR",
+      "icon": "🔺",
+      "color": "rose",
+      "description": "Tecnología avanzada"
+    },
+    "arcanas": {
+      "name": "Arcanas",
+      "icon": "✨",
+      "color": "violet",
+      "description": "Naves místicas"
+    },
+    "hibridas": {
+      "name": "Híbridas",
+      "icon": "🧬",
+      "color": "teal",
+      "description": "Múltiples especializaciones"
     }
-},
-"systems": [
-    { "id": "sol", "name": "Sol", "level": 1, "type": "normal" },
-    { "id": "tauceti", "name": "Tau Ceti", "level": 10, "type": "normal" },
-    { "id": "sirius", "name": "Sirius", "level": 15, "type": "singularity" },
-    { "id": "draconis", "name": "Draconis", "level": 20, "type": "normal" },
-    { "id": "mizar", "name": "Mizar", "level": 25, "type": "normal" },
-    { "id": "gemini", "name": "Gemini", "level": 30, "type": "normal" },
-    { "id": "antares", "name": "Antares", "level": 35, "type": "normal" },
-    { "id": "vega", "name": "Vega", "level": 40, "type": "normal" },
-    { "id": "erebos", "name": "Erebos", "level": 45, "type": "normal" }
-]
+  },
+  
+  "systems": [
+    {"id": "sol", "name": "Sol", "minLevel": 1, "tier": 1},
+    {"id": "tauceti", "name": "Tau Ceti", "minLevel": 10, "tier": 2},
+    {"id": "sirius", "name": "Sirius", "minLevel": 15, "tier": 2},
+    {"id": "draconis", "name": "Draconis", "minLevel": 20, "tier": 3},
+    {"id": "mizar", "name": "Mizar", "minLevel": 25, "tier": 3},
+    {"id": "gemini", "name": "Gemini", "minLevel": 30, "tier": 3},
+    {"id": "antares", "name": "Antares", "minLevel": 35, "tier": 4},
+    {"id": "vega", "name": "Vega", "minLevel": 40, "tier": 4},
+    {"id": "erebos", "name": "Erebos", "minLevel": 45, "tier": 5}
+  ]
 }
