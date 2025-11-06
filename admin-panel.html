@@ -140,43 +140,108 @@
                         <form onsubmit="handleAddShip(event)" class="space-y-6" novalidate>
                             
                             <!-- INFORMACIÓN BÁSICA -->
-                            <div class="border-b border-gray-700 pb-4">
-                                <h4 class="text-sm font-bold text-blue-400 mb-3 uppercase flex items-center gap-2">
-                                    <i data-lucide="info" class="w-4 h-4"></i>Información Básica
-                                </h4>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div class="sm:col-span-2">
-                                        <label class="block text-sm font-semibold text-gray-300 mb-2">Nombre de la Nave *</label>
-                                        <input type="text" name="name" required minlength="3" maxlength="60" 
-                                               placeholder="Starblaze Interceptor" 
-                                               class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500">
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-300 mb-2">Nivel de Nave *</label>
-                                        <input type="number" name="level" min="1" max="100" required 
-                                               placeholder="15" 
-                                               class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500">
-                                    </div>
-                                    
-                                    <div>
-    <label class="block text-sm font-semibold text-gray-300 mb-2">Sistema *</label>
-    <select name="system" required 
-            class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500"
-            onchange="updatePlanetsSelect(this.value, 'ship_planet_select')">
-        <option value="">Selecciona un sistema</option>
-        <option value="sol">Sol</option>
-        <option value="vega">Vega</option>
-        <option value="antares">Antares</option>
-        <option value="geminis">Geminis</option>
-        <option value="mizar">Mizar</option>
-        <option value="draconis">Draconis</option>
-        <option value="sirius">Sirius</option>
-        <option value="tau-ceti">Tau Ceti</option>
-        <option value="oort">Oort</option>
-    </select>    </div>
-                                </div>
-                            </div>
+<!-- INFORMACIÓN BÁSICA -->
+<div class="border-b border-gray-700 pb-4">
+    <h4 class="text-sm font-bold text-green-400 mb-3 uppercase flex items-center gap-2">
+        <i data-lucide="info" class="w-4 h-4"></i>Información Básica
+    </h4>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- 🔥 NOMBRE DEL COMPONENTE -->
+        <div>
+    <label class="block text-sm font-semibold text-gray-300 mb-2">Nombre del Componente *</label>
+    <input type="text" 
+           name="comp_name" 
+           id="component-name" 
+           required 
+           minlength="3"
+           placeholder="ej: Cañón de Plasma MK-II" 
+           class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500">
+    <span class="text-xs text-gray-500">Mínimo 3 caracteres</span>
+</div>
+        
+        <!-- 🔥 CLASE DE COMPONENTE -->
+        <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-gray-300 mb-2">
+                Clase de Componente
+                <span class="text-gray-500 text-xs ml-2">(Categoría general)</span>
+            </label>
+            <select id="component-class" 
+                    name="component_class" 
+                    required
+                    class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20">
+                <option value="">Selecciona una clase...</option>
+                <optgroup label="⚔️ Armas">
+                    <option value="cañon">🔫 Cañón</option>
+                    <option value="misil">🚀 Misil</option>
+                    <option value="perforador">🔩 Perforador</option>
+                    <option value="rayo_termico">🔥 Rayo Térmico</option>
+                    <option value="cañon_largo_alcance">🎯 Cañón de Largo Alcance</option>
+                    <option value="bomba_agresion">💣 Bomba de Agresión</option>
+                    <option value="carga_ataque">⚡ Carga de Ataque</option>
+                    <option value="ataque_orbital">🛸 Ataque Orbital</option>
+                    <option value="bomba_lapa">🧨 Bomba Lapa</option>
+                    <option value="haz_electrico">⚡ Haz Eléctrico</option>
+                </optgroup>
+                <optgroup label="🔧 Soporte">
+                    <option value="recolector">📦 Recolector</option>
+                    <option value="reparador">🔧 Reparador</option>
+                    <option value="telerreparador">📡 Telereparador</option>
+                    <option value="campo_reparacion">🛠️ Campo de Reparación</option>
+                    <option value="protector">🛡️ Protector</option>
+                    <option value="resurrector">❤️ Resurrector</option>
+                    <option value="picador">⛏️ Picador</option>
+                    <option value="torre_reparacion">🏥 Torre de Reparación</option>
+                </optgroup>
+                <optgroup label="🚀 Movilidad">
+                    <option value="impulsor">🚀 Impulsor</option>
+                    <option value="acelerador">⚡ Acelerador</option>
+                    <option value="desacelerador">🐌 Desacelerador</option>
+                    <option value="salto_cuantico">🌀 Salto Cuántico</option>
+                </optgroup>
+                <optgroup label="🛡️ Defensa">
+                    <option value="escudo">🛡️ Escudo</option>
+                    <option value="señuelo">🎭 Señuelo</option>
+                    <option value="paralizador">💥 Paralizador</option>
+                    <option value="señal_interferencia">📡 Señal de Interferencia</option>
+                    <option value="inversor_daño">🔄 Inversor de Daño</option>
+                    <option value="droide_reflector">🔮 Droide Reflector</option>
+                    <option value="absorvedor_alcance">🌐 Absorbedor de Alcance</option>
+                </optgroup>
+                <optgroup label="🤖 Drones y Especiales">
+                    <option value="mira">🎯 Mira</option>
+                    <option value="droide_ataque">🤖 Droide de Ataque</option>
+                    <option value="torre_ataque">🏰 Torre de Ataque</option>
+                    <option value="mina">💣 Mina</option>
+                    <option value="trampa_magnetica">🧲 Trampa Magnética</option>
+                    <option value="nube_corrosiva">☠️ Nube Corrosiva</option>
+                    <option value="aura_conducta">✨ Aura de Conducta</option>
+                </optgroup>
+            </select>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Nivel del Componente *</label>
+            <input type="number" 
+                   id="component-level"
+                   name="comp_level" 
+                   min="1" 
+                   max="100" 
+                   required 
+                   placeholder="25" 
+                   class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Sistema *</label>
+            <input type="text" 
+                   id="component-system"
+                   name="comp_system" 
+                   required 
+                   placeholder="sol / sirius / draconis" 
+                   class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500 lowercase">
+        </div>
+    </div>
+</div>
 
                             <!-- CLASES DE NAVE (MÚLTIPLES) -->
                             <div class="border-b border-gray-700 pb-4">
@@ -246,6 +311,22 @@
                                     </label>
                                 </div>
                             </div>
+                            <!-- BUFFS ADICIONALES DE LA NAVE -->
+<div class="border-b border-gray-700 pb-4">
+    <h4 class="text-sm font-bold text-purple-400 mb-3 uppercase flex items-center gap-2">
+        <i data-lucide="sparkles" class="w-4 h-4"></i>Buffs Adicionales de la Nave
+    </h4>
+    <p class="text-xs text-gray-400 mb-3">Bonificaciones especiales que otorga la nave (afecta stats globales)</p>
+    
+    <div id="ship-buffs-container" class="space-y-2">
+        <!-- Los buffs se agregan dinámicamente aquí -->
+    </div>
+    
+    <button type="button" onclick="addShipBuff()" 
+            class="mt-3 text-sm px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 rounded text-purple-400 border border-purple-500/50">
+        <i data-lucide="plus" class="inline w-4 h-4 mr-1"></i>Agregar Buff
+    </button>
+</div>
 
                             <!-- ESTADÍSTICAS Y RENDIMIENTO -->
                             <div class="border-b border-gray-700 pb-4">
@@ -267,87 +348,163 @@
                                     </div>
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-300 mb-2">Performance</label>
-                                        <input type="number" name="performance" min="0" step="0.1" 
+                                        <input type="text" name="performance" min="0" step="0.1" 
                                                placeholder="8.5" 
                                                class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500">
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- BLINDAJES (ARMORS) CON ICONOS -->
-                            <div class="border-b border-gray-700 pb-4">
-                                <h4 class="text-sm font-bold text-cyan-400 mb-3 uppercase flex items-center gap-2">
-                                    <i data-lucide="shield" class="w-4 h-4"></i>Blindajes (Armors)
-                                </h4>
-                                <div id="armors-container" class="space-y-3">
-                                    <div class="armor-row grid grid-cols-1 sm:grid-cols-12 gap-3">
-                                        <input type="text" name="armor_name_1" placeholder="Nombre del blindaje (ej: Titanium Plating)" 
-                                               class="sm:col-span-5 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
-                                        <input type="number" name="armor_level_1" placeholder="Nivel" min="1" 
-                                               class="sm:col-span-2 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
-                                        
-                                        <!-- Campo de COMPRA con icono Crionita -->
-                                        <div class="sm:col-span-2 relative">
-                                            <div class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-                                                <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'">
-                                            </div>
-                                            <input type="number" name="armor_price_1" placeholder="Compra" min="0" 
-                                                   class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
-                                        </div>
-                                        
-                                        <!-- Campo de VENTA con icono Crionita -->
-                                        <div class="sm:col-span-2 relative">
-                                            <div class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-                                                <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4 opacity-70" onerror="this.style.display='none'">
-                                            </div>
-                                            <input type="number" name="armor_sell_1" placeholder="Venta" min="0" 
-                                                   class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500">
-                                        </div>
-                                        
-                                        <button type="button" onclick="removeArmorField(this)" 
-                                                class="sm:col-span-1 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
-                                            <i data-lucide="x" class="w-4 h-4"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <button type="button" onclick="addArmorField()" 
-                                        class="mt-3 text-sm px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 rounded text-cyan-400 border border-cyan-500/50">
-                                    <i data-lucide="plus" class="inline w-4 h-4 mr-1"></i>Añadir otro blindaje
-                                </button>
-                            </div>
+                            <!-- BLINDAJES CON MULTIPLICADOR Y BONO -->
+<div class="border-b border-gray-700 pb-4">
+    <h4 class="text-sm font-bold text-cyan-400 mb-3 uppercase flex items-center gap-2">
+        <i data-lucide="shield" class="w-4 h-4"></i>Blindajes (Armors)
+    </h4>
+    <div id="armors-container" class="space-y-3">
+        <!-- Primera fila de blindaje -->
+        <div class="armor-row p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-3">
+                <!-- Nombre -->
+                <input type="text" name="armor_name_1" placeholder="Nombre del blindaje (ej: Titanium Plating)" 
+                       class="sm:col-span-4 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                
+                <!-- Nivel -->
+                <input type="number" name="armor_level_1" placeholder="Nivel" min="1" 
+                       class="sm:col-span-2 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                
+                <!-- Multiplicador -->
+                <div class="sm:col-span-2">
+                    <input type="number" name="armor_multiplier_1" placeholder="Mult." min="0.1" max="10" step="0.1" value="1.0"
+                           class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                    <span class="text-xs text-gray-500">Ej: 1.5</span>
+                </div>
+                
+                <!-- Bono Extra -->
+                <div class="sm:col-span-3">
+                    <input type="number" name="armor_bonus_1" placeholder="Bono Extra" min="0" value="0"
+                           class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                    <span class="text-xs text-gray-500">Puntos +</span>
+                </div>
+                
+                <!-- Botón eliminar -->
+                <button type="button" onclick="removeArmorField(this)" 
+                        class="sm:col-span-1 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <!-- Precios (Compra y Venta) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="relative">
+                    <label class="block text-xs text-gray-400 mb-1">💰 Precio de Compra</label>
+                    <div class="absolute left-3 top-8 flex items-center pointer-events-none">
+                        <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'">
+                    </div>
+                    <input type="number" name="armor_price_1" placeholder="Compra" min="0" 
+                           class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                </div>
+                
+                <div class="relative">
+                    <label class="block text-xs text-gray-400 mb-1">💵 Precio de Venta</label>
+                    <div class="absolute left-3 top-8 flex items-center pointer-events-none">
+                        <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4 opacity-70" onerror="this.style.display='none'">
+                    </div>
+                    <input type="number" name="armor_sell_1" placeholder="Venta" min="0" 
+                           class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500">
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" onclick="addArmorField()" 
+            class="mt-3 text-sm px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 rounded text-cyan-400 border border-cyan-500/50">
+        <i data-lucide="plus" class="inline w-4 h-4 mr-1"></i>Añadir otro blindaje
+    </button>
+</div>
 
-                            <!-- SLOTS DE COMPONENTES -->
-                            <div class="border-b border-gray-700 pb-4">
-                                <h4 class="text-sm font-bold text-yellow-400 mb-3 uppercase flex items-center gap-2">
-                                    <i data-lucide="wrench" class="w-4 h-4"></i>Slots de Componentes
-                                </h4>
-                                <div class="grid grid-cols-1 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-300 mb-2">Cantidad Total de Slots *</label>
-                                        <input type="number" name="componentSlots" min="0" max="20" required
-                                               placeholder="8" 
-                                               class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500">
-                                        <span class="text-xs text-gray-500">Slots disponibles para equipar componentes (armas, escudos, etc.)</span>
-                                    </div>
-                                    
-                                    <div id="component-slots-container" class="space-y-2 mt-3">
-                                        <p class="text-sm text-gray-400 mb-2">Define qué componentes van en cada slot:</p>
-                                        <div class="component-slot grid grid-cols-1 sm:grid-cols-12 gap-2">
-                                            <span class="sm:col-span-1 flex items-center justify-center text-gray-400 font-bold">1.</span>
-                                            <input type="text" name="slot_component_1" placeholder="ID o nombre del componente" 
-                                                   class="sm:col-span-10 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500 text-sm">
-                                            <button type="button" onclick="removeComponentSlot(this)" 
-                                                    class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
-                                                <i data-lucide="x" class="w-4 h-4"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <button type="button" onclick="addComponentSlot()" 
-                                            class="text-sm px-4 py-2 bg-yellow-500/20 hover:bg-yellow-500/30 rounded text-yellow-400 border border-yellow-500/50">
-                                        <i data-lucide="plus" class="inline w-4 h-4 mr-1"></i>Añadir slot de componente
-                                    </button>
-                                </div>
-                            </div>
+                            <!-- SLOTS DE COMPONENTES POR TIPO -->
+<div class="border-b border-gray-700 pb-4">
+    <h4 class="text-sm font-bold text-yellow-400 mb-3 uppercase flex items-center gap-2">
+        <i data-lucide="wrench" class="w-4 h-4"></i>Slots de Componentes
+    </h4>
+    <div class="grid grid-cols-1 gap-4">
+        <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Cantidad Total de Slots *</label>
+            <input type="number" name="componentSlots" min="0" max="20" required
+                   placeholder="8" 
+                   class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500">
+            <span class="text-xs text-gray-500">Slots disponibles para equipar componentes</span>
+        </div>
+        
+        <div id="component-slots-container" class="space-y-2 mt-3">
+    <p class="text-sm text-gray-400 mb-2">Define qué TIPO de componente va en cada slot:</p>
+    <!-- 🔥 PRIMER SLOT YA INCLUIDO -->
+    <div class="component-slot grid grid-cols-1 sm:grid-cols-12 gap-2">
+        <span class="sm:col-span-1 flex items-center justify-center text-gray-400 font-bold">1.</span>
+        
+        <select name="slot_component_type_1" 
+                class="sm:col-span-10 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500 text-sm">
+            <option value="">Selecciona tipo de componente...</option>
+            <optgroup label="⚔️ Armas">
+                <option value="cañon">🔫 Cañón</option>
+                <option value="misil">🚀 Misil</option>
+                <option value="perforador">🔩 Perforador</option>
+                <option value="rayo_termico">🔥 Rayo Térmico</option>
+                <option value="cañon_largo_alcance">🎯 Cañón de Largo Alcance</option>
+                <option value="bomba_agresion">💣 Bomba de Agresión</option>
+                <option value="carga_ataque">⚡ Carga de Ataque</option>
+                <option value="ataque_orbital">🛸 Ataque Orbital</option>
+                <option value="bomba_lapa">🧨 Bomba Lapa</option>
+                <option value="haz_electrico">⚡ Haz Eléctrico</option>
+            </optgroup>
+            <optgroup label="🔧 Soporte">
+                <option value="recolector">📦 Recolector</option>
+                <option value="reparador">🔧 Reparador</option>
+                <option value="telerreparador">📡 Telereparador</option>
+                <option value="campo_reparacion">🛠️ Campo de Reparación</option>
+                <option value="protector">🛡️ Protector</option>
+                <option value="resurrector">❤️ Resurrector</option>
+                <option value="picador">⛏️ Picador</option>
+                <option value="torre_reparacion">🏥 Torre de Reparación</option>
+            </optgroup>
+            <optgroup label="🚀 Movilidad">
+                <option value="impulsor">🚀 Impulsor</option>
+                <option value="acelerador">⚡ Acelerador</option>
+                <option value="desacelerador">🐌 Desacelerador</option>
+                <option value="salto_cuantico">🌀 Salto Cuántico</option>
+            </optgroup>
+            <optgroup label="🛡️ Defensa">
+                <option value="escudo">🛡️ Escudo</option>
+                <option value="señuelo">🎭 Señuelo</option>
+                <option value="paralizador">💥 Paralizador</option>
+                <option value="señal_interferencia">📡 Señal de Interferencia</option>
+                <option value="inversor_daño">🔄 Inversor de Daño</option>
+                <option value="droide_reflector">🔮 Droide Reflector</option>
+                <option value="absorvedor_alcance">🌐 Absorbedor de Alcance</option>
+            </optgroup>
+            <optgroup label="🤖 Drones y Especiales">
+                <option value="mira">🎯 Mira</option>
+                <option value="droide_ataque">🤖 Droide de Ataque</option>
+                <option value="torre_ataque">🏰 Torre de Ataque</option>
+                <option value="mina">💣 Mina</option>
+                <option value="trampa_magnetica">🧲 Trampa Magnética</option>
+                <option value="nube_corrosiva">☠️ Nube Corrosiva</option>
+                <option value="aura_conducta">✨ Aura de Conducta</option>
+            </optgroup>
+        </select>
+        
+        <button type="button" onclick="removeComponentSlot(this)" 
+                class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    </div>
+</div>
+
+        <button type="button" onclick="addComponentSlot()" 
+                class="text-sm px-4 py-2 bg-yellow-500/20 hover:bg-yellow-500/30 rounded text-yellow-400 border border-yellow-500/50">
+            <i data-lucide="plus" class="inline w-4 h-4 mr-1"></i>Añadir slot de componente
+        </button>
+    </div>
+</div>
 
                             <!-- COSTOS Y ECONOMÍA CON ICONOS INTEGRADOS -->
                             <div class="border-b border-gray-700 pb-4">
@@ -490,40 +647,75 @@
                                     </button>
                                 </div>
                                 
-                                <!-- Costos Misceláneos CON ICONOS -->
-                                <div>
-                                    <p class="text-sm text-gray-400 mb-3 font-semibold">🔧 Costos Misceláneos</p>
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-sm font-semibold text-gray-300 mb-2 currency-label">
-                                                <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'">
-                                                Cambio de Pintura
-                                            </label>
-                                            <div class="relative">
-                                                <div class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-                                                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-5 h-5" onerror="this.style.display='none'">
-                                                </div>
-                                                <input type="number" name="paintCost" min="0" 
-                                                       placeholder="10000" 
-                                                       class="w-full pl-11 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-orange-500">
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-semibold text-gray-300 mb-2 currency-label">
-                                                <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'">
-                                                Renombrar Nave
-                                            </label>
-                                            <div class="relative">
-                                                <div class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-                                                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-5 h-5" onerror="this.style.display='none'">
-                                                </div>
-                                                <input type="number" name="renameCost" min="0" 
-                                                       placeholder="5000" 
-                                                       class="w-full pl-11 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-orange-500">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!-- Costos Misceláneos AMPLIADOS -->
+<div>
+    <p class="text-sm text-gray-400 mb-3 font-semibold">🔧 Costos Misceláneos</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Cambio de Pintura -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-2 currency-label">
+                <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'">
+                Cambio de Pintura
+            </label>
+            <div class="relative">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
+                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-5 h-5" onerror="this.style.display='none'">
+                </div>
+                <input type="number" name="paintCost" min="0" 
+                       placeholder="10000" 
+                       class="w-full pl-11 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-orange-500">
+            </div>
+        </div>
+        
+        <!-- Renombrar Nave -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-2 currency-label">
+                <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'">
+                Renombrar Nave
+            </label>
+            <div class="relative">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
+                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-5 h-5" onerror="this.style.display='none'">
+                </div>
+                <input type="number" name="renameCost" min="0" 
+                       placeholder="5000" 
+                       class="w-full pl-11 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-orange-500">
+            </div>
+        </div>
+        
+        <!-- 🔥 NUEVO: Configuración de Nave -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-2 currency-label">
+                <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'">
+                Configuración de Nave
+            </label>
+            <div class="relative">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
+                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-5 h-5" onerror="this.style.display='none'">
+                </div>
+                <input type="number" name="configCost" min="0" 
+                       placeholder="2000" 
+                       class="w-full pl-11 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-orange-500">
+            </div>
+        </div>
+        
+        <!-- 🔥 NUEVO: Costo de Reparación -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-2 currency-label">
+                <img src="/assets/currencies/Energy.png" alt="Energía" class="w-4 h-4" onerror="this.style.display='none'">
+                Reparación en Hangar
+            </label>
+            <div class="relative">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
+                    <img src="/assets/currencies/Energy.png" alt="Energía" class="w-5 h-5" onerror="this.style.display='none'">
+                </div>
+                <input type="number" name="repairCost" min="0" 
+                       placeholder="150" 
+                       class="w-full pl-11 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-orange-500">
+            </div>
+        </div>
+    </div>
+</div>
                             </div>
 
                             <!-- OBTENCIÓN Y DESBLOQUEO - VERSIÓN MEJORADA -->
@@ -826,13 +1018,67 @@
                 <h4 class="text-sm font-bold text-green-400 mb-3 uppercase flex items-center gap-2">
                     <i data-lucide="info" class="w-4 h-4"></i>Información Básica
                 </h4>
+                <div class="form-group">
+  <label for="component-name">Component Name:</label>
+  <input type="text" id="component-name" placeholder="e.g., Header, Navigation, Card">
+</div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="sm:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-300 mb-2">Nombre del Componente *</label>
-                        <input type="text" name="comp_name" required minlength="3" maxlength="60" 
-                               placeholder="Plasma Cannon MK-III" 
-                               class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500">
-                    </div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">
+        Clase de Componente
+        <span class="text-gray-500 text-xs ml-2">(Categoría general)</span>
+    </label>
+    <select id="component-class" name="component_class" required
+            class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20">
+        <option value="">Selecciona una clase...</option>
+        <optgroup label="⚔️ Armas">
+            <option value="cañon">🔫 Cañón</option>
+            <option value="misil">🚀 Misil</option>
+            <option value="perforador">🔩 Perforador</option>
+            <option value="rayo_termico">🔥 Rayo Térmico</option>
+            <option value="cañon_largo_alcance">🎯 Cañón de Largo Alcance</option>
+            <option value="bomba_agresion">💣 Bomba de Agresión</option>
+            <option value="carga_ataque">⚡ Carga de Ataque</option>
+            <option value="ataque_orbital">🛸 Ataque Orbital</option>
+            <option value="bomba_lapa">🧨 Bomba Lapa</option>
+            <option value="haz_electrico">⚡ Haz Eléctrico</option>
+        </optgroup>
+        <optgroup label="🔧 Soporte">
+            <option value="recolector">📦 Recolector</option>
+            <option value="reparador">🔧 Reparador</option>
+            <option value="telerreparador">📡 Telereparador</option>
+            <option value="campo_reparacion">🛠️ Campo de Reparación</option>
+            <option value="protector">🛡️ Protector</option>
+            <option value="resurrector">❤️ Resurrector</option>
+            <option value="picador">⛏️ Picador</option>
+            <option value="torre_reparacion">🏥 Torre de Reparación</option>
+        </optgroup>
+        <optgroup label="🚀 Movilidad">
+            <option value="impulsor">🚀 Impulsor</option>
+            <option value="acelerador">⚡ Acelerador</option>
+            <option value="desacelerador">🐌 Desacelerador</option>
+            <option value="salto_cuantico">🌀 Salto Cuántico</option>
+        </optgroup>
+        <optgroup label="🛡️ Defensa">
+            <option value="escudo">🛡️ Escudo</option>
+            <option value="señuelo">🎭 Señuelo</option>
+            <option value="paralizador">💥 Paralizador</option>
+            <option value="señal_interferencia">📡 Señal de Interferencia</option>
+            <option value="inversor_daño">🔄 Inversor de Daño</option>
+            <option value="droide_reflector">🔮 Droide Reflector</option>
+            <option value="absorvedor_alcance">🌐 Absorbedor de Alcance</option>
+        </optgroup>
+        <optgroup label="🤖 Drones y Especiales">
+            <option value="mira">🎯 Mira</option>
+            <option value="droide_ataque">🤖 Droide de Ataque</option>
+            <option value="torre_ataque">🏰 Torre de Ataque</option>
+            <option value="mina">💣 Mina</option>
+            <option value="trampa_magnetica">🧲 Trampa Magnética</option>
+            <option value="nube_corrosiva">☠️ Nube Corrosiva</option>
+            <option value="aura_conducta">✨ Aura de Conducta</option>
+        </optgroup>
+    </select>
+</div>
                     
                     <div>
                         <label class="block text-sm font-semibold text-gray-300 mb-2">Nivel del Componente *</label>
@@ -842,11 +1088,22 @@
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-semibold text-gray-300 mb-2">Sistema *</label>
-                        <input type="text" name="comp_system" required 
-                               placeholder="sol / sirius / draconis" 
-                               class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500 lowercase">
-                    </div>
+                <label class="block text-sm font-semibold text-gray-300 mb-2">Sistema *</label>
+                <select name="comp_drop_system" 
+                        onchange="updateDropPlanets('component', this.value)"
+                        class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-pink-500">
+                    <option value="">Selecciona sistema</option>
+                    <option value="sol">☀️ Sistema Solar</option>
+                    <option value="vega">⭐ Vega</option>
+                    <option value="antares">🔴 Antares</option>
+                    <option value="geminis">♊ Geminis</option>
+                    <option value="mizar">🌟 Mizar</option>
+                    <option value="draconis">🐉 Draconis</option>
+                    <option value="sirius">🌀 Sirius</option>
+                    <option value="tau-ceti">🌌 Tau Ceti</option>
+                    <option value="oort">❄️ Oort</option>
+                </select>
+            </div>
                 </div>
             </div>
 
@@ -1503,6 +1760,57 @@
         let cortexSlotCounter = 1;
         let droneSlotCounter = 1;
         
+// ============================================
+// GESTIÓN DE BUFFS DE LA NAVE
+// ============================================
+
+/**
+ * Agrega un buff global a la nave
+ */
+function addShipBuff() {
+    const container = document.getElementById('ship-buffs-container');
+    const buffIndex = container.children.length + 1;
+    
+    const buffRow = document.createElement('div');
+    buffRow.className = 'ship-buff-row grid grid-cols-1 sm:grid-cols-12 gap-2 mb-2';
+    buffRow.innerHTML = `
+        <select name="ship_buff_type_${buffIndex}" 
+                class="sm:col-span-5 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-purple-500 text-sm">
+            <option value="">Selecciona tipo de buff...</option>
+            <option value="velocidad">🚀 Velocidad</option>
+            <option value="defensa">🛡️ Defensa</option>
+            <option value="ataque">⚔️ Ataque</option>
+            <option value="hp">❤️ HP (Puntos de Vida)</option>
+            <option value="escudo">🔰 Escudo</option>
+            <option value="energia">⚡ Energía</option>
+            <option value="regeneracion">💚 Regeneración</option>
+            <option value="evasion">💨 Evasión</option>
+            <option value="precision">🎯 Precisión</option>
+            <option value="alcance">📏 Alcance</option>
+            <option value="critico">💥 Crítico</option>
+            <option value="resistencia">💪 Resistencia</option>
+            <option value="velocidad_disparo">⚡ Velocidad de Disparo</option>
+            <option value="reduccion_cooldown">⏱️ Reducción de Cooldown</option>
+            <option value="robo_vida">🩸 Robo de Vida</option>
+            <option value="velocidad_recarga">🔋 Velocidad de Recarga</option>
+        </select>
+        
+        <div class="sm:col-span-6 flex items-center gap-2">
+            <input type="number" name="ship_buff_value_${buffIndex}" 
+                   placeholder="Valor (%)" min="-100" max="500" step="0.1"
+                   class="flex-1 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-purple-500 text-sm">
+            <span class="text-gray-400 text-sm">%</span>
+        </div>
+        
+        <button type="button" onclick="this.closest('.ship-buff-row').remove()" 
+                class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    `;
+    container.appendChild(buffRow);
+    lucide.createIcons();
+}
+
         // Storage keys
         const STORAGE_KEYS = { 
             ships: 'pirate-ships-db', 
@@ -1836,44 +2144,213 @@ function populateEnemySelect(selectId) {
         }
         
         // ============================================
+// FUNCIÓN PARA ICONOS DE CLASE DE COMPONENTE
+// ============================================
+
+function getComponentClassIcon(componentClass) {
+    const icons = {
+        'cañon': '🔫',
+        'misil': '🚀',
+        'perforador': '🔩',
+        'rayo_termico': '🔥',
+        'cañon_largo_alcance': '🎯',
+        'bomba_agresion': '💣',
+        'carga_ataque': '⚡',
+        'ataque_orbital': '🛸',
+        'bomba_lapa': '🧨',
+        'haz_electrico': '⚡',
+        'recolector': '📦',
+        'reparador': '🔧',
+        'telerreparador': '📡',
+        'campo_reparacion': '🛠️',
+        'protector': '🛡️',
+        'resurrector': '❤️',
+        'picador': '⛏️',
+        'torre_reparacion': '🏥',
+        'impulsor': '🚀',
+        'acelerador': '⚡',
+        'desacelerador': '🐌',
+        'salto_cuantico': '🌀',
+        'escudo': '🛡️',
+        'señuelo': '🎭',
+        'paralizador': '💥',
+        'señal_interferencia': '📡',
+        'inversor_daño': '🔄',
+        'droide_reflector': '🔮',
+        'absorvedor_alcance': '🌐',
+        'mira': '🎯',
+        'droide_ataque': '🤖',
+        'torre_ataque': '🏰',
+        'mina': '💣',
+        'trampa_magnetica': '🧲',
+        'nube_corrosiva': '☠️',
+        'aura_conducta': '✨'
+    };
+    return icons[componentClass] || '⚙️';
+}
+
+// ============================================
+// GESTIÓN DE BUFFS EN BLINDAJES
+// ============================================
+
+/**
+ * Agrega un buff a un blindaje específico
+ */
+function addArmorBuff(armorIndex) {
+    const container = document.querySelector(`.armor-buffs-container[data-armor-index="${armorIndex}"]`);
+    if (!container) return;
+    
+    const buffIndex = container.children.length + 1;
+    const buffRow = document.createElement('div');
+    buffRow.className = 'buff-row grid grid-cols-1 sm:grid-cols-12 gap-2 mb-2';
+    buffRow.innerHTML = `
+        <select name="armor_${armorIndex}_buff_type_${buffIndex}" 
+                class="sm:col-span-5 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500 text-sm">
+            <option value="">Tipo de buff...</option>
+            <option value="velocidad">🚀 Velocidad</option>
+            <option value="defensa">🛡️ Defensa</option>
+            <option value="ataque">⚔️ Ataque</option>
+            <option value="evasion">💨 Evasión</option>
+            <option value="resistencia">💪 Resistencia</option>
+            <option value="escudo">🔰 Escudo</option>
+            <option value="energia">⚡ Energía</option>
+        </select>
+        
+        <div class="sm:col-span-6 flex items-center gap-2">
+            <input type="number" name="armor_${armorIndex}_buff_value_${buffIndex}" 
+                   placeholder="Valor (%)" min="-100" max="100" step="0.1"
+                   class="flex-1 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500 text-sm">
+            <span class="text-gray-400">%</span>
+        </div>
+        
+        <button type="button" onclick="this.closest('.buff-row').remove()" 
+                class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    `;
+    container.appendChild(buffRow);
+    lucide.createIcons();
+}
+
+/**
+ * Llena los selectores de componentes con los componentes existentes
+ */
+function populateComponentSelects() {
+    const components = DB.components();
+    const selects = document.querySelectorAll('.component-select');
+    
+    selects.forEach(select => {
+        const currentValue = select.value;
+        select.innerHTML = '<option value="">Selecciona un componente...</option>';
+        
+        if (components.length === 0) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = '⚠️ No hay componentes creados aún';
+            option.disabled = true;
+            select.appendChild(option);
+            return;
+        }
+        
+        // Agrupar por categoría
+        const groupedComponents = {};
+        components.forEach(comp => {
+            const category = comp.category || 'sin_categoria';
+            if (!groupedComponents[category]) {
+                groupedComponents[category] = [];
+            }
+            groupedComponents[category].push(comp);
+        });
+        
+        // Crear optgroups
+        Object.keys(groupedComponents).forEach(category => {
+            const categoryLabels = {
+                basicos: '⚙️ Básicos',
+                tormenta: '⚡ Tormenta',
+                tanque: '🛡️ Tanque',
+                ingeniera: '🔧 Ingeniera',
+                paralizador: '💥 Paralizador',
+                sniper: '🎯 Sniper',
+                minadora: '⛏️ Minadora',
+                evento: '🎉 Evento',
+                especial: '✨ Especial',
+                sin_categoria: '📦 Sin Categoría'
+            };
+            
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = categoryLabels[category] || category;
+            
+            groupedComponents[category].forEach(comp => {
+                const option = document.createElement('option');
+                option.value = comp.id;
+                option.textContent = `${comp.name} (Lv${comp.level})`;
+                if (comp.id === currentValue) option.selected = true;
+                optgroup.appendChild(option);
+            });
+            
+            select.appendChild(optgroup);
+        });
+    });
+}
+
+        // ============================================
         // GESTIÓN DE BLINDAJES CON ICONOS
         // ============================================
         
         function addArmorField() {
-            armorCounter++;
-            const container = document.getElementById('armors-container');
-            const newRow = document.createElement('div');
-            newRow.className = 'armor-row grid grid-cols-1 sm:grid-cols-12 gap-3';
-            newRow.innerHTML = `
-                <input type="text" name="armor_name_${armorCounter}" placeholder="Nombre del blindaje" 
-                       class="sm:col-span-5 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
-                <input type="number" name="armor_level_${armorCounter}" placeholder="Nivel" min="1" 
-                       class="sm:col-span-2 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
-                
-                <div class="sm:col-span-2 relative">
-                    <div class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-                        <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'">
-                    </div>
-                    <input type="number" name="armor_price_${armorCounter}" placeholder="Compra" min="0" 
-                           class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+    armorCounter++;
+    const container = document.getElementById('armors-container');
+    const newRow = document.createElement('div');
+    newRow.className = 'armor-row p-4 bg-gray-800/50 rounded-lg border border-gray-700 mb-3';
+    newRow.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-3">
+            <input type="text" name="armor_name_${armorCounter}" placeholder="Nombre del blindaje" 
+                   class="sm:col-span-4 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+            
+            <input type="number" name="armor_level_${armorCounter}" placeholder="Nivel" min="1" 
+                   class="sm:col-span-2 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+            
+            <div class="sm:col-span-2">
+                <input type="number" name="armor_multiplier_${armorCounter}" placeholder="Mult." min="0.1" max="10" step="0.1" value="1.0"
+                       class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                <span class="text-xs text-gray-500">Ej: 1.5</span>
+            </div>
+            
+            <div class="sm:col-span-3">
+                <input type="number" name="armor_bonus_${armorCounter}" placeholder="Bono" min="0" value="0"
+                       class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                <span class="text-xs text-gray-500">Puntos +</span>
+            </div>
+            
+            <button type="button" onclick="removeArmorField(this)" 
+                    class="sm:col-span-1 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="relative">
+                <label class="block text-xs text-gray-400 mb-1">💰 Compra</label>
+                <div class="absolute left-3 top-8 flex items-center pointer-events-none">
+                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'">
                 </div>
-                
-                <div class="sm:col-span-2 relative">
-                    <div class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-                        <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4 opacity-70" onerror="this.style.display='none'">
-                    </div>
-                    <input type="number" name="armor_sell_${armorCounter}" placeholder="Venta" min="0" 
-                           class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500">
+                <input type="number" name="armor_price_${armorCounter}" placeholder="0" min="0" 
+                       class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+            </div>
+            
+            <div class="relative">
+                <label class="block text-xs text-gray-400 mb-1">💵 Venta</label>
+                <div class="absolute left-3 top-8 flex items-center pointer-events-none">
+                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4 opacity-70" onerror="this.style.display='none'">
                 </div>
-                
-                <button type="button" onclick="removeArmorField(this)" 
-                        class="sm:col-span-1 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-            `;
-            container.appendChild(newRow);
-            lucide.createIcons();
-        }
+                <input type="number" name="armor_sell_${armorCounter}" placeholder="0" min="0" 
+                       class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500">
+            </div>
+        </div>
+    `;
+    container.appendChild(newRow);
+    lucide.createIcons();
+}
         
         function removeArmorField(button) {
             button.closest('.armor-row').remove();
@@ -1912,22 +2389,72 @@ function populateEnemySelect(selectId) {
         // ============================================
         
         function addComponentSlot() {
-            componentSlotCounter++;
-            const container = document.getElementById('component-slots-container');
-            const newSlot = document.createElement('div');
-            newSlot.className = 'component-slot grid grid-cols-1 sm:grid-cols-12 gap-2';
-            newSlot.innerHTML = `
-                <span class="sm:col-span-1 flex items-center justify-center text-gray-400 font-bold">${componentSlotCounter}.</span>
-                <input type="text" name="slot_component_${componentSlotCounter}" placeholder="ID o nombre del componente" 
-                       class="sm:col-span-10 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500 text-sm">
-                <button type="button" onclick="removeComponentSlot(this)" 
-                        class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-            `;
-            container.appendChild(newSlot);
-            lucide.createIcons();
-        }
+    componentSlotCounter++;
+    const container = document.getElementById('component-slots-container');
+    const newSlot = document.createElement('div');
+    newSlot.className = 'component-slot grid grid-cols-1 sm:grid-cols-12 gap-2 mb-2';
+    newSlot.innerHTML = `
+        <span class="sm:col-span-1 flex items-center justify-center text-gray-400 font-bold">${componentSlotCounter}.</span>
+        
+        <select name="slot_component_type_${componentSlotCounter}" 
+                class="sm:col-span-10 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500 text-sm">
+            <option value="">Selecciona tipo de componente...</option>
+            <optgroup label="⚔️ Armas">
+                <option value="cañon">🔫 Cañón</option>
+                <option value="misil">🚀 Misil</option>
+                <option value="perforador">🔩 Perforador</option>
+                <option value="rayo_termico">🔥 Rayo Térmico</option>
+                <option value="cañon_largo_alcance">🎯 Cañón de Largo Alcance</option>
+                <option value="bomba_agresion">💣 Bomba de Agresión</option>
+                <option value="carga_ataque">⚡ Carga de Ataque</option>
+                <option value="ataque_orbital">🛸 Ataque Orbital</option>
+                <option value="bomba_lapa">🧨 Bomba Lapa</option>
+                <option value="haz_electrico">⚡ Haz Eléctrico</option>
+            </optgroup>
+            <optgroup label="🔧 Soporte">
+                <option value="recolector">📦 Recolector</option>
+                <option value="reparador">🔧 Reparador</option>
+                <option value="telerreparador">📡 Telereparador</option>
+                <option value="campo_reparacion">🛠️ Campo de Reparación</option>
+                <option value="protector">🛡️ Protector</option>
+                <option value="resurrector">❤️ Resurrector</option>
+                <option value="picador">⛏️ Picador</option>
+                <option value="torre_reparacion">🏥 Torre de Reparación</option>
+            </optgroup>
+            <optgroup label="🚀 Movilidad">
+                <option value="impulsor">🚀 Impulsor</option>
+                <option value="acelerador">⚡ Acelerador</option>
+                <option value="desacelerador">🐌 Desacelerador</option>
+                <option value="salto_cuantico">🌀 Salto Cuántico</option>
+            </optgroup>
+            <optgroup label="🛡️ Defensa">
+                <option value="escudo">🛡️ Escudo</option>
+                <option value="señuelo">🎭 Señuelo</option>
+                <option value="paralizador">💥 Paralizador</option>
+                <option value="señal_interferencia">📡 Señal de Interferencia</option>
+                <option value="inversor_daño">🔄 Inversor de Daño</option>
+                <option value="droide_reflector">🔮 Droide Reflector</option>
+                <option value="absorvedor_alcance">🌐 Absorbedor de Alcance</option>
+            </optgroup>
+            <optgroup label="🤖 Drones y Especiales">
+                <option value="mira">🎯 Mira</option>
+                <option value="droide_ataque">🤖 Droide de Ataque</option>
+                <option value="torre_ataque">🏰 Torre de Ataque</option>
+                <option value="mina">💣 Mina</option>
+                <option value="trampa_magnetica">🧲 Trampa Magnética</option>
+                <option value="nube_corrosiva">☠️ Nube Corrosiva</option>
+                <option value="aura_conducta">✨ Aura de Conducta</option>
+            </optgroup>
+        </select>
+        
+        <button type="button" onclick="removeComponentSlot(this)" 
+                class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    `;
+    container.appendChild(newSlot);
+    lucide.createIcons();
+}
         
         function removeComponentSlot(button) {
             button.closest('.component-slot').remove();
@@ -1935,13 +2462,24 @@ function populateEnemySelect(selectId) {
         }
         
         function renumberSlots() {
-            const slots = document.querySelectorAll('.component-slot');
-            slots.forEach((slot, index) => {
-                const span = slot.querySelector('span');
-                if (span) span.textContent = `${index + 1}.`;
-            });
-            componentSlotCounter = slots.length;
+    const slots = document.querySelectorAll('.component-slot');
+    slots.forEach((slot, index) => {
+        const span = slot.querySelector('span');
+        const select = slot.querySelector('select');
+        
+        if (span) span.textContent = `${index + 1}.`;
+        
+        // Actualizar el name del select para que coincida con el índice
+        if (select) {
+            const oldName = select.getAttribute('name');
+            if (oldName) {
+                const newName = `slot_component_type_${index + 1}`;
+                select.setAttribute('name', newName);
+            }
         }
+    });
+    componentSlotCounter = slots.length;
+}
         
         // ============================================
         // GESTIÓN DE RANURAS CORTEX CON ICONOS
@@ -2120,6 +2658,12 @@ function populateEnemySelect(selectId) {
                 clearImage2D();
                 clearModel3D();
                 
+                // Limpiar buffs de la nave
+const shipBuffsContainer = document.getElementById('ship-buffs-container');
+if (shipBuffsContainer) {
+    shipBuffsContainer.innerHTML = '';
+}
+
                 // Limpiar campos dinámicos de blindajes
                 const armorsContainer = document.getElementById('armors-container');
                 if (armorsContainer) {
@@ -2172,26 +2716,76 @@ function populateEnemySelect(selectId) {
                     `;
                 }
                 
+                
                 // Limpiar slots de componentes
-                const slotsContainer = document.getElementById('component-slots-container');
-                if (slotsContainer) {
-                    const firstChild = slotsContainer.querySelector('p');
-                    slotsContainer.innerHTML = '';
-                    if (firstChild) slotsContainer.appendChild(firstChild);
-                    
-                    const newSlot = document.createElement('div');
-                    newSlot.className = 'component-slot grid grid-cols-1 sm:grid-cols-12 gap-2';
-                    newSlot.innerHTML = `
-                        <span class="sm:col-span-1 flex items-center justify-center text-gray-400 font-bold">1.</span>
-                        <input type="text" name="slot_component_1" placeholder="ID o nombre del componente" 
-                               class="sm:col-span-10 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500 text-sm">
-                        <button type="button" onclick="removeComponentSlot(this)" 
-                                class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                        </button>
-                    `;
-                    slotsContainer.appendChild(newSlot);
-                }
+const slotsContainer = document.getElementById('component-slots-container');
+if (slotsContainer) {
+    const descriptionText = slotsContainer.querySelector('p');
+    slotsContainer.innerHTML = '';
+    if (descriptionText) slotsContainer.appendChild(descriptionText);
+    
+    componentSlotCounter = 1;
+    const newSlot = document.createElement('div');
+    newSlot.className = 'component-slot grid grid-cols-1 sm:grid-cols-12 gap-2';
+    newSlot.innerHTML = `
+        <span class="sm:col-span-1 flex items-center justify-center text-gray-400 font-bold">1.</span>
+        <select name="slot_component_type_1" 
+                class="sm:col-span-10 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500 text-sm">
+            <option value="">Selecciona tipo de componente...</option>
+            <optgroup label="⚔️ Armas">
+                <option value="cañon">🔫 Cañón</option>
+                <option value="misil">🚀 Misil</option>
+                <option value="perforador">🔩 Perforador</option>
+                <option value="rayo_termico">🔥 Rayo Térmico</option>
+                <option value="cañon_largo_alcance">🎯 Cañón de Largo Alcance</option>
+                <option value="bomba_agresion">💣 Bomba de Agresión</option>
+                <option value="carga_ataque">⚡ Carga de Ataque</option>
+                <option value="ataque_orbital">🛸 Ataque Orbital</option>
+                <option value="bomba_lapa">🧨 Bomba Lapa</option>
+                <option value="haz_electrico">⚡ Haz Eléctrico</option>
+            </optgroup>
+            <optgroup label="🔧 Soporte">
+                <option value="recolector">📦 Recolector</option>
+                <option value="reparador">🔧 Reparador</option>
+                <option value="telerreparador">📡 Telereparador</option>
+                <option value="campo_reparacion">🛠️ Campo de Reparación</option>
+                <option value="protector">🛡️ Protector</option>
+                <option value="resurrector">❤️ Resurrector</option>
+                <option value="picador">⛏️ Picador</option>
+                <option value="torre_reparacion">🏥 Torre de Reparación</option>
+            </optgroup>
+            <optgroup label="🚀 Movilidad">
+                <option value="impulsor">🚀 Impulsor</option>
+                <option value="acelerador">⚡ Acelerador</option>
+                <option value="desacelerador">🐌 Desacelerador</option>
+                <option value="salto_cuantico">🌀 Salto Cuántico</option>
+            </optgroup>
+            <optgroup label="🛡️ Defensa">
+                <option value="escudo">🛡️ Escudo</option>
+                <option value="señuelo">🎭 Señuelo</option>
+                <option value="paralizador">💥 Paralizador</option>
+                <option value="señal_interferencia">📡 Señal de Interferencia</option>
+                <option value="inversor_daño">🔄 Inversor de Daño</option>
+                <option value="droide_reflector">🔮 Droide Reflector</option>
+                <option value="absorvedor_alcance">🌐 Absorbedor de Alcance</option>
+            </optgroup>
+            <optgroup label="🤖 Drones y Especiales">
+                <option value="mira">🎯 Mira</option>
+                <option value="droide_ataque">🤖 Droide de Ataque</option>
+                <option value="torre_ataque">🏰 Torre de Ataque</option>
+                <option value="mina">💣 Mina</option>
+                <option value="trampa_magnetica">🧲 Trampa Magnética</option>
+                <option value="nube_corrosiva">☠️ Nube Corrosiva</option>
+                <option value="aura_conducta">✨ Aura de Conducta</option>
+            </optgroup>
+        </select>
+        <button type="button" onclick="removeComponentSlot(this)" 
+                class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    `;
+    slotsContainer.appendChild(newSlot);
+}
                 
                 // Limpiar ranuras Cortex
                 const cortexContainer = document.getElementById('cortex-slots-container');
@@ -2256,20 +2850,32 @@ function populateEnemySelect(selectId) {
                 }
                 
                 // Limpiar campos específicos de componentes
+                // Limpiar campos específicos de componentes
 if (type === 'components') {
     compRequirementCounter = 1;
     clearCompImage2D();
     clearCompModel3D();
+    
+    // 🔥 RESETEAR NOMBRE Y CLASE
+    const nameInput = document.getElementById('component-name');
+    const classSelect = document.getElementById('component-class');
+    const levelInput = document.getElementById('component-level');
+    const systemInput = document.getElementById('component-system');
+    
+    if (nameInput) nameInput.value = '';
+    if (classSelect) classSelect.value = '';
+    if (levelInput) levelInput.value = '';
+    if (systemInput) systemInput.value = '';
     
     const compReqsContainer = document.getElementById('comp-requirements-container');
     if (compReqsContainer) {
         compReqsContainer.innerHTML = `
             <div class="comp-requirement-row grid grid-cols-1 sm:grid-cols-12 gap-3">
                 <input type="text" name="comp_requirement_item_1" 
-                       placeholder="Nombre del plano/componente requerido" 
-                       class="sm:col-span-9 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-red-500">
+                    placeholder="Nombre del plano/componente requerido" 
+                    class="sm:col-span-9 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-red-500">
                 <input type="number" name="comp_requirement_amount_1" placeholder="Cantidad" min="1" 
-                       class="sm:col-span-2 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-red-500">
+                    class="sm:col-span-2 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-red-500">
                 <button type="button" onclick="removeCompRequirementField(this)" 
                         class="sm:col-span-1 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -2277,6 +2883,13 @@ if (type === 'components') {
             </div>
         `;
     }
+}
+
+                // Llenar selectores de componentes si es el formulario de naves
+if (type === 'ships') {
+    setTimeout(() => {
+        populateComponentSelects();
+    }, 100);
 }
 
                 lucide.createIcons();
@@ -2290,6 +2903,10 @@ if (type === 'components') {
         function handleAddShip(event) {
             event.preventDefault();
             const data = new FormData(event.target);
+
+            // 🔥 DETECTAR SI ESTAMOS EDITANDO
+            const editingShipId = data.get('editingShipId');
+            const isEditing = !!editingShipId;
             
             // Obtener clases seleccionadas
             const selectedClasses = [];
@@ -2297,23 +2914,45 @@ if (type === 'components') {
                 selectedClasses.push(checkbox.value);
             });
             
-            // Obtener blindajes dinámicos con precio de venta
-            const armors = [];
-            for (let i = 1; i <= armorCounter; i++) {
-                const name = data.get(`armor_name_${i}`);
-                const level = data.get(`armor_level_${i}`);
-                const price = data.get(`armor_price_${i}`);
-                const sellPrice = data.get(`armor_sell_${i}`);
-                if (name && name.trim() !== '') {
-                    armors.push({
-                        name: sanitizeText(name),
-                        level: safeNumber(level, 1),
-                        price: safeNumber(price, 0),
-                        sellPrice: safeNumber(sellPrice, 0)
-                    });
-                }
-                
+            // Obtener buffs de la nave
+            const shipBuffs = [];
+            let buffIndex = 1;
+            while (true) {
+            const buffType = data.get(`ship_buff_type_${buffIndex}`);
+            const buffValue = data.get(`ship_buff_value_${buffIndex}`);
+            
+            if (!buffType && !buffValue) break; // No hay más buffs
+            
+            if (buffType && buffValue) {
+                shipBuffs.push({
+                    type: sanitizeText(buffType),
+                    value: safeNumber(buffValue, 0)
+                });
             }
+            buffIndex++;
+            }
+
+            // Obtener blindajes con multiplicador y bono (SIN buffs aquí)
+        const armors = [];
+        for (let i = 1; i <= armorCounter; i++) {
+            const name = data.get(`armor_name_${i}`);
+            const level = data.get(`armor_level_${i}`);
+            const price = data.get(`armor_price_${i}`);
+            const sellPrice = data.get(`armor_sell_${i}`);
+            const multiplier = data.get(`armor_multiplier_${i}`);
+            const bonus = data.get(`armor_bonus_${i}`);
+            
+            if (name && name.trim() !== '') {
+                armors.push({
+                    name: sanitizeText(name),
+                    level: safeNumber(level, 1),
+                    price: safeNumber(price, 0),
+                    sellPrice: safeNumber(sellPrice, 0),
+                    multiplier: safeNumber(multiplier, 1),
+                    bonus: safeNumber(bonus, 0)
+                });
+            }
+            }   
             
             // Obtener requisitos de descifrado
             const requirements = [];
@@ -2335,33 +2974,41 @@ if (type === 'components') {
                 if (value) componentSlots.push(sanitizeText(value));
             });
             
+            // Obtener tipos de componentes para slots
+const componentSlotTypes = [];
+document.querySelectorAll('[name^="slot_component_type_"]').forEach(select => {
+    const value = select.value.trim();
+    if (value) componentSlotTypes.push(sanitizeText(value));
+});
+
             // Obtener ranuras Cortex con precios escalonados
-            const cortexSlots = [];
-            for (let i = 1; i <= cortexSlotCounter; i++) {
-                const buyPrice = data.get(`cortex_slot_price_${i}`);
-                const sellPrice = data.get(`cortex_slot_sell_${i}`);
-                if (buyPrice && safeNumber(buyPrice, 0) > 0) {
-                    cortexSlots.push({
-                        slot: i,
-                        buyPrice: safeNumber(buyPrice, 0),
-                        sellPrice: safeNumber(sellPrice, 0)
-                    });
-                }
-            }
+
+const cortexSlots = [];
+for (let i = 1; i <= cortexSlotCounter; i++) {
+    const buyPrice = data.get(`cortex_slot_price_${i}`);
+    const sellPrice = data.get(`cortex_slot_sell_${i}`);
+    if (buyPrice !== null && buyPrice !== '') {
+        cortexSlots.push({
+            slot: i,
+            buyPrice: safeNumber(buyPrice, 0),
+            sellPrice: safeNumber(sellPrice, 0)
+        });
+    }
+}
             
-            // Obtener ranuras Drones con precios escalonados
-            const droneSlots = [];
-            for (let i = 1; i <= droneSlotCounter; i++) {
-                const buyPrice = data.get(`drone_slot_price_${i}`);
-                const sellPrice = data.get(`drone_slot_sell_${i}`);
-                if (buyPrice && safeNumber(buyPrice, 0) > 0) {
-                    droneSlots.push({
-                        slot: i,
-                        buyPrice: safeNumber(buyPrice, 0),
-                        sellPrice: safeNumber(sellPrice, 0)
-                    });
-                }
-            }
+            // Obtener ranuras Drones (incluso si cuestan 0)
+const droneSlots = [];
+for (let i = 1; i <= droneSlotCounter; i++) {
+    const buyPrice = data.get(`drone_slot_price_${i}`);
+    const sellPrice = data.get(`drone_slot_sell_${i}`);
+    if (buyPrice !== null && buyPrice !== '') {
+        droneSlots.push({
+            slot: i,
+            buyPrice: safeNumber(buyPrice, 0),
+            sellPrice: safeNumber(sellPrice, 0)
+        });
+    }
+}
 
             // 🔥 OBTENER IMAGEN 2D (Base64 o URL)
             let image2D = document.getElementById('image2d-data').value; // Base64
@@ -2379,6 +3026,7 @@ if (type === 'components') {
                 id: generateUniqueId('ship-'),
                 name: sanitizeText(data.get('name')),
                 classes: selectedClasses,
+                shipBuffs: shipBuffs,
                 level: safeNumber(data.get('level'), 1),
                 system: sanitizeText(data.get('system')),
                 
@@ -2392,7 +3040,7 @@ if (type === 'components') {
                 
                 // Componentes
                 componentSlots: safeNumber(data.get('componentSlots'), 0),
-                slotComponents: componentSlots,
+                slotComponents: componentSlotTypes,
                 
                 // Economía básica
                 crionita: safeNumber(data.get('crionita'), 0),
@@ -2406,6 +3054,8 @@ if (type === 'components') {
                 // Costos misceláneos
                 paintCost: safeNumber(data.get('paintCost'), 0),
                 renameCost: safeNumber(data.get('renameCost'), 0),
+                configCost: safeNumber(data.get('configCost'), 0),     
+                repairCost: safeNumber(data.get('repairCost'), 0),
                 
                 // Obtención
                 obtainMethod: sanitizeText(data.get('obtainMethod')),
@@ -2437,8 +3087,35 @@ if (type === 'components') {
             }
             
             const ships = DB.ships();
-            ships.push(ship);
-            DB.save('ships', ships);
+            // 🔥 DETECTAR MODO EDICIÓN
+if (isEditing) {
+    // ACTUALIZAR nave existente
+    const index = ships.findIndex(s => s.id === editingShipId);
+    if (index !== -1) {
+        // Mantener el ID original y actualizar el resto
+        ships[index] = { ...ship, id: editingShipId };
+        notify(`Nave "${ship.name}" actualizada exitosamente`, 'success');
+    } else {
+        notify('Error: Nave no encontrada para editar', 'error');
+        return;
+    }
+    
+    // Limpiar input oculto de edición
+    const hiddenInput = event.target.querySelector('[name="editingShipId"]');
+    if (hiddenInput) hiddenInput.remove();
+    
+    // Restaurar título del formulario
+    const formTitle = document.querySelector('#ships-form h3');
+    formTitle.innerHTML = `
+        <i data-lucide="plus-circle" class="w-5 h-5"></i>Agregar Nueva Nave
+    `;
+} else {
+    // CREAR nave nueva
+    ships.push(ship);
+    notify(`Nave "${ship.name}" agregada exitosamente`, 'success');
+}
+
+DB.save('ships', ships);
             
             event.target.reset();
             armorCounter = 1;
@@ -2451,7 +3128,7 @@ if (type === 'components') {
             toggleForm('ships');
             notify(`Nave "${ship.name}" agregada exitosamente`, 'success');
             loadShips();
-        }
+            }
         
         // Contador para requisitos de componentes
 let compRequirementCounter = 1;
@@ -2522,6 +3199,91 @@ function clearCompImage() {
 }
 
 // ============================================
+// MANEJO DE IMÁGENES 2D DE COMPONENTES
+// ============================================
+
+function handleCompImage2DUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+        notify('El archivo debe ser una imagen', 'error');
+        return;
+    }
+    
+    if (file.size > 2 * 1024 * 1024) {
+        notify('La imagen no debe superar 2MB', 'warning');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const base64 = e.target.result;
+        document.getElementById('comp-image2d-data').value = base64;
+        document.getElementById('comp-image2d-preview-img').src = base64;
+        document.getElementById('comp-image2d-filename').textContent = file.name;
+        document.getElementById('comp-image2d-preview').classList.remove('hidden');
+        notify('Imagen de componente cargada', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearCompImage2D() {
+    const fileInput = document.getElementById('comp-image2d-file');
+    const dataInput = document.getElementById('comp-image2d-data');
+    const preview = document.getElementById('comp-image2d-preview');
+    
+    if (fileInput) fileInput.value = '';
+    if (dataInput) dataInput.value = '';
+    if (preview) preview.classList.add('hidden');
+    notify('Imagen eliminada', 'info');
+}
+
+// ============================================
+// MANEJO DE MODELOS 3D DE COMPONENTES
+// ============================================
+
+function handleCompModel3DUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const validExtensions = ['.glb', '.gltf'];
+    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    
+    if (!validExtensions.includes(fileExtension)) {
+        notify('El archivo debe ser GLB o GLTF', 'error');
+        return;
+    }
+    
+    if (file.size > 20 * 1024 * 1024) {
+        notify('El modelo no debe superar 20MB', 'warning');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const base64 = e.target.result;
+        document.getElementById('comp-model3d-data').value = base64;
+        document.getElementById('comp-model3d-filename').textContent = file.name;
+        document.getElementById('comp-model3d-size').textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+        document.getElementById('comp-model3d-info').classList.remove('hidden');
+        notify('Modelo 3D de componente cargado', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearCompModel3D() {
+    const fileInput = document.getElementById('comp-model3d-file');
+    const dataInput = document.getElementById('comp-model3d-data');
+    const info = document.getElementById('comp-model3d-info');
+    
+    if (fileInput) fileInput.value = '';
+    if (dataInput) dataInput.value = '';
+    if (info) info.classList.add('hidden');
+    notify('Modelo 3D eliminado', 'info');
+}
+
+// ============================================
 // HANDLER DE COMPONENTES ACTUALIZADO
 // ============================================
 
@@ -2543,14 +3305,22 @@ function handleAddComponent(event) {
     }
 
     // Obtener imagen (Base64 o URL)
-    let componentImage = document.getElementById('comp-image-data').value;
-    if (!componentImage) {
-        componentImage = data.get('comp_image_url') || '';
-    }
+    // 🔥 OBTENER IMAGEN 2D (Base64 o URL)
+let componentImage = document.getElementById('comp-image2d-data').value; // Base64
+if (!componentImage) {
+    componentImage = data.get('comp_image2D_url') || ''; // URL alternativa
+}
+
+// 🔥 OBTENER MODELO 3D (Base64 o URL)
+let componentModel = document.getElementById('comp-model3d-data').value; // Base64
+if (!componentModel) {
+    componentModel = data.get('comp_model3D_url') || ''; // URL alternativa
+}
     
     const component = {
         id: generateUniqueId('component-'),
-        name: sanitizeText(data.get('comp_name')),
+        name: sanitizeText(data.get('component_name')), // 🔥 CORREGIDO
+        componentClass: sanitizeText(data.get('component_class')), // 🔥 NUEVA LÍNEA
         level: safeNumber(data.get('comp_level'), 1),
         system: sanitizeText(data.get('comp_system')),
         
@@ -2579,6 +3349,7 @@ function handleAddComponent(event) {
         
         // Visuales
         image: componentImage,
+        model3D: componentModel,   
         description: sanitizeText(data.get('comp_description')),
         lore: sanitizeText(data.get('comp_lore'))
     };
@@ -2587,6 +3358,11 @@ function handleAddComponent(event) {
     if (!component.name || component.name.length < 3) {
         notify('El nombre debe tener al menos 3 caracteres', 'warning');
         return;
+    }
+
+    if (!component.componentClass) {
+    notify('Debes seleccionar una clase de componente', 'warning');
+    return;
     }
     
     if (!component.category) {
@@ -2693,6 +3469,18 @@ function handleAddComponent(event) {
                     ? ship.classes.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(', ')
                     : (ship.class || 'N/A');
                 
+                // Mostrar buffs de la nave
+const shipBuffsHTML = ship.shipBuffs && ship.shipBuffs.length > 0
+    ? `<div class="mt-2 text-xs flex flex-wrap gap-2">
+        <span class="text-purple-400 font-semibold">✨ Buffs:</span>
+        ${ship.shipBuffs.map(b => `
+            <span class="inline-flex items-center gap-1 bg-purple-500/10 px-2 py-1 rounded border border-purple-500/30">
+                ${b.type}: <span class="text-green-400">+${b.value}%</span>
+            </span>
+        `).join('')}
+       </div>`
+    : '';
+
                 const obtainMethodLabels = {
                     tienda: '🛒 Tienda',
                     mision: '📜 Misión',
@@ -2702,25 +3490,40 @@ function handleAddComponent(event) {
                     premium: '⭐ Premium'
                 };
                 
-                // Mostrar blindajes con iconos de Crionita
-                const armorsHTML = ship.armors && ship.armors.length > 0 
-                    ? `<div class="mt-2 text-xs flex flex-wrap gap-2">
-                        <span class="text-cyan-400 font-semibold">🛡️ Blindajes:</span>
-                        ${ship.armors.map(a => `
-                            <span class="inline-flex items-center gap-1 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/30">
-                                ${a.name} (Lv${a.level})
-                                <span class="inline-flex items-center gap-0.5">
-                                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3" onerror="this.style.display='none'">
-                                    ${formatNumber(a.price)}
-                                </span>
-                                ${a.sellPrice ? `<span class="text-green-400 inline-flex items-center gap-0.5">
-                                    → <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3 opacity-70" onerror="this.style.display='none'">
-                                    ${formatNumber(a.sellPrice)}
-                                </span>` : ''}
-                            </span>
-                        `).join('')}
-                       </div>`
-                    : '';
+                // Mostrar blindajes con multiplicador y bono (SIN buffs)
+// Mostrar blindajes (incluso si cuestan 0)
+const armorsHTML = ship.armors && ship.armors.length > 0 
+    ? `<div class="mt-2 text-xs flex flex-wrap gap-2">
+        <span class="text-cyan-400 font-semibold">🛡️ Blindajes:</span>
+        ${ship.armors.map(a => `
+            <span class="inline-flex items-center gap-1 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/30">
+                ${a.name} (Lv${a.level}) 
+                <span class="text-yellow-400">×${a.multiplier || 1}</span>
+                ${a.bonus ? `<span class="text-green-400">+${a.bonus}</span>` : ''}
+                <span class="inline-flex items-center gap-0.5">
+                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3" onerror="this.style.display='none'">
+                    ${a.price === 0 ? 'Gratis' : formatNumber(a.price)}
+                </span>
+                <span class="text-green-400 inline-flex items-center gap-0.5">
+                    → <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3 opacity-70" onerror="this.style.display='none'">
+                    ${a.sellPrice === 0 ? 'N/A' : formatNumber(a.sellPrice)}
+                </span>
+            </span>
+        `).join('')}
+       </div>`
+    : '';
+
+    // Mostrar tipos de componentes en slots
+const componentSlotsHTML = ship.slotComponents && ship.slotComponents.length > 0
+    ? `<div class="mt-2 text-xs flex flex-wrap gap-2">
+        <span class="text-yellow-400 font-semibold">🔧 Slots:</span>
+        ${ship.slotComponents.map((type, index) => `
+            <span class="inline-flex items-center gap-1 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/30">
+                ${index + 1}. ${type || 'Vacío'}
+            </span>
+        `).join('')}
+       </div>`
+    : '';
                 
                 // Mostrar ranuras Cortex con iconos
                 const cortexHTML = ship.cortexSlots && ship.cortexSlots.length > 0
@@ -2743,40 +3546,51 @@ function handleAddComponent(event) {
                     : '';
                 
                 // Mostrar ranuras Drones con iconos
-                const droneHTML = ship.droneSlots && ship.droneSlots.length > 0
-                    ? `<div class="mt-2 text-xs flex flex-wrap gap-2">
-                        <span class="text-purple-400 font-semibold">🤖 Drones:</span>
-                        ${ship.droneSlots.map(d => `
-                            <span class="inline-flex items-center gap-1 bg-purple-500/10 px-2 py-1 rounded border border-purple-500/30">
-                                Slot ${d.slot}:
-                                <span class="inline-flex items-center gap-0.5">
-                                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3" onerror="this.style.display='none'">
-                                    ${formatNumber(d.buyPrice)}
-                                </span>
-                                <span class="text-green-400 inline-flex items-center gap-0.5">
-                                    → <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3 opacity-70" onerror="this.style.display='none'">
-                                    ${formatNumber(d.sellPrice)}
-                                </span>
-                            </span>
-                        `).join('')}
-                       </div>`
-                    : '';
-                
-                // Mostrar costos misceláneos con iconos
-                const extraCostsHTML = (ship.paintCost || ship.renameCost)
-                    ? `<div class="mt-2 text-xs flex gap-3 flex-wrap">
-                        ${ship.paintCost ? `<span class="inline-flex items-center gap-1">
-                            🎨 Pintura: 
-                            <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3" onerror="this.style.display='none'">
-                            ${formatNumber(ship.paintCost)}
-                        </span>` : ''}
-                        ${ship.renameCost ? `<span class="inline-flex items-center gap-1">
-                            📝 Renombrar: 
-                            <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3" onerror="this.style.display='none'">
-                            ${formatNumber(ship.renameCost)}
-                        </span>` : ''}
-                       </div>`
-                    : '';
+                // Mostrar ranuras Drones (incluso si cuestan 0)
+const droneHTML = ship.droneSlots && ship.droneSlots.length > 0
+    ? `<div class="mt-2 text-xs flex flex-wrap gap-2">
+        <span class="text-purple-400 font-semibold">🤖 Drones:</span>
+        ${ship.droneSlots.map(d => `
+            <span class="inline-flex items-center gap-1 bg-purple-500/10 px-2 py-1 rounded border border-purple-500/30">
+                Slot ${d.slot}:
+                <span class="inline-flex items-center gap-0.5">
+                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3" onerror="this.style.display='none'">
+                    ${d.buyPrice === 0 ? 'Gratis' : formatNumber(d.buyPrice)}
+                </span>
+                <span class="text-green-400 inline-flex items-center gap-0.5">
+                    → <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3 opacity-70" onerror="this.style.display='none'">
+                    ${d.sellPrice === 0 ? 'N/A' : formatNumber(d.sellPrice)}
+                </span>
+            </span>
+        `).join('')}
+       </div>`
+    : '';
+
+                // Mostrar costos misceláneos con iconos (actualizado)
+const extraCostsHTML = (ship.paintCost !== undefined || ship.renameCost !== undefined || ship.configCost !== undefined || ship.repairCost !== undefined)
+    ? `<div class="mt-2 text-xs flex gap-3 flex-wrap">
+        ${ship.paintCost ? `<span class="inline-flex items-center gap-1">
+            🎨 Pintura: 
+            <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3" onerror="this.style.display='none'">
+            ${formatNumber(ship.paintCost)}
+        </span>` : ''}
+        ${ship.renameCost ? `<span class="inline-flex items-center gap-1">
+            📝 Renombrar: 
+            <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3" onerror="this.style.display='none'">
+            ${formatNumber(ship.renameCost)}
+        </span>` : ''}
+        ${ship.configCost ? `<span class="inline-flex items-center gap-1">
+            ⚙️ Config: 
+            <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-3 h-3" onerror="this.style.display='none'">
+            ${formatNumber(ship.configCost)}
+        </span>` : ''}
+        ${ship.repairCost ? `<span class="inline-flex items-center gap-1">
+            🔧 Reparación: 
+            <img src="/assets/currencies/Energy.png" alt="Energía" class="w-3 h-3" onerror="this.style.display='none'">
+            ${formatNumber(ship.repairCost)}
+        </span>` : ''}
+       </div>`
+    : '';
                 
                 return `
                     <div class="content-panel p-5 hover:border-blue-400 transition">
@@ -2804,7 +3618,7 @@ function handleAddComponent(event) {
                                 ${cortexHTML}
                                 ${droneHTML}
                                 
-                                ${ship.crionita || ship.oro || ship.sellPrice ? `
+                                ${(ship.crionita !== undefined || ship.oro !== undefined || ship.sellPrice !== undefined) ? `
                                     <div class="flex gap-4 mt-3 text-sm">
                                         ${ship.crionita ? `<div class="inline-flex items-center gap-1">
                                             <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'">
@@ -2834,6 +3648,30 @@ function handleAddComponent(event) {
                                 ${ship.requirements && ship.requirements.length > 0 ? `
                                     <p class="text-xs text-red-400 mt-1">🔒 Requisitos: ${ship.requirements.map(r => `${r.amount}x ${r.ship}`).join(', ')}</p>
                                 ` : ''}
+                                ${componentSlotsHTML}
+${shipBuffsHTML}
+
+${ship.description ? `
+    <div class="mt-3 p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+        <p class="text-xs font-semibold text-blue-400 mb-1">📝 Descripción</p>
+        <p class="text-xs text-gray-300">${sanitizeText(ship.description)}</p>
+    </div>
+` : ''}
+
+${ship.lore ? `
+    <div class="mt-2 p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+        <p class="text-xs font-semibold text-purple-400 mb-1">📖 Historia / Lore</p>
+        <p class="text-xs text-gray-300 line-clamp-3">${sanitizeText(ship.lore)}</p>
+    </div>
+` : ''}
+
+            ${ship.image2D || ship.model3D ? `
+                <div class="mt-2 flex gap-2 text-xs">
+                    ${ship.image2D ? '<span class="inline-flex items-center gap-1 text-indigo-400"><i data-lucide="image" class="w-3 h-3"></i>Imagen 2D</span>' : ''}
+                    ${ship.model3D ? '<span class="inline-flex items-center gap-1 text-indigo-400"><i data-lucide="box" class="w-3 h-3"></i>Modelo 3D</span>' : ''}
+                </div>
+            ` : ''}
+
                             </div>
                             
                             <div class="flex gap-2 flex-shrink-0">
@@ -2856,9 +3694,296 @@ function handleAddComponent(event) {
         }
         
         function editShip(shipId) {
-            notify('Función de edición en desarrollo. Por ahora, elimina y crea una nueva nave.', 'info');
-        }
+            const ships = DB.ships();
+            const ship = ships.find(s => s.id === shipId);
+    
+            if (!ship) {
+                notify('Nave no encontrada', 'error');
+                return;
+            }
+    
+            // 1. Mostrar formulario
+            const form = document.getElementById('ships-form');
+            form.classList.remove('hidden');
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // 2. Cambiar título
+            const formTitle = form.querySelector('h3');
+            formTitle.innerHTML = `
+                <i data-lucide="edit" class="w-5 h-5 inline"></i>
+                Editando: ${sanitizeText(ship.name)}
+            `;
+            
+            // 3. Agregar input oculto con ID de la nave
+            let hiddenInput = form.querySelector('[name="editingShipId"]');
+            if (!hiddenInput) {
+                hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'editingShipId';
+                form.querySelector('form').appendChild(hiddenInput);
+            }
+            hiddenInput.value = shipId;
+            
+            // 4. Llenar campos básicos
+            form.querySelector('[name="name"]').value = ship.name || '';
+            form.querySelector('[name="level"]').value = ship.level || 1;
+            form.querySelector('[name="system"]').value = ship.system || '';
+            form.querySelector('[name="armorIndex"]').value = ship.armorIndex || 0;
+            form.querySelector('[name="speed"]').value = ship.speed || 0;
+            form.querySelector('[name="performance"]').value = ship.performance || '';
+            form.querySelector('[name="componentSlots"]').value = ship.componentSlots || 0;
+            form.querySelector('[name="crionita"]').value = ship.crionita || 0;
+            form.querySelector('[name="oro"]').value = ship.oro || 0;
+            form.querySelector('[name="sellPrice"]').value = ship.sellPrice || 0;
+            form.querySelector('[name="paintCost"]').value = ship.paintCost || 0;
+            form.querySelector('[name="renameCost"]').value = ship.renameCost || 0;
+            form.querySelector('[name="configCost"]').value = ship.configCost || 0;
+            form.querySelector('[name="repairCost"]').value = ship.repairCost || 0;
+            form.querySelector('[name="obtainMethod"]').value = ship.obtainMethod || '';
+            form.querySelector('[name="obtainLocation"]').value = ship.obtainLocation || '';
+            form.querySelector('[name="blueprintsRequired"]').value = ship.blueprintsRequired || 0;
+            form.querySelector('[name="description"]').value = ship.description || '';
+            form.querySelector('[name="lore"]').value = ship.lore || '';
+            form.querySelector('[name="image2D_url"]').value = (ship.image2D && !ship.image2D.startsWith('data:')) ? ship.image2D : '';
+            form.querySelector('[name="model3D_url"]').value = (ship.model3D && !ship.model3D.startsWith('data:')) ? ship.model3D : '';
+            
+            // 5. Marcar clases seleccionadas
+            form.querySelectorAll('[name="classes"]').forEach(checkbox => {
+                checkbox.checked = ship.classes && ship.classes.includes(checkbox.value);
+            });
+            
+            // 6. Recrear buffs de la nave
+            const shipBuffsContainer = document.getElementById('ship-buffs-container');
+            shipBuffsContainer.innerHTML = '';
+            if (ship.shipBuffs && ship.shipBuffs.length > 0) {
+                ship.shipBuffs.forEach((buff, index) => {
+                    const buffIndex = index + 1;
+                    const buffRow = document.createElement('div');
+                    buffRow.className = 'ship-buff-row grid grid-cols-1 sm:grid-cols-12 gap-2 mb-2';
+                    buffRow.innerHTML = `
+                        <select name="ship_buff_type_${buffIndex}" 
+                                class="sm:col-span-5 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-purple-500 text-sm">
+                            <option value="">Selecciona tipo de buff...</option>
+                            <option value="velocidad" ${buff.type === 'velocidad' ? 'selected' : ''}>🚀 Velocidad</option>
+                            <option value="defensa" ${buff.type === 'defensa' ? 'selected' : ''}>🛡️ Defensa</option>
+                            <option value="ataque" ${buff.type === 'ataque' ? 'selected' : ''}>⚔️ Ataque</option>
+                            <option value="hp" ${buff.type === 'hp' ? 'selected' : ''}>❤️ HP</option>
+                            <option value="escudo" ${buff.type === 'escudo' ? 'selected' : ''}>🔰 Escudo</option>
+                            <option value="energia" ${buff.type === 'energia' ? 'selected' : ''}>⚡ Energía</option>
+                            <option value="regeneracion" ${buff.type === 'regeneracion' ? 'selected' : ''}>💚 Regeneración</option>
+                            <option value="evasion" ${buff.type === 'evasion' ? 'selected' : ''}>💨 Evasión</option>
+                            <option value="precision" ${buff.type === 'precision' ? 'selected' : ''}>🎯 Precisión</option>
+                            <option value="alcance" ${buff.type === 'alcance' ? 'selected' : ''}>📏 Alcance</option>
+                            <option value="critico" ${buff.type === 'critico' ? 'selected' : ''}>💥 Crítico</option>
+                            <option value="resistencia" ${buff.type === 'resistencia' ? 'selected' : ''}>💪 Resistencia</option>
+                            <option value="velocidad_disparo" ${buff.type === 'velocidad_disparo' ? 'selected' : ''}>⚡ Velocidad de Disparo</option>
+                            <option value="reduccion_cooldown" ${buff.type === 'reduccion_cooldown' ? 'selected' : ''}>⏱️ Reducción de Cooldown</option>
+                            <option value="robo_vida" ${buff.type === 'robo_vida' ? 'selected' : ''}>🩸 Robo de Vida</option>
+                            <option value="velocidad_recarga" ${buff.type === 'velocidad_recarga' ? 'selected' : ''}>🔋 Velocidad de Recarga</option>
+                        </select>
+                        
+                        <div class="sm:col-span-6 flex items-center gap-2">
+                            <input type="number" name="ship_buff_value_${buffIndex}" 
+                                value="${buff.value || 0}"
+                                placeholder="Valor (%)" min="-100" max="500" step="0.1"
+                                class="flex-1 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-purple-500 text-sm">
+                            <span class="text-gray-400 text-sm">%</span>
+                        </div>
+                        
+                        <button type="button" onclick="this.closest('.ship-buff-row').remove()" 
+                                class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    `;
+                    shipBuffsContainer.appendChild(buffRow);
+                });
+            }
+            
+            // 7. Recrear blindajes
+            const armorsContainer = document.getElementById('armors-container');
+            armorsContainer.innerHTML = '';
+            armorCounter = 0;
+            if (ship.armors && ship.armors.length > 0) {
+                ship.armors.forEach((armor, index) => {
+                    armorCounter = index + 1;
+                    const armorRow = document.createElement('div');
+                    armorRow.className = 'armor-row p-4 bg-gray-800/50 rounded-lg border border-gray-700 mb-3';
+                    armorRow.innerHTML = `
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-3">
+                            <input type="text" name="armor_name_${armorCounter}" value="${sanitizeText(armor.name || '')}" placeholder="Nombre" 
+                                class="sm:col-span-4 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                            <input type="number" name="armor_level_${armorCounter}" value="${armor.level || 1}" placeholder="Nivel" min="1" 
+                                class="sm:col-span-2 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                            <div class="sm:col-span-2">
+                                <input type="number" name="armor_multiplier_${armorCounter}" value="${armor.multiplier || 1}" placeholder="Mult." min="0.1" max="10" step="0.1"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                                <span class="text-xs text-gray-500">Ej: 1.5</span>
+                            </div>
+                            <div class="sm:col-span-3">
+                                <input type="number" name="armor_bonus_${armorCounter}" value="${armor.bonus || 0}" placeholder="Bono" min="0"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                                <span class="text-xs text-gray-500">Puntos +</span>
+                            </div>
+                            <button type="button" onclick="removeArmorField(this)" 
+                                    class="sm:col-span-1 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="relative">
+                                <label class="block text-xs text-gray-400 mb-1">💰 Compra</label>
+                                <div class="absolute left-3 top-8 flex items-center pointer-events-none">
+                                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'">
+                                </div>
+                                <input type="number" name="armor_price_${armorCounter}" value="${armor.price || 0}" placeholder="0" min="0" 
+                                    class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                            </div>
+                            <div class="relative">
+                                <label class="block text-xs text-gray-400 mb-1">💵 Venta</label>
+                                <div class="absolute left-3 top-8 flex items-center pointer-events-none">
+                                    <img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4 opacity-70" onerror="this.style.display='none'">
+                                </div>
+                                <input type="number" name="armor_sell_${armorCounter}" value="${armor.sellPrice || 0}" placeholder="0" min="0" 
+                                    class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500">
+                            </div>
+                        </div>
+                    `;
+                    armorsContainer.appendChild(armorRow);
+                });
+            } else {
+                armorCounter = 1;
+                armorsContainer.innerHTML = `<div class="armor-row p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-3">
+                        <input type="text" name="armor_name_1" placeholder="Nombre del blindaje" class="sm:col-span-4 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                        <input type="number" name="armor_level_1" placeholder="Nivel" min="1" class="sm:col-span-2 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500">
+                        <div class="sm:col-span-2"><input type="number" name="armor_multiplier_1" placeholder="Mult." min="0.1" max="10" step="0.1" value="1.0" class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500"><span class="text-xs text-gray-500">Ej: 1.5</span></div>
+                        <div class="sm:col-span-3"><input type="number" name="armor_bonus_1" placeholder="Bono" min="0" value="0" class="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500"><span class="text-xs text-gray-500">Puntos +</span></div>
+                        <button type="button" onclick="removeArmorField(this)" class="sm:col-span-1 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="relative"><label class="block text-xs text-gray-400 mb-1">💰 Compra</label><div class="absolute left-3 top-8 flex items-center pointer-events-none"><img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'"></div><input type="number" name="armor_price_1" placeholder="0" min="0" class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500"></div>
+                        <div class="relative"><label class="block text-xs text-gray-400 mb-1">💵 Venta</label><div class="absolute left-3 top-8 flex items-center pointer-events-none"><img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4 opacity-70" onerror="this.style.display='none'"></div><input type="number" name="armor_sell_1" placeholder="0" min="0" class="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500"></div>
+                    </div>
+                </div>`;
+            }
+            
+            // 8. Recrear slots de componentes
+            const slotsContainer = document.getElementById('component-slots-container');
+            const firstChild = slotsContainer.querySelector('p');
+            slotsContainer.innerHTML = '';
+            if (firstChild) slotsContainer.appendChild(firstChild);
+            componentSlotCounter = 0;
+            if (ship.slotComponents && ship.slotComponents.length > 0) {
+                ship.slotComponents.forEach((type, index) => {
+                    componentSlotCounter = index + 1;
+                    const slotDiv = document.createElement('div');
+                    slotDiv.className = 'component-slot grid grid-cols-1 sm:grid-cols-12 gap-2';
+                    slotDiv.innerHTML = `
+                        <span class="sm:col-span-1 flex items-center justify-center text-gray-400 font-bold">${componentSlotCounter}.</span>
+                        <select name="slot_component_type_${componentSlotCounter}" class="sm:col-span-10 px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500 text-sm">
+                            <option value="">Selecciona tipo...</option>
+                            <optgroup label="⚔️ Armas">
+                                <option value="cañon" ${type === 'cañon' ? 'selected' : ''}>🔫 Cañón</option>
+                                <option value="misil" ${type === 'misil' ? 'selected' : ''}>🚀 Misil</option>
+                                <option value="perforador" ${type === 'perforador' ? 'selected' : ''}>🔩 Perforador</option>
+                            </optgroup>
+                            <optgroup label="🔧 Soporte">
+                                <option value="reparador" ${type === 'reparador' ? 'selected' : ''}>🔧 Reparador</option>
+                                <option value="escudo" ${type === 'escudo' ? 'selected' : ''}>🛡️ Escudo</option>
+                            </optgroup>
+                        </select>
+                        <button type="button" onclick="removeComponentSlot(this)" class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    `;
+                    slotsContainer.appendChild(slotDiv);
+                });
+            }
+            
+            // 9. Recrear Cortex slots
+            const cortexContainer = document.getElementById('cortex-slots-container');
+            cortexContainer.innerHTML = '';
+            cortexSlotCounter = 0;
+            if (ship.cortexSlots && ship.cortexSlots.length > 0) {
+                ship.cortexSlots.forEach((slot, index) => {
+                    cortexSlotCounter = index + 1;
+                    const slotDiv = document.createElement('div');
+                    slotDiv.className = 'cortex-slot grid grid-cols-1 sm:grid-cols-12 gap-2';
+                    slotDiv.innerHTML = `
+                        <span class="sm:col-span-1 flex items-center justify-center text-cyan-400 font-bold">${cortexSlotCounter}.</span>
+                        <div class="sm:col-span-5 relative">
+                            <div class="absolute left-2 top-1/2 -translate-y-1/2 flex items-center pointer-events-none"><img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'"></div>
+                            <input type="number" name="cortex_slot_price_${cortexSlotCounter}" value="${slot.buyPrice || 0}" placeholder="Compra" min="0" class="w-full pl-8 pr-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500 text-sm">
+                        </div>
+                        <div class="sm:col-span-5 relative">
+                            <div class="absolute left-2 top-1/2 -translate-y-1/2 flex items-center pointer-events-none"><img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4 opacity-70" onerror="this.style.display='none'"></div>
+                            <input type="number" name="cortex_slot_sell_${cortexSlotCounter}" value="${slot.sellPrice || 0}" placeholder="Venta" min="0" class="w-full pl-8 pr-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500 text-sm">
+                        </div>
+                        <button type="button" onclick="removeCortexSlot(this)" class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    `;
+                    cortexContainer.appendChild(slotDiv);
+                });
+            }
+            
+            // 10. Recrear Drone slots
+            const droneContainer = document.getElementById('drone-slots-container');
+            droneContainer.innerHTML = '';
+            droneSlotCounter = 0;
+            if (ship.droneSlots && ship.droneSlots.length > 0) {
+                ship.droneSlots.forEach((slot, index) => {
+                    droneSlotCounter = index + 1;
+                    const slotDiv = document.createElement('div');
+                    slotDiv.className = 'drone-slot grid grid-cols-1 sm:grid-cols-12 gap-2';
+                    slotDiv.innerHTML = `
+                        <span class="sm:col-span-1 flex items-center justify-center text-purple-400 font-bold">${droneSlotCounter}.</span>
+                        <div class="sm:col-span-5 relative">
+                            <div class="absolute left-2 top-1/2 -translate-y-1/2 flex items-center pointer-events-none"><img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4" onerror="this.style.display='none'"></div>
+                            <input type="number" name="drone_slot_price_${droneSlotCounter}" value="${slot.buyPrice || 0}" placeholder="Compra" min="0" class="w-full pl-8 pr-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-purple-500 text-sm">
+                        </div>
+                        <div class="sm:col-span-5 relative">
+                            <div class="absolute left-2 top-1/2 -translate-y-1/2 flex items-center pointer-events-none"><img src="/assets/currencies/crionita.png" alt="Crionita" class="w-4 h-4 opacity-70" onerror="this.style.display='none'"></div>
+                            <input type="number" name="drone_slot_sell_${droneSlotCounter}" value="${slot.sellPrice || 0}" placeholder="Venta" min="0" class="w-full pl-8 pr-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-green-500 text-sm">
+                        </div>
+                        <button type="button" onclick="removeDroneSlot(this)" class="sm:col-span-1 px-2 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    `;
+                    droneContainer.appendChild(slotDiv);
+                });
+            }
+            
+            // 11. Recrear requisitos
+            const reqsContainer = document.getElementById('requirements-container');
+            reqsContainer.innerHTML = '';
+            requirementCounter = 0;
+            if (ship.requirements && ship.requirements.length > 0) {
+                ship.requirements.forEach((req, index) => {
+                    requirementCounter = index + 1;
+                    const reqRow = document.createElement('div');
+                    reqRow.className = 'requirement-row grid grid-cols-1 sm:grid-cols-12 gap-3';
+                    reqRow.innerHTML = `
+                        <input type="text" name="requirement_ship_${requirementCounter}" value="${sanitizeText(req.ship || '')}" placeholder="Nombre de nave/plano requerido" class="sm:col-span-9 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-red-500">
+                        <input type="number" name="requirement_amount_${requirementCounter}" value="${req.amount || 1}" placeholder="Cantidad" min="1" class="sm:col-span-2 px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-red-500">
+                        <button type="button" onclick="removeRequirementField(this)" class="sm:col-span-1 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 rounded text-red-400 border border-red-500/50 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    `;
+                    reqsContainer.appendChild(reqRow);
+                });
+            }
+            
+            // Actualizar iconos
+            lucide.createIcons();
+            notify(`Editando nave: ${ship.name}`, 'info');
+            }
         
+        function cancelEditShip() {
+    const hiddenInput = document.querySelector('[name="editingShipId"]');
+    if (hiddenInput) hiddenInput.remove();
+    
+    const formTitle = document.querySelector('#ships-form h3');
+    formTitle.innerHTML = `
+        <i data-lucide="plus-circle" class="w-5 h-5 inline"></i>Agregar Nueva Nave
+    `;
+    
+    lucide.createIcons();
+    toggleForm('ships');
+}
+
         function loadComponents() {
     console.log('[Admin Panel] loadComponents iniciado');
     const container = document.getElementById('components-list');
@@ -2935,7 +4060,15 @@ function handleAddComponent(event) {
                         
                         <div class="flex-1">
                             <div class="flex items-center gap-3 mb-2 flex-wrap">
-                                <h3 class="font-bold text-green-300 text-lg">${sanitizeText(comp.name)}</h3>
+    <h3 class="font-bold text-green-300 text-lg">
+        ${comp.componentClass ? getComponentClassIcon(comp.componentClass) : '⚙️'} 
+        ${sanitizeText(comp.name)}
+    </h3>
+    ${comp.componentClass ? `
+        <span class="px-2 py-1 rounded text-xs bg-yellow-500/20 text-yellow-400 border border-yellow-500/50">
+            ${comp.componentClass.replace('_', ' ')}
+        </span>
+    ` : ''}
                                 <span class="px-2 py-1 rounded text-xs bg-green-500/20 text-green-400 border border-green-500/50">
                                     Nivel ${comp.level}
                                 </span>
@@ -3018,8 +4151,30 @@ function handleAddComponent(event) {
     console.log('[Admin Panel] loadComponents completado');
 }
 
-function editComponent(componentId) {
-    notify('Función de edición en desarrollo. Por ahora, elimina y crea un nuevo componente.', 'info');
+        function editComponent(componentId) {
+    const components = DB.components();
+    const comp = components.find(c => c.id === componentId);
+    
+    if (!comp) {
+        notify('Componente no encontrado', 'error');
+        return;
+    }
+    
+    // Mostrar formulario
+    const form = document.getElementById('components-form');
+    form.classList.remove('hidden');
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
+    // Llenar campos básicos
+    document.getElementById('component-name').value = comp.name || '';
+    document.getElementById('component-class').value = comp.componentClass || '';
+    document.getElementById('component-level').value = comp.level || 1;
+    document.getElementById('component-system').value = comp.system || '';
+    
+    // ... llenar resto de campos (categoría, tipo, precios, etc.)
+    
+    notify(`Editando componente: ${comp.name}`, 'info');
+    lucide.createIcons();
 }
         
         function loadPlanets() {
@@ -3124,7 +4279,7 @@ function editComponent(componentId) {
             };
             
             if (!confirm(`¿Estás seguro de eliminar ${typeLabels[type]} "${item.name || item.id}"?
-Esta acción no se puede deshacer.`)) {
+            Esta acción no se puede deshacer.`)) {
                 return;
             }
             
@@ -3371,6 +4526,15 @@ Esta acción no se puede deshacer.`)) {
 
         input[type="number"] {
             -moz-appearance: textfield;
+        }
+        
+        /* 🔥 TRUNCAR TEXTO LARGO */
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 

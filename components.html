@@ -11,7 +11,36 @@
 </head>
 <body class="bg-gray-950 text-gray-100">
 
-    <!-- Header -->
+    <!-- Header --><section class="admin-tab admin-tab--components">
+  <header class="admin-tab__header">
+    <h2>Componentes</h2>
+    <p>Organiza y crea equipamiento modular para las naves.</p>
+  </header>
+
+  <div class="admin-tab__grid">
+    <article class="admin-card">
+      <header class="admin-card__header">
+        <h3>Listado de componentes</h3>
+      </header>
+      <div
+        class="admin-card__body"
+        data-region="components-list"
+      >
+        <p class="placeholder">Cargando componentes...</p>
+      </div>
+    </article>
+
+    <article class="admin-card">
+      <header class="admin-card__header">
+        <h3>Nuevo / editar componente</h3>
+      </header>
+      <div
+        class="admin-card__body"
+        data-partial="components-form"
+      ></div>
+    </article>
+  </div>
+</section>
     <div id="header-placeholder"></div>
 
     <!-- Main Content -->
