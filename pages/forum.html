@@ -1,0 +1,320 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Foro Comunitario</title>
+    <meta name="description" content="Foro de GalaxWiki - Comparte estrategias, preguntas y conecta con otros jugadores de Pirate Galaxy.">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { corePlugins: { preflight: false } }
+    </script>
+    <script src="../js/components/footer-component.js"></script>
+    <style>
+        .forum-hero {
+            background: linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.1) 100%);
+            border: 1px solid rgba(102,126,234,0.2);
+            border-radius: 20px;
+            padding: 32px 28px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .forum-hero-icon {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; color: white; flex-shrink: 0;
+        }
+        .forum-stats-bar {
+            display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 24px;
+        }
+        .forum-stat {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 20px;
+            display: flex; align-items: center; gap: 12px;
+            flex: 1; min-width: 150px;
+        }
+        .forum-stat-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+        }
+        .forum-stat-value { font-size: 22px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+        .forum-stat-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .category-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px 22px;
+            display: flex; align-items: center; gap: 18px;
+            text-decoration: none; color: inherit;
+            margin-bottom: 14px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 16px var(--shadow-color);
+            position: relative; overflow: hidden;
+        }
+        .category-card::before {
+            content: '';
+            position: absolute; left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 4px 0 0 4px;
+            opacity: 0.6; transition: opacity 0.25s;
+        }
+        .category-card:hover { border-color: rgba(102,126,234,0.4); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(102,126,234,0.15); }
+        .category-card:hover::before { opacity: 1; }
+        .category-card-icon {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+            border: 1px solid rgba(102,126,234,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: #a78bfa; flex-shrink: 0;
+        }
+        .category-card-body { flex: 1; min-width: 0; }
+        .category-card-title { font-size: 17px; font-weight: 700; color: var(--text-primary); margin: 0 0 4px 0; }
+        .category-card-desc { font-size: 13px; color: var(--text-secondary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .category-card-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+        .category-stat-pill {
+            font-size: 11px; font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+        .category-stat-threads { background: rgba(102,126,234,0.15); color: #a78bfa; }
+        .category-stat-posts { background: rgba(34,197,94,0.12); color: #4ade80; }
+        .category-card-arrow { color: var(--text-tertiary); font-size: 14px; flex-shrink: 0; transition: transform 0.2s; }
+        .category-card:hover .category-card-arrow { transform: translateX(4px); color: var(--accent); }
+
+        .forum-section-title {
+            font-size: 13px; font-weight: 700;
+            color: var(--text-tertiary);
+            text-transform: uppercase; letter-spacing: 1.5px;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .skeleton-cat { height: 82px; border-radius: 16px; margin-bottom: 14px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="wiki/tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="wiki/ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="wiki/builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="wiki/components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="wiki/enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="wiki/systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="wiki/missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="wiki/misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="wiki/calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="forum.html" class="nav-link active"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <!-- Hero section -->
+        <div class="forum-hero">
+            <div class="forum-hero-icon"><i class="fas fa-comments"></i></div>
+            <div>
+                <h1 class="page-title" style="margin-bottom: 6px;">Foro Comunitario</h1>
+                <p class="page-subtitle" style="margin-bottom: 0;">Comparte estrategias, pide ayuda y conecta con otros jugadores de Pirate Galaxy.</p>
+            </div>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="forum-stats-bar" id="forumStatsBar" style="display: none;">
+            <div class="forum-stat">
+                <div class="forum-stat-icon" style="background: rgba(102,126,234,0.15); color: #a78bfa;"><i class="fas fa-layer-group"></i></div>
+                <div>
+                    <div class="forum-stat-value" id="statCategories">—</div>
+                    <div class="forum-stat-label">Categorías</div>
+                </div>
+            </div>
+            <div class="forum-stat">
+                <div class="forum-stat-icon" style="background: rgba(59,130,246,0.15); color: #60a5fa;"><i class="fas fa-comments"></i></div>
+                <div>
+                    <div class="forum-stat-value" id="statThreads">—</div>
+                    <div class="forum-stat-label">Hilos</div>
+                </div>
+            </div>
+            <div class="forum-stat">
+                <div class="forum-stat-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;"><i class="fas fa-reply"></i></div>
+                <div>
+                    <div class="forum-stat-value" id="statPosts">—</div>
+                    <div class="forum-stat-label">Respuestas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories section -->
+        <div class="forum-section-title"><i class="fas fa-layer-group me-2"></i>Categorías</div>
+        <div id="forumCategories"></div>
+        <div id="forumEmpty" class="empty-state" style="display: none; padding: 60px 24px;">
+            <i class="fas fa-comments" style="font-size: 48px; color: var(--accent); margin-bottom: 16px; display: block;"></i>
+            <p><strong>El foro aún no tiene categorías.</strong></p>
+            <p style="color: var(--text-secondary); font-size: 14px;">El administrador puede crearlas desde el panel admin.</p>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/header-auth.js"></script>
+    <script>
+        (function() {
+            function showSkeletons() {
+                const container = document.getElementById('forumCategories');
+                container.innerHTML = Array(4).fill('<div class="skeleton-base skeleton skeleton-cat"></div>').join('');
+            }
+
+            async function loadForum() {
+                const container = document.getElementById('forumCategories');
+                const emptyEl = document.getElementById('forumEmpty');
+                showSkeletons();
+
+                const db = window.db;
+                if (!db) {
+                    container.innerHTML = '<div class="empty-state">Error: Firebase no inicializado. Revisa la configuración.</div>';
+                    return;
+                }
+
+                try {
+                    const snap = await db.collection('forum_categories').get();
+
+                    if (snap.empty) {
+                        container.innerHTML = '';
+                        emptyEl.style.display = 'block';
+                        return;
+                    }
+
+                    const categories = [];
+                    snap.forEach(doc => {
+                        const d = doc.data();
+                        categories.push({ id: doc.id, ...d });
+                    });
+                    categories.sort((a, b) => (a.order || 999) - (b.order || 999));
+
+                    // Update stats bar
+                    document.getElementById('statCategories').textContent = categories.length;
+                    document.getElementById('forumStatsBar').style.display = 'flex';
+
+                    // Load thread counts per category (in parallel)
+                    const threadCounts = await Promise.all(
+                        categories.map(cat =>
+                            db.collection('forum_threads').where('categoryId', '==', cat.id).get()
+                                .then(s => ({ id: cat.id, count: s.size, totalPosts: s.docs.reduce((acc, d) => acc + (d.data().postCount || 0), 0) }))
+                                .catch(() => ({ id: cat.id, count: 0, totalPosts: 0 }))
+                        )
+                    );
+
+                    const countMap = {};
+                    let totalThreads = 0, totalPosts = 0;
+                    threadCounts.forEach(tc => {
+                        countMap[tc.id] = tc;
+                        totalThreads += tc.count;
+                        totalPosts += tc.totalPosts;
+                    });
+
+                    document.getElementById('statThreads').textContent = totalThreads;
+                    document.getElementById('statPosts').textContent = totalPosts;
+
+                    container.innerHTML = '';
+                    categories.forEach(cat => {
+                        const tc = countMap[cat.id] || { count: 0, totalPosts: 0 };
+                        const icon = cat.icon || 'fa-comments';
+                        const card = document.createElement('a');
+                        card.href = `forum-thread-list.html?categoryId=${encodeURIComponent(cat.id)}`;
+                        card.className = 'category-card';
+                        card.innerHTML = `
+                            <div class="category-card-icon"><i class="fas ${icon}"></i></div>
+                            <div class="category-card-body">
+                                <div class="category-card-title">${(cat.name || 'Categoría').replace(/</g, '&lt;')}</div>
+                                <p class="category-card-desc">${(cat.description || 'Sin descripción').replace(/</g, '&lt;')}</p>
+                            </div>
+                            <div class="category-card-stats">
+                                <span class="category-stat-pill category-stat-threads"><i class="fas fa-comments me-1"></i>${tc.count} hilo${tc.count !== 1 ? 's' : ''}</span>
+                                <span class="category-stat-pill category-stat-posts"><i class="fas fa-reply me-1"></i>${tc.totalPosts} respuesta${tc.totalPosts !== 1 ? 's' : ''}</span>
+                            </div>
+                            <i class="fas fa-chevron-right category-card-arrow"></i>
+                        `;
+                        container.appendChild(card);
+                    });
+
+                } catch (e) {
+                    console.error('Error cargando foro:', e);
+                    let msg = 'Error al cargar el foro. ';
+                    if (e.code === 'permission-denied') msg += 'Permisos insuficientes.';
+                    else if (e.code === 'unavailable') msg += 'Servicio no disponible.';
+                    else msg += 'Inténtalo de nuevo más tarde.';
+                    container.innerHTML = `<div class="empty-state">${msg}</div>`;
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', loadForum);
+            } else {
+                loadForum();
+            }
+        })();
+    </script>
+</body>
+</html>

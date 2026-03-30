@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Favoritos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="wiki/tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="wiki/ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="wiki/builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="wiki/components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="wiki/enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="wiki/systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="wiki/missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="wiki/misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="wiki/calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <h1 class="page-title"><i class="fas fa-star me-2"></i>Favoritos</h1>
+        <p class="page-subtitle">Naves, componentes, enemigos, pinturas, planetas y sistemas que guardaste.</p>
+
+        <div id="favoritesLoading" class="empty-state" style="padding: 60px 24px;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: var(--accent); margin-bottom: 16px;"></i>
+            <p>Cargando...</p>
+        </div>
+        <div id="favoritesGuest" class="empty-state" style="padding: 60px 24px; display: none;">
+            <i class="fas fa-lock" style="font-size: 48px; color: var(--accent); margin-bottom: 16px;"></i>
+            <p><strong>Inicia sesión</strong></p>
+            <p>Para guardar y ver favoritos necesitas estar registrado.</p>
+            <a href="../login.html" class="btn-header btn-register" style="margin-top: 16px; display: inline-block;">Iniciar sesión</a>
+        </div>
+
+        <div id="favoritesContent" style="display: none;">
+            <div class="section-tabs mb-3" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;">
+                <button class="section-tab active" data-type="all"><i class="fas fa-th-list me-1"></i> Todos</button>
+                <button class="section-tab" data-type="ship"><i class="fas fa-space-shuttle me-1"></i> Naves</button>
+                <button class="section-tab" data-type="component"><i class="fas fa-cog me-1"></i> Componentes</button>
+                <button class="section-tab" data-type="enemy"><i class="fas fa-skull me-1"></i> Enemigos</button>
+                <button class="section-tab" data-type="paint"><i class="fas fa-palette me-1"></i> Pinturas</button>
+                <button class="section-tab" data-type="drone"><i class="fas fa-satellite-dish me-1"></i> Drones</button>
+                <button class="section-tab" data-type="cortex"><i class="fas fa-brain me-1"></i> Cortex</button>
+                <button class="section-tab" data-type="graviton"><i class="fas fa-gem me-1"></i> Gravitones</button>
+                <button class="section-tab" data-type="planet"><i class="fas fa-moon me-1"></i> Planetas</button>
+                <button class="section-tab" data-type="system"><i class="fas fa-globe me-1"></i> Sistemas</button>
+            </div>
+            <div id="favoritesList" class="favorites-list"></div>
+            <div id="favoritesEmpty" class="empty-state" style="display: none;">No tienes favoritos en esta categoría.</div>
+        </div>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/header-auth.js"></script>
+    <script src="../js/favorites.js"></script>
+    <script>
+        (function () {
+            const auth = window.auth;
+            const db = window.db;
+            let currentType = 'all';
+            let favoritesCache = [];
+            const typeLabels = { ship: 'Nave', component: 'Componente', enemy: 'Enemigo', paint: 'Pintura', drone: 'Drone', cortex: 'Cortex', graviton: 'Gravitón', planet: 'Planeta', system: 'Sistema' };
+            const typeLinks = {
+                ship: 'wiki/ships.html',
+                component: 'wiki/components.html',
+                enemy: 'wiki/enemies.html',
+                paint: 'wiki/components.html?tab=pinturas',
+                drone: 'wiki/components.html?tab=drones',
+                cortex: 'wiki/components.html?tab=cortex',
+                graviton: 'wiki/components.html?tab=gravitones',
+                planet: 'wiki/systems.html',
+                system: 'wiki/systems.html'
+            };
+
+            function renderFavorites(list) {
+                const container = document.getElementById('favoritesList');
+                const emptyEl = document.getElementById('favoritesEmpty');
+                if (!container) return;
+                
+                const filtered = currentType === 'all' ? list : list.filter(f => f.type === currentType);
+                favoritesCache = list;
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = '';
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+                emptyEl.style.display = 'none';
+                container.innerHTML = filtered.map(f => {
+                    const label = typeLabels[f.type] || f.type;
+                    const href = typeLinks[f.type] || '#';
+                    const name = (f.name || f.entityId || 'Sin nombre').substring(0, 60);
+                    return `<div class="favorite-item" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <a href="${href}" class="favorite-item-link" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+                            <span class="favorite-item-type" style="font-size: 11px; text-transform: uppercase; color: var(--accent); font-weight: bold;">${label}</span>
+                            <span class="favorite-item-name">${name}</span>
+                        </a>
+                        <button type="button" class="btn-remove-fav" data-type="${f.type}" data-id="${f.entityId}" title="Quitar de favoritos" style="background: none; border: none; color: var(--text-tertiary); cursor: pointer; padding: 5px;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>`;
+                }).join('');
+                
+                container.querySelectorAll('.btn-remove-fav').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const type = btn.dataset.type;
+                        const id = btn.dataset.id;
+                        if (typeof removeFavorite === 'function') {
+                            const r = await removeFavorite(type, id);
+                            if (r && r.ok) loadFavorites();
+                        }
+                    });
+                });
+            }
+
+            async function loadFavorites() {
+                const loading = document.getElementById('favoritesLoading');
+                const guest = document.getElementById('favoritesGuest');
+                const content = document.getElementById('favoritesContent');
+                
+                if (loading) loading.style.display = 'none';
+                if (!auth || !auth.currentUser) {
+                    if (guest) guest.style.display = 'block';
+                    return;
+                }
+                if (guest) guest.style.display = 'none';
+                if (content) content.style.display = 'block';
+                
+                if (typeof getFavorites === 'function') {
+                    const list = await getFavorites();
+                    renderFavorites(list);
+                }
+            }
+
+            document.querySelectorAll('.section-tab[data-type]').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.section-tab[data-type]').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentType = tab.dataset.type;
+                    renderFavorites(favoritesCache);
+                });
+            });
+
+            function init() {
+                if (!auth) {
+                    if (document.getElementById('favoritesLoading')) document.getElementById('favoritesLoading').style.display = 'none';
+                    if (document.getElementById('favoritesGuest')) document.getElementById('favoritesGuest').style.display = 'block';
+                    return;
+                }
+                auth.onAuthStateChanged(function (user) {
+                    if (user) loadFavorites();
+                    else {
+                        if (document.getElementById('favoritesLoading')) document.getElementById('favoritesLoading').style.display = 'none';
+                        if (document.getElementById('favoritesGuest')) document.getElementById('favoritesGuest').style.display = 'block';
+                        if (document.getElementById('favoritesContent')) document.getElementById('favoritesContent').style.display = 'none';
+                    }
+                });
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+            else init();
+        })();
+    </script>
+</body>
+</html>

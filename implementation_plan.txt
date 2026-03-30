@@ -1,0 +1,35 @@
+Phase 2: Admin Panel Fixes & Data Population Plan
+This phase focuses on fixing the usability issues in the Admin Panel (form submissions and navigation) and populating the wiki with initial real data to provide a better user experience.
+
+Proposed Strategy
+Form Submission Fix: Convert all admin forms to use standard HTML5 submission (type="submit" and 
+submit
+ event listeners) to enable the "Enter" key for saving.
+Sidebar Navigation Fix: Ensure the "Opciones Seleccionables" dropdown works correctly by verifying CSS and JS.
+Data Population: Use a Python script to inject a baseline of real Pirate Galaxy data (Ships, Components, Maps) into Firestore.
+Proposed Changes
+[Admin Panel]
+[MODIFY] 
+dashboard.html
+Form Submission Refactor:
+Update all 
+form
+ save buttons from type="button" to type="submit".
+Replace inline onclick="submit...()" with document.getElementById('...').addEventListener('submit', ...) in the <script> section.
+This ensures the "Enter" key works universally across the admin panel.
+Sidebar Toggle Fix:
+Verify and fix the optionsToggle logic if necessary.
+Ship Slot Logic:
+Ensure the dynamic slot generation remains robust after the form refactor.
+[Data Utility]
+[NEW] 
+inject_real_data.py
+A Python script using firebase-admin to inject:
+Base Ship Types and Factions.
+Initial set of Vega-system Ships and Components.
+Basic Map structure for major planets.
+Verification Plan
+Manual Verification
+Form Submission: Open any admin form (e.g., ships), fill in the data, and press "Enter" to verify it saves correctly.
+Sidebar Dropdown: Click "Opciones Seleccionables" and verify the sub-menu expands and contains all expected links.
+Data Integrity: Verify that the injected data from inject_real_data.py appears correctly in both the Admin Panel and the Wiki pages.

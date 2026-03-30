@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Sistemas</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            }
+        }
+    </script>
+    <script src="../../js/components/footer-component.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link active"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <h1 class="page-title"><i class="fas fa-globe me-2"></i>Sistemas y Planetas</h1>
+        <p class="page-subtitle">Sistemas estelares y planetas de Pirate Galaxy. Nivel, recursos, mapas y descripción.</p>
+
+        <div class="section-tabs">
+            <button class="section-tab active" data-tab="systems"><i class="fas fa-globe me-1"></i> Sistemas</button>
+            <button class="section-tab" data-tab="planets"><i class="fas fa-moon me-1"></i> Planetas</button>
+            <button class="section-tab" data-tab="servers"><i class="fas fa-clock me-1"></i> Hora servidores</button>
+            <button class="section-tab" data-tab="conquest"><i class="fas fa-flag me-1"></i> Conquista</button>
+            <button class="section-tab" data-tab="sirius" style="background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(236,72,153,0.1)); border: 1px solid rgba(168,85,247,0.3); color: #c084fc;"><i class="fas fa-star me-1"></i> Singularidad Sirius</button>
+        </div>
+
+        <div class="filters-bar" id="systemsFiltersBar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <input id="searchInput" type="text" class="search-input" placeholder="Buscar por nombre o descripción..." style="flex: 1; min-width: 200px;">
+            <div class="view-toggle">
+                <button type="button" class="btn-toggle active" data-view="grid" title="Vista Cuadrícula"><i class="fas fa-th"></i></button>
+                <button type="button" class="btn-toggle" data-view="list" title="Vista Lista"><i class="fas fa-list"></i></button>
+            </div>
+        </div>
+
+        <div id="systemsPanel" class="tab-panel active">
+            <div class="items-grid" id="systemsGrid"></div>
+            <div id="systemsEmpty" class="empty-state" style="display: none;">No hay sistemas registrados todavía.</div>
+        </div>
+
+        <div id="planetsPanel" class="tab-panel">
+            <div class="items-grid" id="planetsGrid"></div>
+            <div id="planetsEmpty" class="empty-state" style="display: none;">No hay planetas registrados todavía.</div>
+        </div>
+
+        <div id="serversPanel" class="tab-panel">
+            <p class="page-subtitle" style="margin-bottom: 16px;">Hora actual por servidor (según zona horaria configurada en el panel admin).</p>
+            <div id="serversTimeList" class="items-grid" style="display: block;"></div>
+            <div id="serversEmpty" class="empty-state" style="display: none;">No hay servidores configurados. Añádelos en Panel Admin → Contenido (genérico) → Servidores.</div>
+        </div>
+
+        <!-- Sirius Panel -->
+        <div id="siriusPanel" class="tab-panel">
+            <div id="siriusHeaderSection" style="background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(236,72,153,0.08)); border: 1px solid rgba(168,85,247,0.3); border-radius: 14px; padding: 24px; margin-bottom: 24px;">
+                <div style="display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap;">
+                    <div style="font-size: 48px;">🌀</div>
+                    <div style="flex: 1;">
+                        <h2 style="margin: 0 0 8px; font-size: 24px; background: linear-gradient(135deg, #c084fc, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">Singularidad Sirius</h2>
+                        <p id="siriusDesc" style="color: var(--text-secondary); font-size: 14px; line-height: 1.7; margin: 0;"></p>
+                    </div>
+                </div>
+                <div id="siriusInfoGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 20px;"></div>
+            </div>
+
+            <!-- Dynamic content from admin panel will be injected into this grid if they add extra info/stat blocks -->
+            <div id="siriusExtraInfoGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px;"></div>
+
+            <!-- Planetas de Sirius (Anillos) -->
+            <h3 style="margin: 0 0 16px; color: var(--text-primary); font-size: 18px;"><i class="fas fa-moon me-2" style="color: #c084fc;"></i>Anillos de Singularidad Sirius</h3>
+            <div id="siriusPlanetsGrid" class="items-grid"></div>
+            <div id="siriusPlanetsEmpty" class="empty-state" style="display: none;">No hay planetas de Singularidad Sirius registrados. Agrégalos desde el Panel Admin.</div>
+        </div>
+
+        <div id="conquestPanel" class="tab-panel">
+            <div class="conquest-controls" style="margin-bottom: 20px;">
+                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <label for="conquestServerFilter" style="font-weight: 600; color: var(--text-primary); margin: 0;">
+                        <i class="fas fa-server me-2"></i>Servidor:
+                    </label>
+                    <select id="conquestServerFilter" class="form-control" style="width: auto; min-width: 150px;">
+                        <option value="">Todos los servidores</option>
+                    </select>
+                    <label for="conquestSortFilter" style="font-weight: 600; color: var(--text-primary); margin: 0;">
+                        <i class="fas fa-sort me-2"></i>Ordenar por:
+                    </label>
+                    <select id="conquestSortFilter" class="form-control" style="width: auto; min-width: 150px;">
+                        <option value="date">Próximo más cercano</option>
+                        <option value="server">Servidor</option>
+                        <option value="planet">Planeta</option>
+                    </select>
+                    <input type="text" id="conquestSearch" class="form-control" placeholder="Buscar planeta..." style="width: auto; min-width: 200px;">
+                </div>
+            </div>
+            
+            <div class="conquest-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: center;">
+                    <div style="font-size: 24px; font-weight: bold; color: #667eea;" id="conquestTotalCount">0</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Total Conquistas</div>
+                </div>
+                <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: center;">
+                    <div style="font-size: 24px; font-weight: bold; color: #10B981;" id="conquestTodayCount">0</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Hoy</div>
+                </div>
+                <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: center;">
+                    <div style="font-size: 24px; font-weight: bold; color: #F59E0B;" id="conquestWeekCount">0</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Esta Semana</div>
+                </div>
+                <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: center;">
+                    <div style="font-size: 24px; font-weight: bold; color: #8B5CF6;" id="conquestServerCount">0</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Servidores</div>
+                </div>
+            </div>
+            
+            <div id="conquestList" class="conquest-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
+            <div id="conquestEmpty" class="empty-state" style="display: none;">No hay horarios de conquista. Configúralos en Panel Admin → Contenido (genérico) → Conquista por servidor.</div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/header-auth.js"></script>
+    <script src="../../js/favorites.js"></script>
+    <script>
+        let allSystems = [];
+        let allPlanets = [];
+        let allServers = [];
+        let allConquest = [];
+        let systemMap = {};
+
+        function filterItems(items, search) {
+            if (!search) return items;
+            const s = search.toLowerCase();
+            return items.filter(item => {
+                const name = (item.name || '').toLowerCase();
+                const desc = (item.description || '').toLowerCase();
+                const systemId = (item.systemId || '').toLowerCase();
+                const systemName = (systemMap[item.systemId] || '').toLowerCase();
+                const resources = Array.isArray(item.resources) ? item.resources.join(' ').toLowerCase() : '';
+                return name.includes(s) || desc.includes(s) || systemId.includes(s) || systemName.includes(s) || resources.includes(s);
+            });
+        }
+
+        function renderSystems() {
+            const grid = document.getElementById('systemsGrid');
+            const emptyState = document.getElementById('systemsEmpty');
+            const filtered = filterItems(allSystems, document.getElementById('searchInput').value);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            emptyState.style.display = 'none';
+            grid.innerHTML = '';
+
+            filtered.forEach(item => {
+                const created = item.createdAt && item.createdAt.toDate ? item.createdAt.toDate().toLocaleDateString() : '';
+                const levelRange = item.levelMin != null || item.levelMax != null ? `Nivel ${item.levelMin ?? '?'} - ${item.levelMax ?? '?'}` : '';
+                const planetCount = allPlanets.filter(p => (p.systemId || '') === item.id || (p.systemId || '').toLowerCase() === (item.name || '').toLowerCase()).length;
+                const card = document.createElement('article');
+                card.className = 'item-card';
+                card.style.position = 'relative';
+                const sysNameEsc = (item.name || 'Sin nombre').replace(/"/g, '&quot;');
+                card.innerHTML = `
+                    <button type="button" class="btn-fav" data-type="system" data-id="${item.id}" data-name="${sysNameEsc}" title="Añadir a favoritos" style="position:absolute; top:8px; right:8px; z-index:2; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; color:var(--accent); cursor:pointer; padding:6px 10px;"><i class="far fa-star"></i></button>
+                    ${item.mapImage ? `<img class="system-map" src="${item.mapImage}" alt="${item.name || 'Mapa'}">` : ''}
+                    <div class="item-header"><div class="item-name">${item.name || 'Sin nombre'}</div></div>
+                    <div class="item-meta">${levelRange ? `<span><i class="fas fa-signal me-1"></i>${levelRange}</span>` : ''}</div>
+                    ${item.description ? `<p class="item-description">${item.description}</p>` : ''}
+                    <div class="item-footer" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>${created ? `Actualizado: ${created}` : ''}</span>
+                        <a href="system-detail.html?systemId=${encodeURIComponent(item.id)}" class="btn-header btn-register" style="padding:6px 12px; font-size:13px;"><i class="fas fa-moon me-1"></i>Ver planetas (${planetCount})</a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderPlanets() {
+            const grid = document.getElementById('planetsGrid');
+            const emptyState = document.getElementById('planetsEmpty');
+            const filtered = filterItems(allPlanets, document.getElementById('searchInput').value);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            emptyState.style.display = 'none';
+            grid.innerHTML = '';
+
+            filtered.forEach(item => {
+                const created = item.createdAt && item.createdAt.toDate ? item.createdAt.toDate().toLocaleDateString() : '';
+                const levelRange = item.levelMin != null || item.levelMax != null ? `Nivel ${item.levelMin ?? '?'} - ${item.levelMax ?? '?'}` : '';
+                const resources = Array.isArray(item.resources) && item.resources.length ? item.resources.join(', ') : '';
+                const img = item.planetImage || item.image || '';
+                const card = document.createElement('article');
+                card.className = 'item-card';
+                card.style.cursor = 'pointer';
+                card.onclick = () => location.href = 'planet-detail.html?id=' + encodeURIComponent(item.id);
+                const planetNameEsc = (item.name || 'Sin nombre').replace(/"/g, '&quot;');
+                const systemName = systemMap[item.systemId] || item.systemId || 'Desconocido';
+                card.innerHTML = `
+                    <button type="button" class="btn-fav" data-type="planet" data-id="${item.id}" data-name="${planetNameEsc}" title="Añadir a favoritos" style="position:absolute; top:8px; right:8px; z-index:2; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; color:var(--accent); cursor:pointer; padding:6px 10px;"><i class="far fa-star"></i></button>
+                    ${img ? `<img class="planet-image" src="${img}" alt="${item.name || 'Planeta'}">` : ''}
+                    <div class="item-header"><div class="item-name">${item.name || 'Sin nombre'}</div></div>
+                    <div class="item-meta">
+                        ${item.systemId ? `<span><i class="fas fa-globe me-1"></i>${systemName}</span>` : ''}
+                        ${levelRange ? `<span>${levelRange}</span>` : ''}
+                    </div>
+                    ${resources ? `<div class="item-meta"><span><i class="fas fa-gem me-1"></i>${resources}</span></div>` : ''}
+                    ${item.description ? `<p class="item-description">${item.description}</p>` : ''}
+                    <div class="item-footer">${created ? `Actualizado: ${created}` : ''} <i class="fas fa-external-link-alt" style="margin-left:8px; font-size:12px;"></i></div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderAll() {
+            renderSystems();
+            renderPlanets();
+        }
+
+        function renderServersTime() {
+            const list = document.getElementById('serversTimeList');
+            const empty = document.getElementById('serversEmpty');
+            if (allServers.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+            empty.style.display = 'none';
+            list.innerHTML = '';
+            allServers.forEach(s => {
+                let timeStr = '—';
+                try {
+                    const tz = (s.timezone || 'UTC').trim();
+                    timeStr = new Date().toLocaleTimeString('es-ES', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                } catch (e) {
+                    timeStr = new Date().toUTCString().split(' ')[4] || '—';
+                }
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.style.minWidth = '200px';
+                card.innerHTML = '<div class="item-header"><div class="item-name">' + (s.name || 'Servidor') + '</div></div><div class="item-meta"><span><i class="fas fa-clock me-1"></i>' + timeStr + '</span></div><div class="item-meta" style="font-size:12px; color: var(--text-tertiary);">' + (s.timezone || 'UTC') + '</div>';
+                list.appendChild(card);
+            });
+        }
+
+        function getNextConquestDate(dayIndex, timeStr, serverTimezone = 'UTC') {
+            if (dayIndex === undefined || !timeStr) return null;
+            
+            // Current time in server's timezone
+            const now = new Date();
+            const serverDate = new Intl.DateTimeFormat('en-US', {
+                timeZone: serverTimezone,
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: false
+            }).formatToParts(now);
+            
+            const parts = {};
+            serverDate.forEach(p => parts[p.type] = p.value);
+            
+            const currentServerDate = new Date(`${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`);
+            const currentDay = currentServerDate.getDay();
+            
+            let daysUntil = (dayIndex - currentDay + 7) % 7;
+            
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            const targetTime = hours * 60 + minutes;
+            const currentTime = currentServerDate.getHours() * 60 + currentServerDate.getMinutes();
+            
+            if (daysUntil === 0 && targetTime <= currentTime) {
+                daysUntil = 7;
+            }
+            
+            const nextDate = new Date(currentServerDate);
+            nextDate.setDate(currentServerDate.getDate() + daysUntil);
+            nextDate.setHours(hours, minutes, 0, 0);
+            
+            // Convert back to user's local time (approximate but useful for display)
+            // For a perfectly accurate local time, we would need to handle offsets more carefully
+            return nextDate;
+        }
+
+        function renderConquest() {
+            const list = document.getElementById('conquestList');
+            const empty = document.getElementById('conquestEmpty');
+            const serverFilter = document.getElementById('conquestServerFilter').value;
+            const sortFilter = document.getElementById('conquestSortFilter').value;
+            const searchFilter = document.getElementById('conquestSearch').value.toLowerCase();
+            
+            const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+            
+            // Preparar datos con fechas próximas calculadas
+            let processed = allConquest.map(c => {
+                const server = allServers.find(s => s.id === c.serverId) || { timezone: 'UTC' };
+                const nextDate = getNextConquestDate(c.dayIndex, c.time, (server.timezone || 'UTC').trim());
+                return { ...c, nextConquestDate: nextDate };
+            });
+            
+            let filtered = processed;
+            
+            // Filtrar por servidor
+            if (serverFilter) {
+                filtered = filtered.filter(c => c.serverId === serverFilter);
+            }
+            
+            // Filtrar por búsqueda
+            if (searchFilter) {
+                filtered = filtered.filter(c => 
+                    (c.planetName || '').toLowerCase().includes(searchFilter) ||
+                    (c.serverId || '').toLowerCase().includes(searchFilter)
+                );
+            }
+            
+            // Ordenar por fecha próxima
+            if (sortFilter === 'date') {
+                filtered.sort((a, b) => {
+                    if (!a.nextConquestDate) return 1;
+                    if (!b.nextConquestDate) return -1;
+                    return a.nextConquestDate - b.nextConquestDate;
+                });
+            } else if (sortFilter === 'server') {
+                filtered.sort((a, b) => (a.serverId || '').localeCompare(b.serverId || ''));
+            } else if (sortFilter === 'planet') {
+                filtered.sort((a, b) => (a.planetName || '').localeCompare(b.planetName || ''));
+            }
+            
+            // Actualizar estadísticas
+            updateConquestStats(filtered);
+            
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 40px;">No hay conquistas con los filtros seleccionados.</div>';
+                empty.style.display = 'none';
+                return;
+            }
+            
+            empty.style.display = 'none';
+            list.innerHTML = '';
+            
+            // Agrupar por servidor o por "Estado" si se ordena por fecha
+            const groups = {};
+            if (sortFilter === 'date') {
+                // Si ordenamos por fecha, agrupamos por proximidad
+                filtered.forEach(c => {
+                    const diff = c.nextConquestDate ? (c.nextConquestDate - new Date()) / (1000 * 60 * 60 * 24) : 999;
+                    let groupName = "Más tarde";
+                    if (diff < 1) groupName = "Hoy / Muy pronto";
+                    else if (diff < 3) groupName = "Próximos 3 días";
+                    else if (diff < 7) groupName = "Esta semana";
+                    
+                    if (!groups[groupName]) groups[groupName] = [];
+                    groups[groupName].push(c);
+                });
+            } else {
+                // Por defecto o por servidor, agrupamos por Servidor
+                filtered.forEach(c => {
+                    const sid = c.serverId || 'Otro';
+                    if (!groups[sid]) groups[sid] = [];
+                    groups[sid].push(c);
+                });
+            }
+            
+            const groupKeys = sortFilter === 'date' ? ["Hoy / Muy pronto", "Próximos 3 días", "Esta semana", "Más tarde"] : Object.keys(groups).sort();
+
+            groupKeys.forEach(groupName => {
+                if (!groups[groupName] || groups[groupName].length === 0) return;
+                
+                const groupBlock = document.createElement('div');
+                groupBlock.className = 'conquest-group-block';
+                groupBlock.style.cssText = 'background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px;';
+                
+                const groupTitle = document.createElement('h3');
+                groupTitle.style.cssText = 'margin: 0 0 15px 0; color: var(--text-primary); font-size: 18px; display: flex; align-items: center; gap: 10px;';
+                
+                const icon = sortFilter === 'date' ? 'fas fa-calendar-alt' : 'fas fa-server';
+                groupTitle.innerHTML = `<i class="${icon}"></i> ${groupName} <span style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">${groups[groupName].length}</span>`;
+                groupBlock.appendChild(groupTitle);
+                
+                const planetsGrid = document.createElement('div');
+                planetsGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;';
+                
+                groups[groupName].forEach(conquest => {
+                    const nextDate = conquest.nextConquestDate;
+                    const isToday = nextDate && nextDate.toDateString() === new Date().toDateString();
+                    const isThisWeek = nextDate && (nextDate >= new Date() && nextDate <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
+                    
+                    const planetCard = document.createElement('div');
+                    planetCard.className = 'conquest-planet-card';
+                    planetCard.style.cssText = 'background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; position: relative; display: flex; flex-direction: column; justify-content: space-between; min-height: 140px; transition: transform 0.2s;';
+                    planetCard.onmouseover = () => planetCard.style.transform = 'translateY(-2px)';
+                    planetCard.onmouseout = () => planetCard.style.transform = 'translateY(0)';
+
+                    const statusColor = isToday ? '#10B981' : isThisWeek ? '#F59E0B' : '#6B7280';
+                    const statusText = isToday ? 'HOY' : isThisWeek ? 'ESTA SEMANA' : 'PRÓXIMO';
+                    const dayName = conquest.dayIndex !== undefined ? days[conquest.dayIndex] : '—';
+
+                    planetCard.innerHTML = `
+                        <div>
+                            <div style="position: absolute; top: 10px; right: 10px; background: ${statusColor}; color: white; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: bold;">${statusText}</div>
+                            <h4 style="margin: 0 0 5px 0; color: var(--text-primary); font-size: 16px;">${conquest.planetName || 'Sin nombre'}</h4>
+                            <div style="font-size: 12px; color: var(--accent); font-weight: 600; margin-bottom: 10px;">${conquest.serverId}</div>
+                        </div>
+                        
+                        <div>
+                            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">
+                                <i class="fas fa-clock me-1" style="width:16px;"></i> ${dayName} a las ${conquest.time || '--:--'}
+                            </div>
+                            ${nextDate ? `
+                                <div style="font-size: 11px; color: var(--text-tertiary);">
+                                    <i class="fas fa-calendar-day me-1" style="width:16px;"></i> ${nextDate.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} ${nextDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    planetsGrid.appendChild(planetCard);
+                });
+                
+                groupBlock.appendChild(planetsGrid);
+                list.appendChild(groupBlock);
+            });
+        }
+        
+        function updateConquestStats(filtered) {
+            const today = new Date().toDateString();
+            const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+            
+            const totalCount = filtered.length;
+            const todayCount = filtered.filter(c => {
+                const nextDate = c.nextConquest ? new Date(c.nextConquest) : null;
+                return nextDate && nextDate.toDateString() === today;
+            }).length;
+            const weekCount = filtered.filter(c => {
+                const nextDate = c.nextConquest ? new Date(c.nextConquest) : null;
+                return nextDate && nextDate >= new Date() && nextDate <= weekFromNow;
+            }).length;
+            const serverCount = new Set(filtered.map(c => c.serverId || 'Otro')).size;
+            
+            document.getElementById('conquestTotalCount').textContent = totalCount;
+            document.getElementById('conquestTodayCount').textContent = todayCount;
+            document.getElementById('conquestWeekCount').textContent = weekCount;
+            document.getElementById('conquestServerCount').textContent = serverCount;
+        }
+
+        document.querySelectorAll('.section-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                const panelId = tab.dataset.tab + 'Panel';
+                document.getElementById(panelId).classList.add('active');
+                document.getElementById('systemsFiltersBar').style.display = (tab.dataset.tab === 'systems' || tab.dataset.tab === 'planets') ? 'flex' : 'none';
+                if (tab.dataset.tab === 'servers') {
+                    renderServersTime();
+                    if (window.serversTimeInterval) clearInterval(window.serversTimeInterval);
+                    window.serversTimeInterval = setInterval(renderServersTime, 1000);
+                } else {
+                    if (window.serversTimeInterval) { clearInterval(window.serversTimeInterval); window.serversTimeInterval = null; }
+                }
+                if (tab.dataset.tab === 'conquest') renderConquest();
+                if (tab.dataset.tab === 'sirius' && !window._siriusLoaded) loadSiriusData();
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', renderAll);
+        
+        // Event listeners para conquest
+        document.getElementById('conquestServerFilter').addEventListener('change', renderConquest);
+        document.getElementById('conquestSortFilter').addEventListener('change', renderConquest);
+        document.getElementById('conquestSearch').addEventListener('input', renderConquest);
+
+        async function setupFavButton(btn) {
+            if (!btn || typeof window.toggleFavorite !== 'function') return;
+            const type = btn.dataset.type, id = btn.dataset.id, name = btn.dataset.name || '';
+            const r = await window.toggleFavorite(type, id, name);
+            const icon = btn.querySelector('i');
+            if (r && r.ok && icon) icon.className = r.isNowFavorite ? 'fas fa-star' : 'far fa-star';
+        }
+        document.getElementById('systemsGrid').addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn-fav');
+            if (btn) { e.preventDefault(); e.stopPropagation(); setupFavButton(btn); }
+        });
+        document.getElementById('planetsGrid').addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn-fav');
+            if (btn) { e.preventDefault(); e.stopPropagation(); setupFavButton(btn); }
+        });
+
+        async function loadData() {
+            const sysGrid = document.getElementById('systemsGrid');
+            const planGrid = document.getElementById('planetsGrid');
+
+            sysGrid.innerHTML = '<div class="empty-state">Cargando sistemas...</div>';
+            planGrid.innerHTML = '<div class="empty-state">Cargando planetas...</div>';
+
+            try {
+                // Setup View Toggle
+                const savedView = localStorage.getItem('systemsViewPref') || 'grid';
+                const grids = [sysGrid, planGrid];
+                
+                function setView(view) {
+                    grids.forEach(g => {
+                        if (g) {
+                            if (view === 'list') g.classList.add('list-view');
+                            else g.classList.remove('list-view');
+                        }
+                    });
+                    document.querySelectorAll('.btn-toggle').forEach(btn => {
+                        if(btn.dataset.view === view) btn.classList.add('active');
+                        else btn.classList.remove('active');
+                    });
+                    localStorage.setItem('systemsViewPref', view);
+                }
+                
+                document.querySelectorAll('.btn-toggle').forEach(btn => {
+                    btn.addEventListener('click', (e) => setView(e.currentTarget.dataset.view));
+                });
+                setView(savedView);
+
+                const sysSnap = await db.collection('systems').get();
+                allSystems = [];
+                systemMap = {};
+                sysSnap.forEach(doc => {
+                    const data = doc.data();
+                    allSystems.push({ id: doc.id, ...data });
+                    systemMap[doc.id] = data.name || doc.id;
+                });
+                allSystems.sort((a, b) => (a.order ?? 999) - (b.order ?? 999) || (a.name || '').localeCompare(b.name || ''));
+
+                const planSnap = await db.collection('planets').get();
+                allPlanets = [];
+                planSnap.forEach(doc => allPlanets.push({ id: doc.id, ...doc.data() }));
+                allPlanets.sort((a, b) => (a.order ?? 999) - (b.order ?? 999) || (a.name || '').localeCompare(b.name || ''));
+
+                const serversSnap = await db.collection('servers').orderBy('order').get();
+                allServers = [];
+                serversSnap.forEach(doc => allServers.push({ id: doc.id, ...doc.data() }));
+
+                const conquestSnap = await db.collection('conquest_schedules').get();
+                allConquest = [];
+                conquestSnap.forEach(doc => allConquest.push({ id: doc.id, ...doc.data() }));
+                allConquest.sort((a, b) => (a.serverId || '').localeCompare(b.serverId || '') || (a.order ?? 0) - (b.order ?? 0));
+
+                // Poblar filtro de servidores en conquest
+                const serverFilter = document.getElementById('conquestServerFilter');
+                if (serverFilter && allServers.length > 0) {
+                    const activeServers = allServers.filter(s => s.status === 'active');
+                    serverFilter.innerHTML = '<option value="">Todos los servidores</option>';
+                    activeServers.forEach(server => {
+                        const option = document.createElement('option');
+                        option.value = server.name;
+                        option.textContent = `${server.name} (${server.region})`;
+                        serverFilter.appendChild(option);
+                    });
+
+                    // Restaurar servidor preferido si existe
+                    const savedServer = localStorage.getItem('preferredServer');
+                    if (savedServer) {
+                        serverFilter.value = savedServer;
+                    }
+                }
+
+                renderAll();
+            } catch (error) {
+                console.error('Error cargando datos:', error);
+                sysGrid.innerHTML = '<div class="empty-state">Error al cargar. Revisa la consola y las reglas de Firestore.</div>';
+                planGrid.innerHTML = '';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadData);
+
+        // ============ SIRIUS DATA ============
+        async function loadSiriusData() {
+            window._siriusLoaded = true;
+            const planetsGrid = document.getElementById('siriusPlanetsGrid');
+            const planetsEmpty = document.getElementById('siriusPlanetsEmpty');
+            const infoGrid = document.getElementById('siriusInfoGrid');
+            const desc = document.getElementById('siriusDesc');
+
+            try {
+                // Cargar info general de Sirius
+                const siriusInfoSnap = await db.collection('sirius_info').orderBy('order').get();
+                const siriusInfoItems = [];
+                siriusInfoSnap.forEach(doc => siriusInfoItems.push({ id: doc.id, ...doc.data() }));
+
+                if (siriusInfoItems.length > 0) {
+                    const general = siriusInfoItems.find(i => i.type === 'description' || i.key === 'description');
+                    if (general && general.content) desc.textContent = general.content;
+
+                    // Mostrar stats de Sirius en el grid superior
+                    const stats = siriusInfoItems.filter(i => i.type === 'stat' || i.statLabel);
+                    if (stats.length > 0) {
+                        infoGrid.innerHTML = stats.map(s => `
+                            <div style="background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2); border-radius: 10px; padding: 14px; text-align: center;">
+                                <div style="font-size: 22px; margin-bottom: 6px;">${s.icon || '⭐'}</div>
+                                <div style="font-weight: 700; color: #c084fc; font-size: 14px;">${s.statValue || s.value || ''}</div>
+                                <div style="font-size: 11px; color: var(--text-tertiary);">${s.statLabel || s.label || s.key || ''}</div>
+                            </div>
+                        `).join('');
+                    }
+                }
+
+                // Cargar "planetas o anillos" de la colección sirius_info (type == 'planet_ring')
+                const siriusRings = siriusInfoItems.filter(i => i.type === 'planet_ring');
+                
+                // Mostrar anillos de Sirius o el mensaje vacío
+                if (siriusRings.length === 0) {
+                    planetsGrid.innerHTML = '';
+                    planetsEmpty.style.display = 'block';
+                    return;
+                }
+
+                // Cargar nombres de enemigos y planos para cruzarlos con los IDs guardados en cada anillo
+                const enemiesSnap = await db.collection('enemies').get();
+                const enemiesMap = {};
+                enemiesSnap.forEach(doc => { enemiesMap[doc.id] = doc.data().name || 'Enemigo desconocido'; });
+
+                const blueprintsSnap = await db.collection('blueprints').get().catch(() => ({ empty: true }));
+                const blueprintsMap = {};
+                if (!blueprintsSnap.empty) {
+                    blueprintsSnap.forEach(doc => { blueprintsMap[doc.id] = doc.data().name || 'Plano desconocido'; });
+                } else {
+                    // Workaround: Los planos son naves
+                    const shipsSnap = await db.collection('ships').get();
+                    shipsSnap.forEach(doc => { blueprintsMap[`ship_${doc.id}`] = doc.data().name || 'Nave desconocida'; });
+                }
+
+                planetsEmpty.style.display = 'none';
+                planetsGrid.innerHTML = '';
+                
+                siriusRings.forEach(ring => {
+                    const card = document.createElement('article');
+                    card.className = 'item-card';
+                    card.style.borderLeft = '3px solid rgba(168,85,247,0.6)';
+                    card.style.display = 'flex';
+                    card.style.flexDirection = 'column';
+                    
+                    const enemyTags = (ring.enemies || []).map(id => `<span class="badge" style="background:rgba(239,68,68,0.2); color:#f87171; font-size:11px; margin-right:4px; margin-bottom:4px;">${enemiesMap[id] || '??'}</span>`).join('');
+                    const bpTags = (ring.blueprints || []).map(id => `<span class="badge" style="background:rgba(59,130,246,0.2); color:#60a5fa; font-size:11px; margin-right:4px; margin-bottom:4px;"><i class="fas fa-file-invoice me-1"></i>${blueprintsMap[id] || '??'}</span>`).join('');
+                    
+                    card.innerHTML = `
+                        <div class="item-header" style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                ${ring.image ? `<img src="${ring.image}" alt="${ring.key}" style="width:40px; height:40px; object-fit:contain; border-radius:8px;">` : `<span style="font-size: 28px;">${ring.icon || '🪐'}</span>`}
+                                <div class="item-name" style="color: #c084fc; font-size:18px;">${ring.key || 'Sin nombre'}</div>
+                            </div>
+                            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                                ${ring.timer ? `<span class="badge badge-admin" style="font-size:11px; background:rgba(245,158,11,0.2); color:#fbbf24;"><i class="fas fa-clock me-1"></i>${ring.timer}</span>` : ''}
+                                ${ring.quarcs ? `<span class="badge" style="font-size:11px; background:rgba(168,85,247,0.2); color:#c084fc;"><i class="fas fa-atom me-1"></i>${ring.quarcs}</span>` : ''}
+                            </div>
+                        </div>
+                        ${ring.content ? `<p class="item-description" style="margin-bottom:12px;">${ring.content}</p>` : '<div style="margin-bottom:12px;"></div>'}
+                        
+                        <div style="display:flex; gap:16px; margin-top:auto; flex-wrap:wrap;">
+                            ${enemyTags ? `<div style="flex:1; min-width:140px;">
+                                <div style="font-size:11px; font-weight:bold; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px;"><i class="fas fa-skull me-1"></i>Enemigos</div>
+                                <div style="display:flex; flex-wrap:wrap;">${enemyTags}</div>
+                            </div>` : ''}
+                            
+                            ${bpTags ? `<div style="flex:1; min-width:140px;">
+                                <div style="font-size:11px; font-weight:bold; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px;"><i class="fas fa-box-open me-1"></i>Planos que caen</div>
+                                <div style="display:flex; flex-wrap:wrap;">${bpTags}</div>
+                            </div>` : ''}
+                        </div>
+                    `;
+                    planetsGrid.appendChild(card);
+                });
+
+            } catch (e) {
+                console.error('Error cargando datos de Sirius:', e);
+                planetsGrid.innerHTML = '<div class="empty-state">Error al cargar datos de Sirius.</div>';
+            }
+        }
+
+        // Soporte para abrir tab por URL ?tab=sirius
+        const urlTab = new URLSearchParams(window.location.search).get('tab');
+        if (urlTab) {
+            window.addEventListener('DOMContentLoaded', () => {
+                const tabBtn = document.querySelector(`[data-tab="${urlTab}"]`);
+                if (tabBtn) tabBtn.click();
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Mi Perfil</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="wiki/tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="wiki/ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="wiki/builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="wiki/components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="wiki/enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="wiki/systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="wiki/missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="wiki/misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="wiki/calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <h1 class="page-title"><i class="fas fa-user me-2"></i>Mi Perfil</h1>
+        <p class="page-subtitle">Tu perfil de usuario en GalaxWiki.</p>
+
+        <div id="profileLoading" class="empty-state" style="padding: 60px 24px;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: var(--accent); margin-bottom: 16px;"></i>
+            <p>Cargando...</p>
+        </div>
+        <div id="profileGuest" class="empty-state" style="padding: 60px 24px; display: none;">
+            <i class="fas fa-lock" style="font-size: 48px; color: var(--accent); margin-bottom: 16px;"></i>
+            <p><strong>Inicia sesión</strong></p>
+            <p>Para ver tu perfil necesitas estar registrado.</p>
+            <a href="../login.html" class="btn-header btn-register" style="margin-top: 16px; display: inline-block;">Iniciar sesión</a>
+        </div>
+
+        <div id="profileContent" class="profile-content" style="display: none;">
+            <div class="profile-card">
+                <div class="profile-avatar-wrap">
+                    <div class="profile-avatar" id="profileAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span class="badge badge-admin" id="profileRoleBadge" style="display: none;">Admin</span>
+                </div>
+                <h2 class="profile-username" id="profileUsername">Usuario</h2>
+                <p class="profile-email" id="profileEmail">â€”</p>
+                <p class="profile-fleet"><i class="fas fa-ship me-2"></i><span id="profileFleet">Sin flota</span></p>
+                <p class="profile-meta" id="profileServerWrap" style="display: none;"><i class="fas fa-server me-2"></i>Servidor: <span id="profileServer">—</span></p>
+                <p class="profile-meta" id="profileLevelWrap" style="display: none;"><i class="fas fa-signal me-2"></i>Nivel <span id="profileLevel">—</span></p>
+                <p class="profile-meta"><small>Miembro desde <span id="profileCreated">—</span></small></p>
+            </div>
+            <div class="profile-stats">
+                <div id="gw-rank-badge" style="margin-bottom: 24px;"></div>
+                <h3 class="profile-section-title"><i class="fas fa-star me-2"></i>Favoritos</h3>
+                <p class="text-secondary" id="profileFavCount">0 elementos guardados. <a href="favorites.html">Ver favoritos</a></p>
+            </div>
+
+            <!-- Link to Collection Tracker -->
+            <div style="margin-top: 24px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <h3 style="margin: 0 0 6px; font-size: 18px; color: var(--text-primary);"><i class="fas fa-check-double me-2" style="color: var(--accent);"></i>Mi Colección de Planos</h3>
+                    <p style="margin: 0; color: var(--text-tertiary); font-size: 14px;">Lleva el control de los planos que ya conseguiste (Naves, Componentes, Pinturas).</p>
+                </div>
+                <a href="wiki/tracker.html" class="btn-header btn-register" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;">
+                    <i class="fas fa-external-link-alt"></i> Abrir Tracker
+                </a>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/header-auth.js"></script>
+    <script src="../js/gamification.js"></script>
+    <script>
+        (function () {
+            const auth = window.auth;
+            const db = window.db;
+
+            async function calculateAchievements(uid) {
+                const achievements = [];
+                try {
+                    const bpDoc = await db.collection('user_blueprints').doc(uid).get();
+                    if (bpDoc.exists) {
+                        if (Object.keys(bpDoc.data()).length > 20) achievements.push({ icon: '🥇', name: 'Collector', desc: 'Gran colección de planos' });
+                    }
+                    const favSnap = await db.collection('users').doc(uid).collection('favorites').get();
+                    if (favSnap.size >= 10) achievements.push({ icon: '🚀', name: 'Explorer', desc: 'Múltiples elementos favoritos' });
+                    const userDoc = await db.collection('users').doc(uid).get();
+                    if (userDoc.exists && userDoc.data().createdAt) {
+                         const created = userDoc.data().createdAt.toDate();
+                         if ((Date.now() - created.getTime()) / 86400000 > 30) achievements.push({ icon: '🌟', name: 'Veteran', desc: 'Miembro por más de 30 días' });
+                    }
+                } catch(e) {}
+                return achievements;
+            }
+
+            async function loadProfile(userWrapper, targetUid) {
+                const loading = document.getElementById('profileLoading');
+                const guest = document.getElementById('profileGuest');
+                const content = document.getElementById('profileContent');
+                if (loading) loading.style.display = 'none';
+                if (!targetUid && !userWrapper) {
+                    if (guest) guest.style.display = 'block';
+                    return;
+                }
+                if (guest) guest.style.display = 'none';
+                if (content) content.style.display = 'block';
+
+                const isOwnProfile = !targetUid || (userWrapper && userWrapper.uid === targetUid);
+                const uidToLoad = targetUid || (userWrapper ? userWrapper.uid : null);
+                if (!uidToLoad) return;
+
+                const privateLinks = document.querySelectorAll('.private-link, .btn-register');
+                if (!isOwnProfile) {
+                    document.querySelector('.page-title').innerHTML = '<i class="fas fa-user me-2"></i>Perfil de Jugador';
+                    document.querySelector('.page-subtitle').textContent = 'Viendo perfil público.';
+                    privateLinks.forEach(el => el.style.display = 'none');
+                    const trackerLink = document.querySelector('a[href="wiki/tracker.html"]');
+                    if (trackerLink) trackerLink.style.display = 'none';
+                    document.getElementById('profileEmail').style.display = 'none';
+                }
+                if (isOwnProfile && userWrapper) {
+                    document.getElementById('profileEmail').textContent = userWrapper.email || '—';
+                }
+
+                document.getElementById('profileUsername').textContent = isOwnProfile ? (userWrapper ? (userWrapper.displayName || userWrapper.email) : 'Usuario') : 'Cargando...';
+                if (isOwnProfile && userWrapper && userWrapper.photoURL) {
+                    document.getElementById('profileAvatar').innerHTML = '<img src="' + userWrapper.photoURL + '" alt="Avatar">';
+                }
+
+                let favCount = 0;
+                try {
+                    if (db) {
+                        const userDoc = await db.collection('users').doc(uidToLoad).get();
+                        if (userDoc.exists) {
+                            const d = userDoc.data();
+                            document.getElementById('profileUsername').textContent = d.username || document.getElementById('profileUsername').textContent;
+                            document.getElementById('profileFleet').textContent = d.fleet || 'Sin flota';
+                            var serverWrap = document.getElementById('profileServerWrap');
+                            var serverEl = document.getElementById('profileServer');
+                            if (serverWrap && serverEl && (d.server != null && d.server !== '')) {
+                                serverEl.textContent = d.server;
+                                serverWrap.style.display = 'block';
+                            } else if (serverWrap) serverWrap.style.display = 'none';
+                            const levelWrap = document.getElementById('profileLevelWrap');
+                            const levelEl = document.getElementById('profileLevel');
+                            if (levelWrap && levelEl && (d.level != null && d.level !== '')) {
+                                levelEl.textContent = d.level;
+                                levelWrap.style.display = 'block';
+                            } else if (levelWrap) levelWrap.style.display = 'none';
+                            const isAdmin = d.role === 'admin';
+                            const badge = document.getElementById('profileRoleBadge');
+                            if (badge) badge.style.display = isAdmin ? 'inline-block' : 'none';
+                            if (d.avatar) {
+                                document.getElementById('profileAvatar').innerHTML = '<img src="' + d.avatar.replace(/"/g, '&quot;') + '" alt="Avatar" onerror="this.parentElement.innerHTML=\'<i class=\'fas fa-user\'></i>\'">';
+                            }
+                            
+                            // Render Gamification XP
+                            const userXp = d.xp || 0;
+                            if (typeof gwRenderRankBadge === 'function') {
+                                gwRenderRankBadge('gw-rank-badge', userXp);
+                            }
+                            
+                            const achievements = await calculateAchievements(uidToLoad);
+                            if (achievements.length > 0) {
+                                const achC = document.createElement('div');
+                                achC.innerHTML = '<h4 style="font-size: 14px; margin-top: 16px; margin-bottom: 8px;"><i class="fas fa-trophy me-2"></i>Logros</h4><div style="display: flex; gap: 8px; flex-wrap: wrap;">' + 
+                                    achievements.map(a => `<span class="badge" title="${a.desc}" style="background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary);">${a.icon} ${a.name}</span>`).join('') + '</div>';
+                                document.querySelector('.profile-card').appendChild(achC);
+                            }
+                        } else {
+                            if (!isOwnProfile) document.getElementById('profileUsername').textContent = 'Usuario Desconocido';
+                        }
+                        const favSnap = await db.collection('users').doc(uidToLoad).collection('favorites').get();
+                        favCount = favSnap.size;
+                    }
+                    if (isOwnProfile && userWrapper && userWrapper.metadata) {
+                        const created = userWrapper.metadata.creationTime;
+                        document.getElementById('profileCreated').textContent = created ? new Date(created).toLocaleDateString('es') : '—';
+                    } else if (!isOwnProfile) {
+                        const uDoc = await db.collection('users').doc(uidToLoad).get();
+                        if (uDoc.exists && uDoc.data().createdAt) {
+                            document.getElementById('profileCreated').textContent = uDoc.data().createdAt.toDate().toLocaleDateString('es');
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error cargando perfil:', e);
+                }
+                document.getElementById('profileFavCount').innerHTML = favCount + ' elemento(s) guardado(s).' + (isOwnProfile ? ' <a href="favorites.html">Ver favoritos</a>' : '');
+            }
+
+            function init() {
+                const params = new URLSearchParams(window.location.search);
+                const targetUid = params.get('uid');
+
+                if (!auth) {
+                    if (targetUid) loadProfile(null, targetUid);
+                    else {
+                        if (document.getElementById('profileLoading')) document.getElementById('profileLoading').style.display = 'none';
+                        if (document.getElementById('profileGuest')) document.getElementById('profileGuest').style.display = 'block';
+                    }
+                    return;
+                }
+                auth.onAuthStateChanged(function (user) {
+                    if (user || targetUid) loadProfile(user, targetUid);
+                    else {
+                        if (document.getElementById('profileLoading')) document.getElementById('profileLoading').style.display = 'none';
+                        if (document.getElementById('profileGuest')) document.getElementById('profileGuest').style.display = 'block';
+                    }
+                });
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+            else init();
+        })();
+    </script>
+</body>
+</html>
+

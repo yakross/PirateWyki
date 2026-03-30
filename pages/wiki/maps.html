@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Mapas Interactivos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+    <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        tailwind.config = { corePlugins: { preflight: false } }
+    </script>
+    <script src="../../js/components/footer-component.js"></script>
+    <style>
+        .map-layout {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 280px);
+            min-height: 520px;
+        }
+        .map-sidebar {
+            width: 260px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .map-main {
+            flex: 1;
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .map-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: auto;
+            cursor: grab;
+            user-select: none;
+        }
+        .map-container:active { cursor: grabbing; }
+        .map-canvas-wrapper {
+            position: relative;
+            display: inline-block;
+            min-width: 100%;
+            min-height: 100%;
+        }
+        .map-bg {
+            display: block;
+            max-width: none;
+        }
+        .map-bg-placeholder {
+            width: 100%;
+            height: 100%;
+            min-height: 500px;
+            background: radial-gradient(ellipse at center, #0a0f1e 0%, #060812 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+            color: rgba(255,255,255,0.15);
+        }
+        .map-marker {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.15s;
+        }
+        .map-marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 20;
+        }
+        .map-marker-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 0 8px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .map-marker-dot::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid currentColor;
+        }
+        .map-marker-label {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 10px;
+            font-weight: 600;
+            background: rgba(0,0,0,0.75);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #fff;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        /* Marker types */
+        .marker-npc .map-marker-dot { background: rgba(239,68,68,0.85); color: #fff; }
+        .marker-npc .map-marker-dot::after { color: rgba(239,68,68,0.85); border-top-color: rgba(239,68,68,0.85); }
+        .marker-resource .map-marker-dot { background: rgba(34,197,94,0.85); color: #fff; }
+        .marker-resource .map-marker-dot::after { border-top-color: rgba(34,197,94,0.85); }
+        .marker-spawn .map-marker-dot { background: rgba(249,115,22,0.85); color: #fff; }
+        .marker-spawn .map-marker-dot::after { border-top-color: rgba(249,115,22,0.85); }
+        .marker-poi .map-marker-dot { background: rgba(168,85,247,0.85); color: #fff; }
+        .marker-poi .map-marker-dot::after { border-top-color: rgba(168,85,247,0.85); }
+
+        /* Tooltip popup */
+        .map-popup {
+            position: fixed;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px 18px;
+            min-width: 200px;
+            max-width: 280px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .map-popup.show { opacity: 1; }
+        .map-popup-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+        .map-popup-type { font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
+        .map-popup-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+        /* Sidebar */
+        .map-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        .map-panel-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+        }
+        .map-selector {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        .filter-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .filter-toggle input { cursor: pointer; accent-color: var(--accent); }
+        .marker-legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        /* Zoom controls */
+        .map-zoom-controls {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 30;
+        }
+        .map-zoom-btn {
+            width: 34px;
+            height: 34px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-primary);
+            transition: background 0.2s;
+        }
+        .map-zoom-btn:hover { background: var(--bg-input); }
+
+        @media (max-width: 768px) {
+            .map-layout { flex-direction: column; height: auto; }
+            .map-sidebar { width: 100%; }
+            .map-main { min-height: 400px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="maps.html" class="nav-link active"><i class="fas fa-map"></i> Mapas</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container" style="padding-bottom: 30px;">
+        <h1 class="page-title"><i class="fas fa-map me-2"></i>Mapas Interactivos</h1>
+        <p class="page-subtitle">Explora los planetas de Pirate Galaxy. Haz clic en los marcadores para ver detalles.</p>
+
+        <div class="map-layout">
+            <!-- Sidebar -->
+            <div class="map-sidebar">
+                <!-- Selector de mapa -->
+                <div class="map-panel">
+                    <div class="map-panel-title"><i class="fas fa-globe me-1"></i> Seleccionar Mapa</div>
+                    <select class="map-selector" id="mapSelector">
+                        <option value="">Cargando mapas...</option>
+                    </select>
+                    <div id="mapInfo" style="font-size: 12px; color: var(--text-tertiary); margin-top: 8px; line-height: 1.5;"></div>
+                </div>
+
+                <!-- Filtros de marcadores -->
+                <div class="map-panel">
+                    <div class="map-panel-title"><i class="fas fa-filter me-1"></i> Mostrar / Ocultar</div>
+                    <label class="filter-toggle">
+                        <span><span class="marker-legend-dot" style="background: #ef4444;"></span>Jefes / Élites</span>
+                        <input type="checkbox" id="filterBoss" checked>
+                    </label>
+                    <label class="filter-toggle">
+                        <span><span class="marker-legend-dot" style="background: #f97316;"></span>Mantis Raros</span>
+                        <input type="checkbox" id="filterRareMantis" checked>
+                    </label>
+                    <label class="filter-toggle">
+                        <span><span class="marker-legend-dot" style="background: #fbbf24;"></span>Mantis / Enemigos</span>
+                        <input type="checkbox" id="filterMantis" checked>
+                    </label>
+                    <label class="filter-toggle">
+                        <span><span class="marker-legend-dot" style="background: #3b82f6;"></span>Zonas de Aterrizaje</span>
+                        <input type="checkbox" id="filterLanding" checked>
+                    </label>
+                    <label class="filter-toggle">
+                        <span><span class="marker-legend-dot" style="background: #22c55e;"></span>Energía</span>
+                        <input type="checkbox" id="filterEnergy" checked>
+                    </label>
+                    <label class="filter-toggle">
+                        <span><span class="marker-legend-dot" style="background: #6366f1;"></span>Torretas / Minas</span>
+                        <input type="checkbox" id="filterHazard" checked>
+                    </label>
+                    <label class="filter-toggle">
+                        <span><span class="marker-legend-dot" style="background: #a855f7;"></span>Puntos de Interés</span>
+                        <input type="checkbox" id="filterPoi" checked>
+                    </label>
+                </div>
+
+                <!-- Lista de marcadores -->
+                <div class="map-panel" style="flex: 1; overflow-y: auto;">
+                    <div class="map-panel-title"><i class="fas fa-list me-1"></i> Puntos (<span id="markerCount">0</span>)</div>
+                    <div id="markerList" style="display: flex; flex-direction: column; gap: 4px;"></div>
+                </div>
+            </div>
+
+            <!-- Mapa principal -->
+            <div class="map-main" style="position: relative;">
+                <div id="map" style="width: 100%; height: 100%; background: #060812; z-index: 1;"></div>
+                
+                <div class="map-bg-placeholder" id="mapPlaceholder" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: radial-gradient(ellipse at center, #0a0f1e 0%, #060812 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; color: rgba(255,255,255,0.15);">
+                    <i class="fas fa-map" style="font-size: 64px;"></i>
+                    <div style="font-size: 20px; font-weight: 700;">Selecciona un mapa</div>
+                    <div style="font-size: 14px;">Escoge un planeta o zona del menú lateral</div>
+                </div>
+
+                <!-- Cargando overlay -->
+                <div id="mapLoading" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; font-size: 18px; color: #fff; border-radius: 14px; z-index: 1000;">
+                    <i class="fas fa-spinner fa-spin me-2"></i> Cargando...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Tooltip -->
+    <div class="map-popup" id="mapTooltip" style="position: absolute; display: none; pointer-events: none;"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/header-auth.js"></script>
+
+    <script>
+        // ============ STATE ============
+        let currentMapId = null;
+        let allMarkers = [];
+        let leafletMap = null;
+        let imageOverlay = null;
+        let mapLayerGroup = null;
+        const bounds = [[0, 0], [1000, 1000]];
+
+        const markerTypeConfig = {
+            boss: { icon: '💀', label: 'Jefe / Élite', color: '#ff3333', filterEl: 'filterBoss' },
+            rare_mantis: { icon: '💎', label: 'Mantis Raro', color: '#ff9933', filterEl: 'filterRareMantis' },
+            mantis: { icon: '🦗', label: 'Mantis', color: '#ffff33', filterEl: 'filterMantis' },
+            enemy_spawn: { icon: '🦗', label: 'Mantis', color: '#ffff33', filterEl: 'filterMantis' },
+            patrol: { icon: '🦗', label: 'Mantis', color: '#ffff33', filterEl: 'filterMantis' },
+            landing: { icon: '🚀', label: 'Zona de Aterrizaje', color: '#3399ff', filterEl: 'filterLanding' },
+            energy: { icon: '⚡', label: 'Energía', color: '#33cc33', filterEl: 'filterEnergy' },
+            rocket_turret: { icon: '🎯', label: 'Torreta Cohetes', color: '#9999ff', filterEl: 'filterHazard' },
+            stun_turret: { icon: '⚡', label: 'Torreta Choque', color: '#9999ff', filterEl: 'filterHazard' },
+            mine_field: { icon: '💣', label: 'Campo de Minas', color: '#9999ff', filterEl: 'filterHazard' },
+            poi: { icon: '⭐', label: 'Punto de Interés', color: '#cc66ff', filterEl: 'filterPoi' },
+        };
+
+        function initMap() {
+            if (!leafletMap) {
+                leafletMap = L.map('map', {
+                    crs: L.CRS.Simple,
+                    minZoom: -1,
+                    maxZoom: 3,
+                    zoomControl: true,
+                    attributionControl: false
+                });
+                mapLayerGroup = L.layerGroup().addTo(leafletMap);
+                leafletMap.fitBounds(bounds);
+            }
+        }
+
+        // ============ LOAD MAPS ============
+        async function loadMaps() {
+            const selector = document.getElementById('mapSelector');
+            try {
+                const snap = await db.collection('maps').orderBy('order').get();
+                const maps = [];
+                snap.forEach(doc => maps.push({ id: doc.id, ...doc.data() }));
+
+                if (maps.length === 0) {
+                    // Default maps
+                    selector.innerHTML = `
+                        <option value="">â€” Selecciona un mapa â€”</option>
+                        <option value="demo_vega">Vega (Demo)</option>
+                        <option value="demo_antares">Antares (Demo)</option>
+                        <option value="demo_sirius">Singularidad Sirius (Demo)</option>
+                    `;
+                } else {
+                    selector.innerHTML = '<option value="">â€” Selecciona un mapa â€”</option>';
+                    maps.forEach(m => {
+                        const opt = document.createElement('option');
+                        opt.value = m.id;
+                        opt.textContent = m.name || m.id;
+                        selector.appendChild(opt);
+                    });
+                }
+            } catch (e) {
+                console.error('Error cargando mapas:', e);
+                selector.innerHTML = '<option value="">Error al cargar mapas</option>';
+            }
+        }
+
+        // ============ LOAD MARKERS FOR MAP ============
+        async function loadMarkersForMap(mapId) {
+            if (!mapId) return;
+            currentMapId = mapId;
+            const loading = document.getElementById('mapLoading');
+            loading.style.display = 'flex';
+
+            try {
+                if (!leafletMap) initMap();
+
+                // Primero cargar info del mapa
+                let mapData = null;
+                if (!mapId.startsWith('demo_')) {
+                    const mapDoc = await db.collection('maps').doc(mapId).get();
+                    mapData = mapDoc.exists ? mapDoc.data() : null;
+                }
+
+                const mapPlaceholder = document.getElementById('mapPlaceholder');
+                
+                if (imageOverlay) {
+                    leafletMap.removeLayer(imageOverlay);
+                    imageOverlay = null;
+                }
+
+                if (mapData && mapData.imageUrl) {
+                    imageOverlay = L.imageOverlay(mapData.imageUrl, bounds).addTo(leafletMap);
+                    leafletMap.fitBounds(bounds);
+                    mapPlaceholder.style.display = 'none';
+                    document.getElementById('mapInfo').textContent = mapData.description || '';
+                } else {
+                    mapPlaceholder.style.display = 'flex';
+                    mapPlaceholder.querySelector('div:nth-child(2)').textContent = mapId.replace('demo_', '').toUpperCase();
+                    mapPlaceholder.querySelector('div:nth-child(3)').textContent = 'Imagen del mapa no configurada';
+                    document.getElementById('mapInfo').textContent = mapData ? (mapData.description || '') : 'Mapa de demostración';
+                }
+
+                // Cargar marcadores estándar
+                let markers = [];
+                if (mapId.startsWith('demo_')) {
+                    markers = getDemoMarkers(mapId);
+                } else {
+                    // Cargar marcadores estándar
+                    const snap = await db.collection('map_markers')
+                        .where('mapId', '==', mapId)
+                        .get();
+                    snap.forEach(doc => markers.push({ id: doc.id, ...doc.data() }));
+
+                    // Cargar enemigos del bestiario
+                    const bestiarySnap = await db.collection('bestiary')
+                        .where('planetId', '==', mapId)
+                        .get();
+                    
+                    const enemyIds = [...new Set(bestiarySnap.docs.map(d => d.data().enemyId))].filter(id => !!id);
+                    const enemyMap = {};
+                    if (enemyIds.length > 0) {
+                        const eSnaps = await Promise.all(enemyIds.map(id => db.collection('enemies').doc(id).get()));
+                        eSnaps.forEach(s => { if(s.exists) enemyMap[s.id] = s.data().name; });
+                    }
+
+                    bestiarySnap.forEach(doc => {
+                        const data = doc.data();
+                        let mType = data.isBoss ? 'boss' : (data.type === 'rare_mantis' ? 'rare_mantis' : 'mantis');
+                        const eName = data.name || enemyMap[data.enemyId] || data.enemyId || 'Enemigo';
+                        
+                        if (data.x != null && data.y != null) {
+                            markers.push({
+                                id: `bestiary_${doc.id}`,
+                                name: eName,
+                                type: mType,
+                                x: data.x,
+                                y: data.y,
+                                description: `Nivel: ${data.enemyLevel || '?'}. ${data.range || ''}`
+                            });
+                        }
+
+                        if (data.routePath && leafletMap) {
+                            const pts = data.routePath.split(';').map(p => {
+                                const [lx, ly] = p.trim().split(',').map(Number);
+                                return [1000 - (ly * 10), lx * 10]; // Leaflet coordinate conversion
+                            }).filter(p => !isNaN(p[0]));
+                            
+                            if (pts.length > 1) {
+                                const col = markerTypeConfig[mType].color;
+                                // Border layer
+                                L.polyline(pts, { color: '#000', weight: 4, opacity: 0.6, interactive: false }).addTo(mapLayerGroup);
+                                // Color layer
+                                const route = L.polyline(pts, { 
+                                    color: col, 
+                                    weight: 2, 
+                                    dashArray: '5, 5', 
+                                    opacity: 0.9 
+                                }).addTo(mapLayerGroup);
+                                
+                                route.bindTooltip(`${eName} (Ruta)`, { sticky: true });
+                            }
+                        }
+                    });
+                }
+
+                allMarkers = markers;
+                updateFilterLabels();
+                renderMarkers();
+            } catch (e) {
+                console.error('Error cargando marcadores:', e);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function getDemoMarkers(mapId) {
+            const demo = {
+                demo_vega: [
+                    { id: '1', name: 'Axiom', type: 'poi', x: 25, y: 30, description: 'Planeta inicial de Vega. Ideal para niveles 1-10.' },
+                    { id: '2', name: 'Spawn Mantis', type: 'spawn', x: 40, y: 50, description: 'Zona de spawn de Mantis. Nivel 5-10.' },
+                    { id: '3', name: 'Crionita x3', type: 'resource', x: 65, y: 35, description: 'Nodo de crionita de alta densidad.' },
+                    { id: '4', name: 'Mantis Queen', type: 'npc', x: 75, y: 65, description: 'Boss de Vega. Nivel 15. Dropa planos raros.' },
+                    { id: '5', name: 'Aurora', type: 'poi', x: 50, y: 70, description: 'Planeta Aurora â€” Centro comercial de Vega.' },
+                ],
+                demo_antares: [
+                    { id: '1', name: 'Desai', type: 'poi', x: 30, y: 40, description: 'Planeta de nivel medio en Antares.' },
+                    { id: '2', name: 'Spawn Saurian', type: 'spawn', x: 55, y: 30, description: 'Saurianos de nivel 25-30.' },
+                    { id: '3', name: 'Crionita Antares', type: 'resource', x: 70, y: 60, description: 'DepÃ³sito rico en crionita.' },
+                    { id: '4', name: 'Saurian Warlord', type: 'npc', x: 80, y: 45, description: 'Boss principal de Antares. Nivel 35.' },
+                ],
+                demo_sirius: [
+                    { id: '1', name: 'Agujero de Gusano', type: 'poi', x: 20, y: 50, description: 'Entrada a Singularidad Sirius.' },
+                    { id: '2', name: 'Mouth of Dori', type: 'poi', x: 40, y: 35, description: 'Primer planeta de Singularidad Sirius.' },
+                    { id: '3', name: 'Spawn élite', type: 'spawn', x: 60, y: 55, description: 'Enemigos de élite de Singularidad Sirius. Nivel 55+.' },
+                    { id: '4', name: 'Quarcs CU', type: 'resource', x: 75, y: 30, description: 'Nodo de Commander Units.' },
+                    { id: '5', name: 'Vénar', type: 'poi', x: 55, y: 70, description: 'Planeta volcánico — Drop de quarcs MU/SU.' },
+                    { id: '6', name: 'Calon', type: 'poi', x: 80, y: 65, description: 'Planeta endgame. Mejor zona de farmeo de Singularidad Sirius.' },
+                ],
+            };
+            return demo[mapId] || [];
+        }
+
+        function updateFilterLabels() {
+            const counts = {};
+            allMarkers.forEach(m => {
+                const cfg = markerTypeConfig[m.type];
+                if (cfg && cfg.filterEl) {
+                    counts[cfg.filterEl] = (counts[cfg.filterEl] || 0) + (parseInt(m.count) || 1);
+                }
+            });
+
+            const filterMap = {
+                'filterBoss': 'Jefes / Élites',
+                'filterRareMantis': 'Mantis Raros',
+                'filterMantis': 'Mantis / Enemigos',
+                'filterLanding': 'Zonas de Aterrizaje',
+                'filterEnergy': 'Energía',
+                'filterHazard': 'Torretas / Minas',
+                'filterPoi': 'Puntos de Interés'
+            };
+
+            Object.entries(filterMap).forEach(([id, baseLabel]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const count = counts[id] || 0;
+                    const span = el.previousElementSibling;
+                    if (span) {
+                        const dot = span.querySelector('.marker-legend-dot');
+                        const dotHtml = dot ? dot.outerHTML : '';
+                        span.innerHTML = `${dotHtml}${baseLabel} <small style="opacity:0.5; margin-left:4px;">(${count})</small>`;
+                    }
+                }
+            });
+        }
+
+        // ============ RENDER MARKERS ============
+        const leafletMarkers = [];
+        function renderMarkers() {
+            if (!mapLayerGroup) return;
+            mapLayerGroup.clearLayers();
+            const list = document.getElementById('markerList');
+            const count = document.getElementById('markerCount');
+
+            list.innerHTML = '';
+            leafletMarkers.length = 0;
+
+            const visible = allMarkers.filter(m => {
+                const cfg = markerTypeConfig[m.type] || markerTypeConfig.poi;
+                if (!cfg.filterEl) return true;
+                const el = document.getElementById(cfg.filterEl);
+                return el ? el.checked : true;
+            });
+            count.textContent = visible.length;
+
+            const groups = {};
+            visible.forEach(marker => {
+                if (marker.x == null || marker.y == null) return;
+                const key = `${marker.x.toFixed(2)},${marker.y.toFixed(2)}`;
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(marker);
+            });
+
+            const typePriority = ['boss', 'rare_mantis', 'mantis', 'enemy_spawn', 'patrol', 'collectible', 'landing', 'energy', 'poi'];
+
+            Object.entries(groups).forEach(([coords, markers]) => {
+                // Find primary marker
+                let primary = markers[0];
+                let maxPriority = typePriority.indexOf(primary.type);
+                if (maxPriority === -1) maxPriority = 999;
+
+                markers.forEach(m => {
+                    let p = typePriority.indexOf(m.type);
+                    if (p !== -1 && p < maxPriority) {
+                        maxPriority = p;
+                        primary = m;
+                    }
+                });
+
+                const cfg = markerTypeConfig[primary.type] || markerTypeConfig.poi;
+
+                // leaf bounds are [[0, 0], [1000, 1000]]
+                const lat = 1000 - ((primary.y || 50) * 10);
+                const lng = (primary.x || 50) * 10;
+                
+                let totalCount = 0;
+                markers.forEach(m => {
+                    totalCount += (parseInt(m.count) || 1);
+                });
+
+                const countHtml = totalCount > 1 ? `
+                    <div style="position: absolute; top: -10px; right: -10px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; border: 2px solid white; z-index: 20; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">
+                        ${totalCount}
+                    </div>
+                ` : '';
+
+                const customIcon = L.divIcon({
+                    className: 'custom-leaflet-icon',
+                    html: `
+                        <div class="map-marker marker-${primary.type}" style="position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); pointer-events: none;">
+                            ${countHtml}
+                            <div class="map-marker-label" style="opacity: 1; top: -25px; pointer-events: none; text-shadow: 0 0 4px #000, 0 0 4px #000;">${totalCount > 1 ? totalCount + ' Puntos' : (primary.name || '')}</div>
+                            <div class="map-marker-dot" style="background: ${cfg.color}33; border: 2px solid ${cfg.color}; box-shadow: 0 0 10px ${cfg.color}, inset 0 0 5px ${cfg.color}; margin-top: -14px; margin-left: -14px; color: ${cfg.color}; font-weight: bold; text-shadow: 0 0 2px #000;">
+                                ${cfg.icon}
+                            </div>
+                        </div>
+                    `,
+                    iconSize: [0, 0],
+                    iconAnchor: [0, 0],
+                    popupAnchor: [0, -25]
+                });
+
+                const leafletMarker = L.marker([lat, lng], { icon: customIcon }).addTo(mapLayerGroup);
+                
+                let popupContent = '<div style="min-width: 180px; max-height: 300px; overflow-y: auto; padding-right: 5px;">';
+                markers.forEach((m, idx) => {
+                    const mCfg = markerTypeConfig[m.type] || markerTypeConfig.poi;
+                    const itemQty = parseInt(m.count) || 1;
+                    const itemPrefix = itemQty > 1 ? `<span style="opacity:0.8; margin-right:4px;">(${itemQty}x)</span>` : '';
+                    popupContent += `
+                        <div style="${idx < markers.length - 1 ? 'border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; padding-bottom: 5px;' : ''}">
+                            <h4 style="margin: 0 0 4px; font-weight: bold; font-size: 14px;">${itemPrefix}${m.name || 'Sin nombre'}</h4>
+                            <div style="font-size: 10px; text-transform: uppercase; color: ${mCfg.color}; margin-bottom: 4px; font-weight: bold;">${mCfg.label}</div>
+                            <p style="margin: 0; font-size: 12px; color: var(--text-secondary);">${m.description || 'Sin descripción.'}</p>
+                        </div>
+                    `;
+                });
+                popupContent += '</div>';
+
+                leafletMarker.bindPopup(popupContent);
+                leafletMarkers.push({ mapData: primary, instance: leafletMarker });
+
+                const item = document.createElement('div');
+                item.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; cursor: pointer; transition: background 0.1s; font-size: 13px;';
+                
+                const displayTitle = totalCount > 1 ? `${totalCount}x Objetivos` : (primary.name || 'Sin nombre');
+                item.innerHTML = `
+                    <span style="font-size: 16px;">${cfg.icon}</span>
+                    <span style="flex: 1; color: var(--text-secondary);">${displayTitle}</span>
+                `;
+                item.addEventListener('mouseenter', () => item.style.background = 'var(--bg-input)');
+                item.addEventListener('mouseleave', () => item.style.background = 'transparent');
+                item.addEventListener('click', () => {
+                    leafletMap.setView([lat, lng], 1.5, { animate: true });
+                    leafletMarker.openPopup();
+                });
+                list.appendChild(item);
+            });
+        }
+
+        // ============ EVENTS ============
+        document.getElementById('mapSelector').addEventListener('change', function() {
+            loadMarkersForMap(this.value);
+        });
+        const filterIds = ['filterBoss', 'filterRareMantis', 'filterMantis', 'filterLanding', 'filterEnergy', 'filterHazard', 'filterPoi'];
+        filterIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('change', renderMarkers);
+        });
+
+        // ============ INIT ============
+        window.addEventListener('DOMContentLoaded', loadMaps);
+    </script>
+</body>
+</html>
+

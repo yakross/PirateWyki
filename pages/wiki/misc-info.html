@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Misc Info</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { corePlugins: { preflight: false } }
+    </script>
+    <script src="../../js/components/footer-component.js"></script>
+    <style>
+        .misc-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 8px;
+        }
+        .misc-tab {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .misc-tab:hover {
+            background: rgba(102,126,234,0.1);
+            color: var(--text-primary);
+        }
+        .misc-tab.active {
+            background: linear-gradient(135deg, rgba(102,126,234,0.3), rgba(118,75,162,0.3));
+            color: #a78bfa;
+            border: 1px solid rgba(102,126,234,0.4);
+        }
+        .misc-panel {
+            display: none;
+        }
+        .misc-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Accordion bars */
+        .misc-accordion-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+        .misc-accordion-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-primary);
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .misc-accordion-btn:hover { background: rgba(102,126,234,0.08); }
+        .misc-accordion-chevron { transition: transform 0.2s; color: var(--accent); }
+        .misc-accordion-body {
+            display: none;
+            padding: 16px 18px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        /* Guide cards */
+        .guide-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+        .guide-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+        .guide-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .guide-card-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+        }
+        .guide-card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .guide-card-body {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        /* Farming route table */
+        .farm-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .farm-table th {
+            background: rgba(102,126,234,0.15);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .farm-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+        .farm-table tr:last-child td { border-bottom: none; }
+        .farm-table tr:hover td { background: rgba(102,126,234,0.05); }
+        .efficiency-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .eff-S { background: rgba(168,85,247,0.2); color: #a855f7; }
+        .eff-A { background: rgba(59,130,246,0.2); color: #3b82f6; }
+        .eff-B { background: rgba(34,197,94,0.2); color: #22c55e; }
+        .eff-C { background: rgba(234,179,8,0.2); color: #eab308; }
+        .eff-D { background: rgba(249,115,22,0.2); color: #f97316; }
+        .eff-E { background: rgba(239,68,68,0.2); color: #ef4444; }
+
+        /* Conquest info cards */
+        .conquest-info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .conquest-info-card h4 {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .conquest-reward-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .conquest-reward-item {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        .conquest-reward-icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+        .conquest-reward-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+        .conquest-reward-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Clan info */
+        .clan-feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .clan-feature-card {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .clan-feature-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .clan-feature-icon {
+            font-size: 28px;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        .clan-feature-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+        .clan-feature-desc {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .section-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+        .section-empty i { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link active"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <h1 class="page-title"><i class="fas fa-info-circle me-2"></i>Info & Guías</h1>
+        <p class="page-subtitle">Información miscelánea, guías de supervivencia, rutas de farmeo, clanes y conquista.</p>
+
+        <!-- Pestañas -->
+        <div class="misc-tabs">
+            <button class="misc-tab active" data-panel="general">
+                <i class="fas fa-book-open"></i> General
+            </button>
+            <button class="misc-tab" data-panel="survival">
+                <i class="fas fa-shield-alt"></i> Guías de Supervivencia
+            </button>
+            <button class="misc-tab" data-panel="farming">
+                <i class="fas fa-gem"></i> Farmeo de Crionita
+            </button>
+            <button class="misc-tab" data-panel="clans">
+                <i class="fas fa-users"></i> Clanes
+            </button>
+            <button class="misc-tab" data-panel="conquest">
+                <i class="fas fa-flag"></i> Conquista
+            </button>
+        </div>
+
+        <!-- Panel: General -->
+        <div class="misc-panel active" id="panel-general">
+            <div id="miscInfoContainer"></div>
+            <div id="miscInfoEmpty" class="section-empty" style="display: none;">
+                <i class="fas fa-book-open d-block"></i>
+                No hay entradas de Misc Info. Añádelas en el Panel Admin.
+            </div>
+        </div>
+
+        <!-- Panel: Guías de Supervivencia -->
+        <div class="misc-panel" id="panel-survival">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 22px; color: var(--text-primary);"><i class="fas fa-shield-alt me-2" style="color: var(--accent);"></i>Guías de Supervivencia</h2>
+                    <p style="margin: 4px 0 0; color: var(--text-tertiary); font-size: 14px;">Consejos y estrategias para sobrevivir en zonas peligrosas</p>
+                </div>
+                <input type="text" id="survivalSearch" class="search-input" placeholder="Buscar guía..." style="width: auto; min-width: 200px;">
+            </div>
+            <div id="survivalContainer"></div>
+            <div id="survivalEmpty" class="section-empty" style="display: none;">
+                <i class="fas fa-shield-alt d-block"></i>
+                No hay guías de supervivencia todavía. El admin puede añadirlas en el panel.
+            </div>
+        </div>
+
+        <!-- Panel: Farmeo de Crionita -->
+        <div class="misc-panel" id="panel-farming">
+            <div style="margin-bottom: 20px;">
+                <h2 style="margin: 0 0 6px; font-size: 22px; color: var(--text-primary);"><i class="fas fa-gem me-2" style="color: #22c55e;"></i>Rutas de Farmeo de Crionita</h2>
+                <p style="color: var(--text-tertiary); font-size: 14px; margin: 0;">Guía de las mejores zonas para farmear crionita según tu nivel. Eficiencia: E (peor) → S (mejor).</p>
+            </div>
+
+            <!-- Filtros de farmeo -->
+            <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+                <select id="farmingLevelFilter" class="filter-select">
+                    <option value="">Todos los niveles</option>
+                    <option value="1-10">Nivel 1-10</option>
+                    <option value="11-20">Nivel 11-20</option>
+                    <option value="21-30">Nivel 21-30</option>
+                    <option value="31-40">Nivel 31-40</option>
+                    <option value="41-50">Nivel 41-50</option>
+                    <option value="51+">Nivel 51+</option>
+                </select>
+                <select id="farmingSystemFilter" class="filter-select">
+                    <option value="">Todos los sistemas</option>
+                    <option value="vega">Vega</option>
+                    <option value="antares">Antares</option>
+                    <option value="mizar">Mizar</option>
+                    <option value="gemini">Gemini</option>
+                    <option value="sirius">Singularidad Sirius</option>
+                </select>
+            </div>
+
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; margin-bottom: 20px;">
+                <table class="farm-table" id="farmingTable">
+                    <thead>
+                        <tr>
+                            <th>Zona / Planeta</th>
+                            <th>Sistema</th>
+                            <th>Nivel Req.</th>
+                            <th>Recurso</th>
+                            <th>Eficiencia</th>
+                            <th>Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="farmingTableBody">
+                        <tr><td colspan="6" style="text-align: center; color: var(--text-tertiary); padding: 30px;">Cargando rutas de farmeo...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="farmingEmpty" class="section-empty" style="display: none;">
+                <i class="fas fa-gem d-block"></i>
+                No hay rutas de farmeo configuradas. El admin puede añadirlas en el panel.
+            </div>
+        </div>
+
+        <!-- Panel: Clanes -->
+        <div class="misc-panel" id="panel-clans">
+            <!-- Info estática de clanes + contenido dinámico de Firestore -->
+            <div style="margin-bottom: 24px;">
+                <h2 style="margin: 0 0 6px; font-size: 22px; color: var(--text-primary);"><i class="fas fa-users me-2" style="color: #f59e0b;"></i>Sistema de Clanes</h2>
+                <p style="color: var(--text-tertiary); font-size: 14px; margin: 0;">Todo lo que necesitas saber sobre los clanes en Pirate Galaxy</p>
+            </div>
+
+            <!-- Contenido dinámico de clan_info -->
+            <div id="clanInfoContainer" style="margin-top: 24px;"></div>
+        </div>
+
+        <!-- Panel: Conquista -->
+        <div class="misc-panel" id="panel-conquest">
+            <div style="margin-bottom: 24px;">
+                <h2 style="margin: 0 0 6px; font-size: 22px; color: var(--text-primary);"><i class="fas fa-flag me-2" style="color: #667eea;"></i>Sistema de Conquista</h2>
+                <p style="color: var(--text-tertiary); font-size: 14px; margin: 0;">Cómo funciona la conquista de planetas y sus recompensas</p>
+            </div>
+
+            <!-- Info dinámica de Firestore -->
+            <div id="conquestInfoContainer"></div>
+
+            <div style="margin-top: 20px; padding: 16px; background: rgba(102,126,234,0.1); border: 1px solid rgba(102,126,234,0.3); border-radius: 10px; font-size: 14px; color: var(--text-secondary);">
+                <i class="fas fa-calendar-alt me-2" style="color: var(--accent);"></i>
+                <strong>¿Buscas los horarios de conquista?</strong> Los calendarios por servidor están disponibles en 
+                <a href="systems.html?tab=conquest" style="color: var(--accent);">Sistemas → Conquista</a>.
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/header-auth.js"></script>
+
+    <script>
+        // ============ TAB SYSTEM ============
+        function setTab(panelId) {
+            document.querySelectorAll('.misc-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.misc-panel').forEach(p => p.classList.remove('active'));
+            document.querySelector(`[data-panel="${panelId}"]`).classList.add('active');
+            document.getElementById(`panel-${panelId}`).classList.add('active');
+            // Lazy load por panel
+            if (panelId === 'general' && !window._generalLoaded) loadMiscInfo();
+            if (panelId === 'survival' && !window._survivalLoaded) loadSurvivalGuides();
+            if (panelId === 'farming' && !window._farmingLoaded) loadFarmingRoutes();
+            if (panelId === 'clans' && !window._clansLoaded) loadClanInfo();
+            if (panelId === 'conquest' && !window._conquestLoaded) loadConquestInfo();
+        }
+
+        document.querySelectorAll('.misc-tab').forEach(btn => {
+            btn.addEventListener('click', () => setTab(btn.dataset.panel));
+        });
+
+        // ============ GENERAL (misc_info) ============
+        async function loadMiscInfo() {
+            window._generalLoaded = true;
+            const container = document.getElementById('miscInfoContainer');
+            const empty = document.getElementById('miscInfoEmpty');
+            const db = window.db;
+            if (!db) { empty.style.display = 'block'; return; }
+            container.innerHTML = '<div class="empty-state">Cargando...</div>';
+            try {
+                const snap = await db.collection('misc_info').orderBy('order').get();
+                const items = [];
+                snap.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+                if (items.length === 0) { container.innerHTML = ''; empty.style.display = 'block'; return; }
+                container.innerHTML = '';
+                items.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'misc-accordion-item';
+                    el.innerHTML = `
+                        <button class="misc-accordion-btn">
+                            <span><i class="fas fa-chevron-right me-2"></i>${item.key || 'Sin título'}</span>
+                            <i class="fas fa-chevron-down misc-accordion-chevron"></i>
+                        </button>
+                        <div class="misc-accordion-body"></div>
+                    `;
+                    const body = el.querySelector('.misc-accordion-body');
+                    if (item.content && item.content.includes('<')) {
+                        body.innerHTML = item.content;
+                    } else {
+                        body.textContent = item.content || '';
+                    }
+                    el.querySelector('.misc-accordion-btn').addEventListener('click', function() {
+                        const open = body.style.display === 'block';
+                        body.style.display = open ? 'none' : 'block';
+                        el.querySelector('.misc-accordion-chevron').style.transform = open ? 'none' : 'rotate(180deg)';
+                    });
+                    container.appendChild(el);
+                });
+            } catch (e) {
+                container.innerHTML = '<div class="section-empty">Error al cargar. Revisa la consola.</div>';
+            }
+        }
+
+        // ============ SURVIVAL GUIDES ============
+        async function loadSurvivalGuides() {
+            window._survivalLoaded = true;
+            const container = document.getElementById('survivalContainer');
+            const empty = document.getElementById('survivalEmpty');
+            const db = window.db;
+            if (!db) { empty.style.display = 'block'; return; }
+            container.innerHTML = '<div class="empty-state">Cargando guías...</div>';
+            try {
+                const snap = await db.collection('survival_guides').orderBy('order').get();
+                const items = [];
+                snap.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+                if (items.length === 0) { container.innerHTML = ''; empty.style.display = 'block'; return; }
+                window._survivalItems = items;
+                renderSurvivalGuides(items);
+            } catch (e) {
+                container.innerHTML = '';
+                empty.style.display = 'block';
+                console.error('Error cargando guías:', e);
+            }
+        }
+
+        function renderSurvivalGuides(items) {
+            const search = (document.getElementById('survivalSearch').value || '').toLowerCase();
+            const filtered = search ? items.filter(i =>
+                (i.title || '').toLowerCase().includes(search) ||
+                (i.content || '').toLowerCase().includes(search) ||
+                (i.system || '').toLowerCase().includes(search)
+            ) : items;
+            const container = document.getElementById('survivalContainer');
+            const empty = document.getElementById('survivalEmpty');
+            if (filtered.length === 0) { container.innerHTML = ''; empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            container.innerHTML = '';
+            filtered.forEach(item => {
+                const diffColor = { easy: '#22c55e', medium: '#eab308', hard: '#ef4444', expert: '#a855f7' }[item.difficulty] || '#94a3b8';
+                const diffLabel = { easy: 'Fácil', medium: 'Moderado', hard: 'Difícil', expert: 'Experto' }[item.difficulty] || (item.difficulty || '');
+                const card = document.createElement('div');
+                card.className = 'guide-card';
+                card.style.borderLeftColor = diffColor;
+                card.innerHTML = `
+                    <div class="guide-card-title">
+                        <i class="fas fa-shield-alt" style="color: ${diffColor};"></i>
+                        ${item.title || 'Sin título'}
+                    </div>
+                    <div class="guide-card-meta">
+                        ${item.system ? `<span><i class="fas fa-globe"></i> ${item.system}</span>` : ''}
+                        ${item.minLevel ? `<span><i class="fas fa-signal"></i> Nivel ${item.minLevel}+</span>` : ''}
+                        ${diffLabel ? `<span style="color: ${diffColor}; font-weight: 700;"><i class="fas fa-fire"></i> ${diffLabel}</span>` : ''}
+                    </div>
+                    <div class="guide-card-body">${item.content || ''}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById('survivalSearch').addEventListener('input', () => {
+            if (window._survivalItems) renderSurvivalGuides(window._survivalItems);
+        });
+
+        // ============ FARMING ROUTES ============
+        async function loadFarmingRoutes() {
+            window._farmingLoaded = true;
+            const tbody = document.getElementById('farmingTableBody');
+            const empty = document.getElementById('farmingEmpty');
+            const db = window.db;
+            if (!db) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+            try {
+                const snap = await db.collection('farming_routes').orderBy('order').get();
+                const items = [];
+                snap.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+                if (items.length === 0) {
+                    tbody.innerHTML = '';
+                    // Mostrar datos de ejemplo si no hay nada en Firestore
+                    renderFarmingRoutes([
+                        { zone: 'Axiom', system: 'Vega', minLevel: 1, maxLevel: 10, resource: 'Crionita', efficiency: 'C', notes: 'Zona inicial, buenos para niveles bajos' },
+                        { zone: 'Kalabesh / Aurora', system: 'Vega', minLevel: 10, maxLevel: 20, resource: 'Crionita', efficiency: 'B', notes: 'Enemigos moderados, buen ratio' },
+                        { zone: 'Desai / Iga', system: 'Antares', minLevel: 20, maxLevel: 30, resource: 'Crionita', efficiency: 'B', notes: 'Zona media de Antares' },
+                        { zone: 'Baumar / Molikar', system: 'Mizar', minLevel: 30, maxLevel: 40, resource: 'Crionita', efficiency: 'A', notes: 'Alta densidad de enemigos' },
+                        { zone: 'Mercury / Earth', system: 'Sol', minLevel: 40, maxLevel: 50, resource: 'Crionita', efficiency: 'A', notes: 'Sistema Sol, enemigos de alto nivel' },
+                        { zone: 'Singularidad Sirius - Planetas Antiguos', system: 'Singularidad Sirius', minLevel: 50, maxLevel: null, resource: 'Crionita + Quarcs', efficiency: 'S', notes: 'Zona endgame. Requiere nave de Singularidad Sirius para descifrar planos' },
+                    ]);
+                    return;
+                }
+                window._farmingItems = items;
+                renderFarmingRoutes(items);
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color: var(--text-tertiary);">Error al cargar rutas.</td></tr>';
+            }
+        }
+
+        function renderFarmingRoutes(items) {
+            const levelFilter = document.getElementById('farmingLevelFilter').value;
+            const systemFilter = document.getElementById('farmingSystemFilter').value.toLowerCase();
+            const tbody = document.getElementById('farmingTableBody');
+            const empty = document.getElementById('farmingEmpty');
+
+            let filtered = items;
+            if (systemFilter) filtered = filtered.filter(i => (i.system || '').toLowerCase().includes(systemFilter));
+            if (levelFilter) {
+                const [min, max] = levelFilter.replace('+','').split('-').map(Number);
+                filtered = filtered.filter(i => {
+                    const level = parseInt(i.minLevel) || 0;
+                    if (levelFilter.endsWith('+')) return level >= min;
+                    return level >= min && level <= (max || 999);
+                });
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color: var(--text-tertiary); padding: 30px;">No hay rutas con estos filtros.</td></tr>';
+                return;
+            }
+            empty.style.display = 'none';
+            tbody.innerHTML = filtered.map(item => {
+                const effClass = `eff-${item.efficiency || 'C'}`;
+                const levelText = item.minLevel ? (item.maxLevel ? `${item.minLevel}—${item.maxLevel}` : `${item.minLevel}+`) : '—';
+                return `
+                <tr>
+                    <td><strong>${item.zone || item.planet || '—'}</strong></td>
+                    <td>${item.system || '—'}</td>
+                    <td>${levelText}</td>
+                    <td>${item.resource || 'Crionita'}</td>
+                    <td><span class="efficiency-badge ${effClass}">${item.efficiency || 'C'}</span></td>
+                    <td style="max-width: 250px; font-size: 13px;">${item.notes || '—'}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        document.getElementById('farmingLevelFilter').addEventListener('change', () => {
+            if (window._farmingItems) renderFarmingRoutes(window._farmingItems);
+        });
+        document.getElementById('farmingSystemFilter').addEventListener('change', () => {
+            if (window._farmingItems) renderFarmingRoutes(window._farmingItems);
+        });
+
+        // ============ CLAN INFO ============
+        async function loadClanInfo() {
+            window._clansLoaded = true;
+            const container = document.getElementById('clanInfoContainer');
+            const db = window.db;
+            if (!db) return;
+            try {
+                const snap = await db.collection('clan_info').orderBy('order').get();
+                const items = [];
+                snap.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+                if (items.length === 0) return;
+                container.innerHTML = '';
+                items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'conquest-info-card';
+                    card.innerHTML = `
+                        <h4><i class="fas fa-users" style="color: #f59e0b;"></i> ${item.title || item.key || 'Info'}</h4>
+                        <div style="color: var(--text-secondary); font-size: 14px; line-height: 1.7; white-space: pre-wrap;">${item.content || ''}</div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (e) { console.error('Error clan info:', e); }
+        }
+
+        // ============ CONQUEST INFO ============
+        async function loadConquestInfo() {
+            window._conquestLoaded = true;
+            const container = document.getElementById('conquestInfoContainer');
+            const db = window.db;
+            if (!db) return;
+            try {
+                const snap = await db.collection('conquest_info').orderBy('order').get();
+                const items = [];
+                snap.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+                if (items.length === 0) return;
+                container.innerHTML = '';
+                items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'conquest-info-card';
+                    card.innerHTML = `
+                        <h4><i class="fas fa-flag" style="color: #667eea;"></i> ${item.title || item.key || 'Info'}</h4>
+                        <div style="color: var(--text-secondary); font-size: 14px; line-height: 1.7; white-space: pre-wrap;">${item.content || ''}</div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (e) { console.error('Error conquest info:', e); }
+        }
+
+        // Cargar pestaña inicial
+        window.addEventListener('DOMContentLoaded', () => {
+            // Check URL param
+            const params = new URLSearchParams(window.location.search);
+            const tab = params.get('tab') || 'general';
+            setTab(tab);
+        });
+    </script>
+</body>
+</html>

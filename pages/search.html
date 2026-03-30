@@ -1,0 +1,293 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Buscar</title>
+    <meta name="description" content="Busca naves, componentes, enemigos, misiones y pinturas en GalaxWiki - Pirate Galaxy">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon theme-icon" id="themeIcon"></i></div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesiÃ³n</a>
+                    <a href="../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: var(--accent);"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="wiki/tracker.html"><i class="fas fa-check-double me-2"></i>Mi ColecciÃ³n</a></li>
+                        <li><a class="dropdown-item" href="favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>ConfiguraciÃ³n</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesiÃ³n</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="wiki/ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="wiki/builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="wiki/components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="wiki/enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="wiki/systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="wiki/missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="wiki/misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <h1 class="page-title"><i class="fas fa-search me-2"></i>BÃºsqueda Global</h1>
+        <p class="page-subtitle" id="searchSummary">Busca en toda la wiki...</p>
+
+        <form class="filters-bar" action="search.html" method="get" style="margin-bottom: 28px;">
+            <input type="text" name="q" id="searchInput" class="search-input" placeholder="Buscar naves, componentes, enemigos, misiones..." value="" autocomplete="off">
+            <button type="submit" class="btn-header btn-register" style="padding: 10px 20px;"><i class="fas fa-search me-1"></i>Buscar</button>
+        </form>
+
+        <!-- Estado de carga -->
+        <div id="resultsSearching" class="empty-state" style="display:none;">
+            <i class="fas fa-spinner fa-spin" style="font-size:32px; color:var(--accent); margin-bottom:12px;"></i>
+            <p>Buscando en toda la wiki...</p>
+        </div>
+
+        <!-- Resultados por categorÃ­a -->
+        <div id="resultsShips" class="content-section" style="display:none;">
+            <h2 class="page-title" style="font-size: 20px; margin-bottom: 12px;"><i class="fas fa-space-shuttle me-2"></i>Naves</h2>
+            <div class="ships-grid" id="shipsGrid"></div>
+        </div>
+        <div id="resultsComponents" class="content-section" style="display:none;">
+            <h2 class="page-title" style="font-size: 20px; margin-bottom: 12px;"><i class="fas fa-cog me-2"></i>Componentes</h2>
+            <div class="items-grid" id="componentsGrid"></div>
+        </div>
+        <div id="resultsEnemies" class="content-section" style="display:none;">
+            <h2 class="page-title" style="font-size: 20px; margin-bottom: 12px;"><i class="fas fa-skull me-2"></i>Enemigos</h2>
+            <div class="items-grid" id="enemiesGrid"></div>
+        </div>
+        <div id="resultsMissions" class="content-section" style="display:none;">
+            <h2 class="page-title" style="font-size: 20px; margin-bottom: 12px;"><i class="fas fa-tasks me-2"></i>Misiones</h2>
+            <div class="items-grid" id="missionsGrid"></div>
+        </div>
+        <div id="resultsPaints" class="content-section" style="display:none;">
+            <h2 class="page-title" style="font-size: 20px; margin-bottom: 12px;"><i class="fas fa-palette me-2"></i>Pinturas</h2>
+            <div class="items-grid" id="paintsGrid"></div>
+        </div>
+        <div id="emptyAll" class="empty-state" style="display: none;">
+            <i class="fas fa-search-minus" style="font-size:32px; opacity:.4; margin-bottom:12px;"></i>
+            <p>No se encontraron resultados. Prueba con otras palabras.</p>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/header-auth.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script>
+        const db = window.db;
+
+        function getParam(name) {
+            return (new URLSearchParams(window.location.search).get(name) || '').trim();
+        }
+
+        function esc(s) {
+            return ('' + (s || '')).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function highlight(text, q) {
+            if (!text || !q) return esc(text || '');
+            const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+            return esc(text).replace(re, '<mark style="background:rgba(102,126,234,0.35);color:inherit;border-radius:3px;padding:0 2px;">$1</mark>');
+        }
+
+        function statsLine(stats) {
+            if (!stats || typeof stats !== 'object') return '';
+            const p = [];
+            if (stats.armor != null) p.push('Blindaje: ' + stats.armor);
+            if (stats.speed != null) p.push('Velocidad: ' + stats.speed);
+            if (stats.damage != null) p.push('DaÃ±o: ' + stats.damage);
+            return p.join(' Â· ');
+        }
+
+        function formatDrops(item) {
+            const drops = item.drops != null ? item.drops : item.drop;
+            if (Array.isArray(drops)) return drops.filter(Boolean).join(', ');
+            return typeof drops === 'string' ? drops : '';
+        }
+
+        async function runSearch() {
+            const raw = getParam('q');
+            const q = raw.toLowerCase();
+            const summaryEl = document.getElementById('searchSummary');
+            document.getElementById('searchInput').value = raw;
+
+            // Hide all sections
+            ['resultsShips','resultsComponents','resultsEnemies','resultsMissions','resultsPaints','emptyAll','resultsSearching'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+
+            if (raw.length < 2) {
+                summaryEl.textContent = 'Escribe al menos 2 caracteres y presiona Buscar.';
+                return;
+            }
+
+            summaryEl.textContent = 'Buscando "' + raw + '" en toda la wiki...';
+            document.getElementById('resultsSearching').style.display = 'block';
+
+            try {
+                const [shipsSnap, componentsSnap, enemiesSnap, missionsSnap, paintsSnap] = await Promise.all([
+                    db.collection('ships').get(),
+                    db.collection('components').get(),
+                    db.collection('enemies').get(),
+                    db.collection('missions').get(),
+                    db.collection('paints').get()
+                ]);
+
+                document.getElementById('resultsSearching').style.display = 'none';
+
+                const ships = [], components = [], enemies = [], missions = [], paints = [];
+                shipsSnap.forEach(d => ships.push({ id: d.id, ...d.data() }));
+                componentsSnap.forEach(d => components.push({ id: d.id, ...d.data() }));
+                enemiesSnap.forEach(d => enemies.push({ id: d.id, ...d.data() }));
+                missionsSnap.forEach(d => missions.push({ id: d.id, ...d.data() }));
+                paintsSnap.forEach(d => paints.push({ id: d.id, ...d.data() }));
+
+                const m = t => (t || '').toLowerCase().includes(q);
+
+                const fShips      = ships.filter(s => m(s.name) || m(s.faction) || m(s.location) || m(s.description) || m(s.role));
+                const fComponents = components.filter(c => m(c.name) || m(c.type) || m(c.rarity) || m(c.description));
+                const fEnemies    = enemies.filter(e => m(e.name) || m(e.system) || m(e.planet) || m(e.description) || m(formatDrops(e)));
+                const fMissions   = missions.filter(m2 => m(m2.name) || m(m2.system) || m(m2.description));
+                const fPaints     = paints.filter(p => m(p.name) || m(p.type) || m(p.rarity) || m(p.description));
+
+                const total = fShips.length + fComponents.length + fEnemies.length + fMissions.length + fPaints.length;
+                summaryEl.textContent = total + ' resultado' + (total !== 1 ? 's' : '') + ' para "' + raw + '"';
+
+                // Ships
+                if (fShips.length) {
+                    document.getElementById('resultsShips').style.display = 'block';
+                    document.getElementById('shipsGrid').innerHTML = fShips.map(s => `
+                        <a href="wiki/ship-detail.html?id=${esc(s.id)}" class="ship-card" style="display:block;text-decoration:none;color:inherit;">
+                            ${s.image ? `<img src="${esc(s.image)}" alt="" style="width:100%;height:120px;object-fit:contain;border-radius:8px;margin-bottom:8px;">` : ''}
+                            <div class="ship-header">
+                                <div class="ship-name">${highlight(s.name, raw)}</div>
+                                <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                                    ${s.type ? `<span class="badge badge-type">${esc(s.type)}</span>` : ''}
+                                    ${s.faction ? `<span class="badge badge-faction">${esc(s.faction)}</span>` : ''}
+                                </div>
+                            </div>
+                            ${s.role ? `<div class="ship-meta" style="color:var(--accent);">${esc(s.role)}</div>` : ''}
+                            ${statsLine(s.stats) ? `<div class="ship-description" style="font-size:12px;">${statsLine(s.stats)}</div>` : ''}
+                        </a>`).join('');
+                }
+
+                // Components
+                if (fComponents.length) {
+                    document.getElementById('resultsComponents').style.display = 'block';
+                    document.getElementById('componentsGrid').innerHTML = fComponents.map(c => `
+                        <a href="wiki/component-detail.html?id=${esc(c.id)}" class="item-card" style="display:block;text-decoration:none;color:inherit;">
+                            <div class="item-header">
+                                <div class="item-name">${highlight(c.name, raw)}</div>
+                                <div>${c.type ? `<span class="badge badge-type">${esc(c.type)}</span>` : ''} ${c.rarity ? `<span class="badge badge-azul">${esc(c.rarity)}</span>` : ''}</div>
+                            </div>
+                            ${c.dropLocation ? `<div class="item-meta">${esc(c.dropLocation)}</div>` : ''}
+                            ${c.description ? `<p class="item-description">${highlight(c.description.slice(0,100), raw)}${c.description.length > 100 ? 'â€¦' : ''}</p>` : ''}
+                        </a>`).join('');
+                }
+
+                // Enemies
+                if (fEnemies.length) {
+                    document.getElementById('resultsEnemies').style.display = 'block';
+                    document.getElementById('enemiesGrid').innerHTML = fEnemies.map(e => {
+                        const loc = [e.system, e.planet].filter(Boolean).join(' â€“ ');
+                        return `
+                        <a href="wiki/enemy-detail.html?id=${esc(e.id)}" class="item-card" style="display:block;text-decoration:none;color:inherit;">
+                            <div class="item-header">
+                                <div class="item-name">${highlight(e.name, raw)}</div>
+                                ${e.type ? `<span class="badge badge-normal">${esc(e.type)}</span>` : ''}
+                            </div>
+                            ${loc ? `<div class="item-meta"><i class="fas fa-globe me-1"></i>${esc(loc)}</div>` : ''}
+                            ${formatDrops(e) ? `<div class="item-drops"><strong>Drops:</strong> ${esc(formatDrops(e))}</div>` : ''}
+                        </a>`;
+                    }).join('');
+                }
+
+                // Missions
+                if (fMissions.length) {
+                    document.getElementById('resultsMissions').style.display = 'block';
+                    document.getElementById('missionsGrid').innerHTML = fMissions.map(ms => `
+                        <a href="wiki/mission-detail.html?id=${esc(ms.id)}" class="item-card" style="display:block;text-decoration:none;color:inherit;">
+                            <div class="item-header">
+                                <div class="item-name">${highlight(ms.name, raw)}</div>
+                                ${ms.system ? `<span class="badge badge-type">${esc(ms.system)}</span>` : ''}
+                            </div>
+                            ${ms.levelMin != null ? `<div class="item-meta">Nivel mÃ­n. ${ms.levelMin}</div>` : ''}
+                            ${ms.description ? `<p class="item-description">${highlight(ms.description.slice(0,100), raw)}${ms.description.length>100?'â€¦':''}</p>` : ''}
+                        </a>`).join('');
+                }
+
+                // Paints
+                if (fPaints.length) {
+                    document.getElementById('resultsPaints').style.display = 'block';
+                    document.getElementById('paintsGrid').innerHTML = fPaints.map(p => `
+                        <a href="wiki/paint-detail.html?id=${esc(p.id)}" class="item-card" style="display:block;text-decoration:none;color:inherit;">
+                            <div class="item-header">
+                                <div class="item-name">${highlight(p.name, raw)}</div>
+                                <div>${p.type ? `<span class="badge badge-type">${esc(p.type)}</span>` : ''} ${p.rarity ? `<span class="badge badge-azul">${esc(p.rarity)}</span>` : ''}</div>
+                            </div>
+                            ${p.description ? `<p class="item-description">${highlight(p.description.slice(0,100), raw)}${p.description.length>100?'â€¦':''}</p>` : ''}
+                        </a>`).join('');
+                }
+
+                if (total === 0) {
+                    document.getElementById('emptyAll').style.display = 'block';
+                    summaryEl.textContent = 'Sin resultados para "' + raw + '"';
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('resultsSearching').style.display = 'none';
+                document.getElementById('emptyAll').textContent = 'Error al buscar. Por favor recarga e intenta nuevamente.';
+                document.getElementById('emptyAll').style.display = 'block';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', runSearch);
+    </script>
+</body>
+</html>
+

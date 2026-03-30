@@ -1,0 +1,302 @@
+rules_version = '2';
+// Reglas de Firestore para GalaxWiki (Pirate Galaxy).
+// Copia este contenido en Firebase Console → Firestore → Reglas, o despliega con: firebase deploy --only firestore:rules
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Función auxiliar para verificar si es admin
+    function isAdmin() {
+      return request.auth != null && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Usuarios: cada usuario lee/escribe su documento; admins pueden leer y actualizar cualquier usuario
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, update: if isAdmin();
+    }
+
+    // Favoritos: cada usuario solo sus propios favoritos
+    match /users/{userId}/favorites/{favId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Planos de usuario: cada usuario solo sus propios planos
+    match /users/{userId}/blueprints/{docId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Colecciones de la wiki: lectura pública, escritura solo admins
+    match /ships/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /components/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /enemies/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /systems/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /planets/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /missions/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /paints/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /drones/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /cortex/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /gravitons/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /factions/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /ship_types/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /component_types/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /component_rarities/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /enemy_types/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /paint_types/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /paint_rarities/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /drone_types/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /servers/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /misc_info/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /conquest_schedules/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Foro: lectura pública
+    match /forum_categories/{categoryId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /forum_threads/{threadId} {
+      allow read: if true;
+      // Cualquier autenticado puede crear un hilo
+      allow create: if request.auth != null;
+      // Solo el autor original o un administrador puede actualizar/borrar
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+    match /forum_threads/{threadId}/posts/{postId} {
+      allow read: if true;
+      // Cualquier autenticado puede crear un post (respuesta)
+      allow create: if request.auth != null;
+      // Solo el autor original o un administrador puede actualizar/borrar
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+
+    // Noticias: lectura pública, escritura solo admins
+    match /news/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /news/{newsId}/user_reactions/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Eventos (colección faltante): lectura pública, escritura solo admins
+    match /events/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Historia del juego: lectura pública, escritura solo admins
+    match /game_story/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Nuevas secciones
+    match /sirius_info/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /survival_guides/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /farming_routes/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /conquest_info/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /clan_info/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /map_markers/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Comentarios en bestiario y drops
+    match /bestiary/{entryId}/comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+
+    match /planet_drops/{dropId}/comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+
+    // Comentarios en planetas (sub-colección)
+    match /planets/{planetId}/comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+
+    // Comentarios en rutas de farmeo (sub-colección) - permitir usuarios autenticados
+    match /farming_routes/{routeId}/comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+
+    // Colecciones generales (asegurar acceso)
+    match /bestiary/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /planet_drops/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /farming_routes/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Blueprints (planos de la wiki): lectura pública, escritura solo admins
+    match /blueprints/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Tracker de colección del usuario: cada usuario solo sus propios datos
+    match /user_blueprints/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Admins pueden leer para estadísticas
+      allow read: if isAdmin();
+    }
+
+    // Comentarios: lectura pública, escritura requiere autenticación
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+
+    // Naves detalle (colección de comentarios embebidos por nave)
+    match /ships/{shipId}/comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+
+    // Enemigos detalle (comentarios por enemigo)
+    match /enemies/{enemyId}/comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+
+    // Misiones comentarios
+    match /missions/{missionId}/comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+
+    // Colección de pinturas (tracker coleccionable)
+    match /paints/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Singularidad Sirius extendida
+    match /sirius_rings/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /sirius_enemies/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /sirius_blueprints/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Builds (configuraciones de naves creadas por usuarios)
+    match /builds/{buildId} {
+      allow read: if true;
+      // Cualquier usuario autenticado puede crear una build
+      allow create: if request.auth != null;
+      // Solo el autor o admin puede actualizar o eliminar
+      allow update: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+      allow delete: if request.auth != null && (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+
+    // Reportes de contenido: cualquier usuario puede crear; solo admins gestionan
+    match /reports/{reportId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

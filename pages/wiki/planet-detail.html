@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Detalle del Planeta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+    <style>
+        /* Premium Layout for Planet Detail */
+        .planet-header-card { 
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(160,193,241,0.05));
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .planet-header-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            opacity: 0.1;
+            filter: blur(50px);
+            pointer-events: none;
+        }
+
+        /* Tabs System */
+        .page-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .page-tab {
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--text-tertiary);
+            padding: 14px 24px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .page-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+        .page-tab.active { 
+            color: var(--accent); 
+            border-bottom-color: var(--accent); 
+            background: rgba(102,126,234,0.06); 
+        }
+
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tactical Map Layout        /* Updated Map Layout for Square Proportions */
+        .map-section-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .map-row-layout {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+            justify-content: center;
+            min-height: 500px;
+        }
+        .map-canvas-container {
+            flex-shrink: 0;
+            position: relative;
+            background: rgba(15, 23, 42, 0.05);
+            border: 2px solid var(--border-color);
+            border-radius: 24px;
+            overflow: hidden;
+            cursor: grab;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            /* Square proportions enforced via JS: width = height */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+        [data-theme="dark"] .map-canvas-container { background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.05); }
+
+        .map-canvas-container:active { cursor: grabbing; }
+
+        #planetMapWrap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: 0 0;
+            will-change: transform; /* GPU Acceleration */
+        }
+        #planetMapImage {
+            display: block;
+            width: 100%;
+            height: 100%; /* Square enforced */
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        #planetMapImage.loaded { opacity: 1; }
+
+        /* Coordinate Probe Indicator */
+        .coord-probe-indicator {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border: 3px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 45;
+            background: var(--accent);
+            box-shadow: 0 0 15px var(--accent);
+            display: none;
+        }
+        .coord-probe-label {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 900;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .coord-probe-indicator::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            animation: probePing 1.5s ease-out infinite;
+        }
+        @keyframes probePing { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+
+        /* Expandable Filter Sidebar */
+        .map-filter-sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            height: 500px; /* Matched to medium map height */
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            transition: height 0.5s ease;
+        }
+        [data-theme="dark"] .map-filter-sidebar { background: rgba(15, 23, 42, 0.8); }
+
+        .filter-sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(to right, rgba(102,126,234,0.05), transparent);
+        }
+        .filter-sidebar-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .filter-sidebar-title {
+            font-size: 11px;
+            font-weight: 900;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-bulk-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-bulk {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .btn-bulk-all { background: rgba(102,126,234,0.1); color: var(--accent); border-color: rgba(102,126,234,0.2); }
+        .btn-bulk-all:hover { background: var(--accent); color: white; }
+        
+        .btn-bulk-none { background: rgba(239,68,68,0.05); color: #f87171; border-color: rgba(239,68,68,0.1); }
+        .btn-bulk-none:hover { background: #ef4444; color: white; }
+
+        .filter-sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 5px;
+        }
+        .filter-sidebar-body::-webkit-scrollbar { width: 4px; }
+        .filter-sidebar-body::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.2); border-radius: 10px; }
+
+        /* Collapsible Groups */
+        .filter-group {
+            margin-bottom: 2px;
+            border-bottom: 1px solid rgba(128,128,128,0.05);
+        }
+        .filter-group-header {
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .filter-group-header:hover { background: rgba(102,126,234,0.05); color: var(--accent); }
+        .filter-group-header i.fa-chevron-right { transition: transform 0.3s; font-size: 10px; opacity: 0.5; }
+        .filter-group.expanded .filter-group-header i.fa-chevron-right { transform: rotate(90deg); }
+        
+        .filter-group-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 5px;
+        }
+        .filter-group.expanded .filter-group-content { max-height: 400px; padding-bottom: 10px; }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            margin-bottom: 2px;
+            color: var(--text-primary);
+        }
+        .filter-item:hover { background: rgba(102,126,234,0.08); }
+        .filter-item.active { background: rgba(102,126,234,0.12); color: var(--accent); font-weight: 700; }
+        .filter-item.disabled { opacity: 0.4; filter: grayscale(1); }
+        
+        .filter-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 0 5px currentColor;
+        }
+        .filter-label {
+            font-size: 13px; /* Slightly larger */
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .filter-eye { font-size: 11px; opacity: 0.7; }
+
+        /* Modern Square Controls */
+        .btn-square {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 900;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .btn-square:hover { background: rgba(102,126,234,0.1); color: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+        .btn-square.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .btn-nav-modern {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(148, 163, 184, 0.1);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .btn-nav-modern:hover { background: #334155; color: white; border-color: transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        [data-theme="dark"] .btn-nav-modern { background: rgba(51, 65, 85, 0.5); border-color: rgba(255,255,255,0.05); }
+
+        .control-group-title { font-size: 10px; font-weight: 900; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+        
+        /* Map Controls Panel */
+        .map-controls-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        /* Marker Styles */
+        .map-marker {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: markerFloat 3.5s ease-in-out infinite;
+        }
+        @keyframes markerFloat {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-5px); }
+        }
+        .map-marker.highlight { transform: translate(-50%, -50%) scale(2); z-index: 100; animation: none !important; }
+        .map-marker.highlight i { filter: drop-shadow(0 0 10px currentColor); }
+
+        .map-marker i {
+            font-size: 18px;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Pulse Effect */
+        .map-marker::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: currentColor;
+            border-radius: 50%;
+            opacity: 0.4;
+            transform: scale(0.5);
+            animation: markerPulse 2s ease-out infinite;
+            z-index: 1;
+        }
+        @keyframes markerPulse {
+            0% { transform: scale(0.5); opacity: 0.6; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        .map-marker:hover { transform: translate(-50%, -50%) scale(1.4); z-index: 20; animation-play-state: paused; }
+        .marker-tooltip {
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            background: var(--card-bg); /* Theme aware */
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 12px;
+            width: 240px;
+            color: var(--text-primary);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+        .map-marker:hover .marker-tooltip { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        
+        /* Marker Count Badge */
+        .marker-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ef4444; /* Bright Red */
+            color: white;
+            font-size: 11px;
+            font-weight: 900;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            z-index: 20;
+        }
+
+        /* Coord Tracker */
+        #coordTracker {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            z-index: 50;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        /* Tables */
+        .premium-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .premium-table th {
+            color: var(--text-tertiary);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 10px 20px;
+        }
+        .premium-table tr {
+            background: rgba(255,255,255,0.02);
+            transition: transform 0.2s, background 0.2s;
+        }
+        .premium-table tr:hover {
+            background: rgba(255,255,255,0.05);
+            transform: translateX(5px);
+        }
+        .premium-table td {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .premium-table td:first-child { border-left: 1px solid rgba(255,255,255,0.05); border-radius: 12px 0 0 12px; }
+        .premium-table td:last-child { border-right: 1px solid rgba(255,255,255,0.05); border-radius: 0 12px 12px 0; }
+
+        /* High Contrast Badges for Drops */
+        .badge-premium {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .badge-type { background: #6366f1; color: white; }
+        [data-theme="dark"] .badge-type { background: rgba(99,102,241,0.2); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+
+        .badge-rarity { border: 1px solid transparent; }
+        .rarity-rare { background: #f59e0b; color: white; }
+        [data-theme="dark"] .rarity-rare { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+        
+        .rarity-common { background: #9ca3af; color: white; }
+        [data-theme="dark"] .rarity-common { background: rgba(156,163,175,0.2); color: #d1d5db; }
+
+        .rarity-epic { background: #8b5cf6; color: white; }
+        [data-theme="dark"] .rarity-epic { background: rgba(139,92,246,0.2); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); }
+
+        .btn-view-map {
+            background: rgba(102,126,234,0.1);
+            color: var(--accent);
+            border: 1px solid rgba(102,126,234,0.2);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        .btn-view-map:hover { background: var(--accent); color: white; transform: scale(1.05); }
+
+        /* Loader */
+        .map-status-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            color: var(--text-tertiary);
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text"><span class="logo-title">GalaxWiki</span><span class="logo-subtitle">PIRATE GALAXY</span></div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon theme-icon" id="themeIcon"></i></div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link active"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div class="mb-5 d-flex justify-content-between align-items-center">
+            <a href="systems.html" class="btn-action" style="padding: 10px 20px;"><i class="fas fa-arrow-left me-2"></i>Volver</a>
+            <div id="conquestStatusContainer" style="display: none;">
+                <!-- Future conquest info -->
+            </div>
+        </div>
+
+        <div class="page-tabs">
+            <button class="page-tab active" onclick="switchTab('overview')"><i class="fas fa-info-circle"></i> VISTA GENERAL</button>
+            <button class="page-tab" onclick="switchTab('map')"><i class="fas fa-satellite-dish"></i> MAPA TÁCTICO</button>
+            <button class="page-tab" onclick="switchTab('drops')"><i class="fas fa-box-open"></i> LOGÍSTICA & DROPS</button>
+        </div>
+
+        <!-- TAB: OVERVIEW -->
+        <div id="tab-overview" class="tab-pane active">
+            <div id="overviewContent" class="planet-header-card">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <span id="planetSystem" class="badge mb-2" style="background: rgba(102,126,234,0.1); color: var(--accent); border: 1px solid rgba(102,126,234,0.2);">Cargando sistema...</span>
+                        <h1 id="planetName" class="page-title mb-3">Cargando planeta...</h1>
+                        <div id="planetStats" class="d-flex gap-4 mb-4 text-tertiary" style="font-size: 14px;">
+                            <span><i class="fas fa-tachometer-alt me-2"></i>Nivel: <strong id="planetLevel">?? - ??</strong></span>
+                            <span><i class="fas fa-shield-alt me-2"></i>Tipo: <strong id="planetType">Cargando...</strong></span>
+                        </div>
+                        <div id="planetDescription" class="item-description" style="line-height: 1.8; opacity: 0.9;">
+                            Obteniendo archivos de inteligencia de la oficina del almirantazgo...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: MAP -->
+        <div id="tab-map" class="tab-pane">
+            <div class="map-controls-panel">
+                <div class="d-flex flex-column align-items-center gap-2">
+                    <span class="control-group-title"><i class="fas fa-expand-alt me-1"></i> Formato</span>
+                    <div class="d-flex gap-2">
+                        <button class="btn-square" onclick="setMapScale('small')" id="btn-size-small">S</button>
+                        <button class="btn-square active" onclick="setMapScale('medium')" id="btn-size-medium">M</button>
+                        <button class="btn-square" onclick="setMapScale('large')" id="btn-size-large">L</button>
+                    </div>
+                </div>
+                
+                <div class="d-flex flex-column align-items-center gap-2">
+                    <span class="control-group-title"><i class="fas fa-location-arrow me-1"></i> Navegación</span>
+                    <div class="d-flex gap-3">
+                        <button class="btn-nav-modern" onclick="adjustZoom(-0.4)" title="Reducir"><i class="fas fa-minus"></i></button>
+                        <button class="btn-nav-modern" onclick="resetView()" title="Auto-Centrar"><i class="fas fa-compress-arrows-alt"></i></button>
+                        <button class="btn-nav-modern" onclick="adjustZoom(0.4)" title="Aumentar"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-row-layout">
+                <div id="mapMainCanvas" class="map-canvas-container">
+                    <div id="coordTracker">X: 00.0 &nbsp; Y: 00.0</div>
+                    <div id="coordProbe" class="coord-probe-indicator"></div>
+                    
+                    <div id="planetMapWrap">
+                        <img id="planetMapImage" src="" alt="Tactical Map">
+                    </div>
+                    
+                    <div id="mapLoader" class="map-status-overlay">
+                        <div class="spinner-grow text-primary" role="status"></div>
+                        <span class="mt-2" style="font-weight: 800; opacity: 0.6;">CALIBRANDO SENSORES...</span>
+                    </div>
+                    <div id="mapError" class="map-status-overlay" style="display: none;">
+                        <i class="fas fa-satellite-dish fa-3x mb-3" style="opacity: 0.2;"></i>
+                        <span>ERROR DE ENLACE SATELITAL</span>
+                    </div>
+                </div>
+
+                <div class="map-filter-sidebar" id="mapSidebar">
+                    <div class="filter-sidebar-header">
+                        <div class="filter-sidebar-top-row">
+                            <span class="filter-sidebar-title"><i class="fas fa-radar"></i> Radar Táctico</span>
+                        </div>
+                        <div class="filter-bulk-actions">
+                            <button class="btn-bulk btn-bulk-all" onclick="toggleAllGroups(true)">Activar Todo</button>
+                            <button class="btn-bulk btn-bulk-none" onclick="toggleAllGroups(false)">Nada</button>
+                        </div>
+                    </div>
+                    <div class="filter-sidebar-body" id="filterSidebarBody">
+                        <!-- Filters -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: DROPS -->
+        <div id="tab-drops" class="tab-pane">
+            <div class="planet-header-card" style="padding: 20px 30px; margin-bottom: 20px;">
+                <h3 style="font-size: 18px; font-weight: 900; margin: 0;"><i class="fas fa-box-open text-accent me-2"></i>Base de Datos de Inteligencia</h3>
+                <p class="text-tertiary mb-0 mt-1" style="font-size: 13px;">Planos, componentes y recursos identificados en este cuadrante.</p>
+            </div>
+            <div class="table-responsive">
+                <table class="premium-table">
+                    <thead>
+                        <tr>
+                            <th>Tecnología</th>
+                            <th>Tipo</th>
+                            <th>Rareza / Frecuencia</th>
+                            <th>Ubicación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dropsTableBody">
+                        <!-- Dynamic drops with "Ver en Mapa" -->
+                    </tbody>
+                </table>
+                <div id="dropsEmpty" class="text-center py-5" style="display: none; opacity: 0.5;">
+                    <i class="fas fa-file-search fa-4x mb-4"></i>
+                    <p>No hay registros de tecnología en este planeta.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="planet-comments-section" class="mt-5 pt-5 border-top border-secondary"></div>
+    </main>
+
+    <!-- Firebase & Custom JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/header-auth.js"></script>
+    <script src="../../js/content-utils.js"></script>
+    <script src="../../js/comments.js"></script>
+
+    <script>
+        /**
+         * GALAXWIKI - Planet Detail Module (Optimized)
+         */
+
+        const AppState = {
+            planetId: new URLSearchParams(window.location.search).get('id'),
+            planetData: null,
+            markers: [],
+            map: {
+                zoom: 1,
+                pan: { x: 0, y: 0 },
+                isPanning: false,
+                startPan: { x: 0, y: 0 },
+                isInitialized: false
+            },
+            filters: {
+                activeGroups: new Set(),
+                entities: new Set(),
+                routes: new Set()
+            }
+        };
+
+        const MARKER_UI = {
+            'boss': { icon: 'fa-skull', color: '#ff3333', label: 'Jefes / Bosses', category: 'categories' },
+            'rare_mantis': { icon: 'fa-diamond', color: '#ff9933', label: 'Mantis Raros', category: 'categories' },
+            'mantis': { icon: 'fa-bug', color: '#ffff33', label: 'Mantis / Enemigos', category: 'categories' },
+            'enemy_spawn': { icon: 'fa-ghost', color: '#ffff33', label: 'Spawns', category: 'categories' }, 
+            'patrol': { icon: 'fa-route', color: '#ffff33', label: 'Patrullas', category: 'categories' },
+            'farming_route': { icon: 'fa-arrow-trend-up', color: '#33cc33', label: 'Rutas de Farmeo', category: 'poi' },
+            'collectible': { icon: 'fa-gem', color: '#3399ff', label: 'Componentes', category: 'categories' },
+            'landing': { icon: 'fa-plane-arrival', color: '#3399ff', label: 'Zona Aterrizaje', category: 'poi' },
+            'energy': { icon: 'fa-bolt', color: '#33cc33', label: 'Zonas Energía', category: 'poi' },
+            'rocket_turret': { icon: 'fa-crosshairs', color: '#9999ff', label: 'Torreta Cohetes', category: 'poi' },
+            'stun_turret': { icon: 'fa-bolt-lightning', color: '#9999ff', label: 'Torreta Choque', category: 'poi' },
+            'mine_field': { icon: 'fa-bomb', color: '#9999ff', label: 'Campo de Minas', category: 'poi' },
+            'poi': { icon: 'fa-location-dot', color: '#cc66ff', label: 'Puntos de Interés', category: 'poi' }
+        };
+
+        Object.keys(MARKER_UI).forEach(k => AppState.filters.activeGroups.add(k));
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.page-tab').forEach(b => b.classList.toggle('active', b.getAttribute('onclick').includes(tabId)));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === `tab-${tabId}`));
+            if (tabId === 'map') {
+                if (!AppState.map.isInitialized) { setMapScale('medium'); AppState.map.isInitialized = true; }
+                setTimeout(resetView, 100); 
+            }
+        }
+
+        function updateTransform() {
+            const w = document.getElementById('planetMapWrap');
+            if (w) w.style.transform = `translate(${AppState.map.pan.x}px, ${AppState.map.pan.y}px) scale(${AppState.map.zoom})`;
+        }
+
+        function setMapScale(size) {
+            const c = document.getElementById('mapMainCanvas'), s = document.getElementById('mapSidebar');
+            if (!c || !s) return;
+            const config = { small: '400px', medium: '500px', large: '650px' };
+            const side = config[size] || config.medium;
+            c.style.width = c.style.height = s.style.height = side;
+            document.querySelectorAll('.btn-square').forEach(b => b.classList.toggle('active', b.id === `btn-size-${size}`));
+            resetView();
+        }
+
+        function adjustZoom(delta, cx = null, cy = null) {
+            const c = document.getElementById('mapMainCanvas'), r = c.getBoundingClientRect(), pz = AppState.map.zoom;
+            AppState.map.zoom = Math.max(0.6, Math.min(AppState.map.zoom + delta, 5));
+            if (cx !== null && cy !== null) {
+                const mx = cx - r.left - AppState.map.pan.x, my = cy - r.top - AppState.map.pan.y;
+                AppState.map.pan.x -= mx * (AppState.map.zoom / pz - 1); AppState.map.pan.y -= my * (AppState.map.zoom / pz - 1);
+            } else {
+                const mx = (r.width / 2) - AppState.map.pan.x, my = (r.height / 2) - AppState.map.pan.y;
+                AppState.map.pan.x -= mx * (AppState.map.zoom / pz - 1); AppState.map.pan.y -= my * (AppState.map.zoom / pz - 1);
+            }
+            updateTransform();
+        }
+
+        function resetView() { AppState.map.zoom = 1; AppState.map.pan = { x: 0, y: 0 }; updateTransform(); }
+
+        function initMapEvents() {
+            const c = document.getElementById('mapMainCanvas'), t = document.getElementById('coordTracker'), p = document.getElementById('coordProbe');
+            if (!c) return;
+            c.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.map-marker')) return;
+                e.preventDefault();
+                AppState.map.isPanning = true;
+                AppState.map.startPan = { x: e.clientX - AppState.map.pan.x, y: e.clientY - AppState.map.pan.y };
+                c.style.cursor = 'grabbing';
+            });
+            c.addEventListener('click', (e) => {
+                if (AppState.map.isPanning && Math.abs(e.clientX - (AppState.map.startPan.x + AppState.map.pan.x)) > 5) return;
+                const r = c.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, i = document.getElementById('planetMapImage');
+                if (!i?.complete) return;
+                const rx = (x - AppState.map.pan.x) / AppState.map.zoom / r.width * 100, ry = (y - AppState.map.pan.y) / AppState.map.zoom / i.offsetHeight * 100;
+                if (rx >= 0 && rx <= 100 && ry >= 0 && ry <= 100) {
+                    p.style.display = 'block'; p.style.left = `${x}px`; p.style.top = `${y}px`;
+                    p.innerHTML = `<div class="coord-probe-label">${rx.toFixed(1).padStart(4,'0')}, ${ry.toFixed(1).padStart(4,'0')}</div>`;
+                }
+            });
+            window.addEventListener('mousemove', (e) => {
+                if (AppState.map.isPanning) { AppState.map.pan.x = e.clientX - AppState.map.startPan.x; AppState.map.pan.y = e.clientY - AppState.map.startPan.y; updateTransform(); p.style.display = 'none'; }
+                const r = c.getBoundingClientRect();
+                if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
+                    t.style.opacity = '1'; const x = e.clientX - r.left, y = e.clientY - r.top, i = document.getElementById('planetMapImage');
+                    if (i?.complete) {
+                        const rx = (x - AppState.map.pan.x) / AppState.map.zoom / r.width * 100, ry = (y - AppState.map.pan.y) / AppState.map.zoom / i.offsetHeight * 100;
+                        t.innerHTML = `X: ${rx.toFixed(1).padStart(4,'0')} &nbsp; Y: ${ry.toFixed(1).padStart(4,'0')}`;
+                    }
+                } else t.style.opacity = '0';
+            });
+            window.addEventListener('mouseup', () => { AppState.map.isPanning = false; c.style.cursor = 'grab'; });
+        }
+
+        function renderMarkers() {
+            const w = document.getElementById('planetMapWrap');
+            if (!w) return;
+            w.querySelectorAll('.map-marker').forEach(m => m.remove());
+            // Group markers by coordinates
+            const groups = {};
+            AppState.markers.forEach(m => {
+                if (!AppState.filters.activeGroups.has(m.type) || (m.entityName && !AppState.filters.entities.has(m.entityName))) return;
+                if (m.x == null || m.y == null) return;
+                
+                const key = `${m.x.toFixed(2)},${m.y.toFixed(2)}`;
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(m);
+            });
+
+            const typePriority = ['boss', 'rare_mantis', 'mantis', 'enemy_spawn', 'patrol', 'collectible', 'landing', 'energy', 'poi'];
+
+            Object.entries(groups).forEach(([coords, markers]) => {
+                // Find primary marker for icon/color
+                let primary = markers[0];
+                let maxPriority = typePriority.indexOf(primary.type);
+                if (maxPriority === -1) maxPriority = 999;
+
+                markers.forEach(m => {
+                    let p = typePriority.indexOf(m.type);
+                    if (p !== -1 && p < maxPriority) {
+                        maxPriority = p;
+                        primary = m;
+                    }
+                });
+
+                const ui = MARKER_UI[primary.type] || MARKER_UI.poi;
+                const marker = document.createElement('div');
+                marker.className = 'map-marker'; 
+                marker.style.left = `${primary.x}%`; 
+                marker.style.top = `${primary.y}%`; 
+                marker.style.color = ui.color;
+                marker.style.background = `${ui.color}22`;
+                marker.style.border = `1.5px solid ${ui.color}`;
+                marker.style.borderRadius = "50%";
+                marker.style.boxShadow = `0 0 8px ${ui.color}, inset 0 0 4px ${ui.color}`;
+                
+                let totalCount = 0;
+                markers.forEach(m => {
+                    totalCount += (parseInt(m.count) || 1);
+                });
+
+                // Count badge if more than 1
+                const countHtml = totalCount > 1 ? `<div class="marker-count">${totalCount}</div>` : '';
+
+                // Tooltip construction
+                let tooltipInner = '';
+                markers.forEach((m, idx) => {
+                    const mUi = MARKER_UI[m.type] || MARKER_UI.poi;
+                    const itemQty = parseInt(m.count) || 1;
+                    const itemPrefix = itemQty > 1 ? `<span style="opacity:0.8; margin-right:4px;">(${itemQty}x)</span>` : '';
+                    tooltipInner += `
+                        <div style="font-weight:900; ${idx < markers.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:10px; padding-bottom:10px;' : ''} display:flex; align-items:center; gap:10px;">
+                            <i class="fas ${mUi.icon}" style="color:${mUi.color}; text-shadow: 0 0 2px #000;"></i>
+                            <span>${itemPrefix}${m.label || mUi.label}</span>
+                        </div>
+                        ${m.entityName ? `<div class="mb-2" style="font-size:13px;"><span class="text-tertiary">Objetivo:</span> <strong style="color:var(--accent)">${m.entityName}</strong></div>` : ''}
+                        ${m.description ? `<div class="mt-1 text-tertiary mb-2" style="font-size:11px;line-height:1.5;">${m.description}</div>` : ''}
+                    `;
+                });
+
+                marker.innerHTML = `
+                    ${countHtml}
+                    <i class="fas ${ui.icon}" style="text-shadow: 0 0 3px #000;"></i>
+                    <div class="marker-tooltip">
+                        ${tooltipInner}
+                        <div class="mt-2 text-center" style="font-size:10px;color:var(--accent);opacity:0.8;">[${primary.x}, ${primary.y}]</div>
+                    </div>
+                `;
+                w.appendChild(marker);
+            });
+            document.querySelectorAll('#routesOverlay polyline').forEach(p => p.style.display = AppState.filters.routes.has(p.dataset.routeName) ? 'block' : 'none');
+        }
+
+        function renderSidebarFilters() {
+            const body = document.getElementById('filterSidebarBody');
+            if (!body) return;
+            const frag = document.createDocumentFragment();
+            [{id:'en_comp',l:'Enemigos & Componentes',i:'fa-skull-crossbones'},{id:'poi',l:'Ubicaciones de Interés',i:'fa-map-marked-alt'}].forEach(sec => {
+                const g = document.createElement('div'); g.className = 'filter-group expanded';
+                const h = document.createElement('div'); h.className = 'filter-group-header';
+                h.innerHTML = `<span><i class="fas ${sec.i} me-2" style="color:var(--accent)"></i>${sec.l}</span><i class="fas fa-chevron-right"></i>`;
+                h.onclick = () => g.classList.toggle('expanded');
+                const c = document.createElement('div'); c.className = 'filter-group-content';
+                if (sec.id === 'en_comp') {
+                    const add = (t, items, col, set) => {
+                        if (!items.size) return;
+
+                        // Calculate counts for each entity
+                        const counts = {};
+                        AppState.markers.forEach(m => {
+                            if (m.entityName) counts[m.entityName] = (counts[m.entityName] || 0) + (parseInt(m.count) || 1);
+                        });
+
+                        const l = document.createElement('div'); l.style.cssText = "font-size:9px;color:rgba(255,255,255,0.3);padding:10px 10px 5px;text-transform:uppercase;letter-spacing:1px;";
+                        l.textContent = t; c.appendChild(l);
+                        items.forEach(n => {
+                            const count = counts[n] || 0;
+                            const act = set.has(n), item = document.createElement('div'); 
+                            const isId = n.length > 15 && /^[a-z0-9]+$/i.test(n);
+                            const displayName = isId ? "Enemigo Desconocido" : n;
+                            
+                            item.className = `filter-item ${act?'active':'disabled'}`;
+                            // Add count badge to the label
+                            const countBadge = count > 1 ? `<span style="opacity:0.5; font-size:10px; margin-left:5px; font-weight:normal;">(${count})</span>` : '';
+                            
+                            item.innerHTML = `<span class="filter-dot" style="background:${col}"></span><span class="filter-label" title="${isId ? n : ''}">${displayName}${countBadge}</span><i class="fas ${act?'fa-eye':'fa-eye-slash'} filter-eye"></i>`;
+                            item.onclick = (e) => { e.stopPropagation(); if(set.has(n)) set.delete(n); else set.add(n); renderSidebarFilters(); renderMarkers(); };
+                            c.appendChild(item);
+                        });
+                    };
+                    add('Jefes de Sector', new Set(AppState.markers.filter(m=>m.type==='boss').map(m=>m.entityName)), MARKER_UI.boss.color, AppState.filters.entities);
+                    add('Ruta de Jefe', new Set(Array.from(AppState.filters.routes).filter(r=>AppState.markers.some(m=>m.type==='boss'&&m.entityName===r))), MARKER_UI.boss.color, AppState.filters.routes);
+                    add('Patrullas & Enjambres', new Set(AppState.markers.filter(m=>['enemy_spawn','patrol','mantis','rare_mantis'].includes(m.type)).map(m=>m.entityName)), MARKER_UI.mantis.color, AppState.filters.entities);
+                    add('Ruta de Patrulla', new Set(Array.from(AppState.filters.routes).filter(r=>AppState.markers.some(m=>!['boss','farming_route'].includes(m.type)&&m.entityName===r))), MARKER_UI.mantis.color, AppState.filters.routes);
+                    add('Tecnologías & Componentes', new Set(AppState.markers.filter(m=>m.type==='collectible').map(m=>m.entityName)), '#60a5fa', AppState.filters.entities);
+                } else {
+                    // Update counts for POI categories
+                    const poiCounts = {};
+                    AppState.markers.forEach(m => {
+                        poiCounts[m.type] = (poiCounts[m.type] || 0) + (parseInt(m.count) || 1);
+                    });
+
+                    Object.entries(MARKER_UI).filter(([k,v])=>v.category==='poi'&&k!=='farming_route').forEach(([id,info]) => {
+                        const count = poiCounts[id] || 0;
+                        const act = AppState.filters.activeGroups.has(id), item = document.createElement('div');
+                        item.className = `filter-item ${act?'active':'disabled'}`;
+                        const countBadge = count > 0 ? `<span style="opacity:0.5; font-size:10px; margin-left:5px; font-weight:normal;">(${count})</span>` : '';
+                        
+                        item.innerHTML = `<span class="filter-dot" style="background:${info.color}"></span><span class="filter-label">${info.label}${countBadge}</span><i class="fas ${act?'fa-eye':'fa-eye-slash'} filter-eye"></i>`;
+                        item.onclick = () => { if(act) AppState.filters.activeGroups.delete(id); else AppState.filters.activeGroups.add(id); renderSidebarFilters(); renderMarkers(); };
+                        c.appendChild(item);
+                    });
+                    const fr = Array.from(AppState.filters.routes).filter(r=>AppState.markers.some(m=>m.type==='farming_route'&&m.entityName===r));
+                    if (fr.length) {
+                        const l = document.createElement('div'); l.style.cssText = "font-size:9px;color:rgba(255,255,255,0.3);padding:10px 10px 5px;text-transform:uppercase;letter-spacing:1px;";
+                        l.textContent = "Rutas de Farmeo"; c.appendChild(l);
+                        fr.forEach(n => {
+                            // Find how many segments or markers relate to this route? 
+                            // Usually there's only 1 route entry per name
+                            const act = AppState.filters.routes.has(n), item = document.createElement('div');
+                            item.className = `filter-item ${act?'active':'disabled'}`;
+                            item.innerHTML = `<span class="filter-dot" style="background:${MARKER_UI.farming_route.color}"></span><span class="filter-label">${n}</span><i class="fas ${act?'fa-eye':'fa-eye-slash'} filter-eye"></i>`;
+                            item.onclick = () => { if(AppState.filters.routes.has(n)) AppState.filters.routes.delete(n); else AppState.filters.routes.add(n); renderSidebarFilters(); renderMarkers(); };
+                            c.appendChild(item);
+                        });
+                    }
+                }
+                g.appendChild(h); g.appendChild(c); frag.appendChild(g);
+            });
+            body.innerHTML = ''; body.appendChild(frag);
+        }
+
+        async function loadPlanet() {
+            if (!AppState.planetId) return;
+            try {
+                const doc = await db.collection('planets').doc(AppState.planetId).get();
+                if (!doc.exists) return;
+                const p = doc.data(); AppState.planetData = p;
+                document.getElementById('planetName').textContent = p.name;
+                document.getElementById('planetLevel').textContent = `${p.levelMin||'?'}-${p.levelMax||'?'}`;
+                document.getElementById('planetType').textContent = p.planetType||'Normal';
+                document.getElementById('planetDescription').innerHTML = p.description||'Sin registros.';
+                if (p.systemId) { const sys = await db.collection('systems').doc(p.systemId).get(); document.getElementById('planetSystem').textContent = sys.exists?sys.data().name:'Desconocido'; }
+                const img = document.getElementById('planetMapImage');
+                if (p.mapImage) {
+                    img.onload = () => { document.getElementById('mapLoader').style.display='none'; img.classList.add('loaded'); if(document.getElementById('tab-map').classList.contains('active')) { setMapScale('medium'); AppState.map.isInitialized=true; } };
+                    img.onerror = () => { document.getElementById('mapLoader').style.display='none'; document.getElementById('mapError').style.display='flex'; };
+                    img.src = p.mapImage.startsWith('http')?p.mapImage:('../../assets/img/planets/maps/'+p.mapImage.replace(/^.*[/\\]/,''));
+                }
+                const [mc, bc, dc, rc] = await Promise.all([db.collection('map_markers').where('planetId','==',AppState.planetId).get(), db.collection('bestiary').where('planetId','==',AppState.planetId).get(), db.collection('planet_drops').where('planetId','==',AppState.planetId).get(), db.collection('farming_routes').where('planetId','==',AppState.planetId).get()]);
+                AppState.markers = mc.docs.map(d=>({id:d.id,...d.data()}));
+                
+                // Fetch missing enemy names in batch (Bestiary + Drops)
+                const allEIds = new Set();
+                bc.forEach(d => { if(d.data().enemyId) allEIds.add(d.data().enemyId); });
+                dc.forEach(d => { 
+                    const data = d.data();
+                    if(data.enemyIds && Array.isArray(data.enemyIds)) data.enemyIds.forEach(id => allEIds.add(id));
+                    else if(data.enemyId) allEIds.add(data.enemyId);
+                });
+                
+                const enemyIds = [...allEIds].filter(id => !!id);
+                const enemyMap = {};
+                if (enemyIds.length > 0) {
+                    const eSnaps = await Promise.all(enemyIds.map(id => db.collection('enemies').doc(id).get()));
+                    eSnaps.forEach(s => { 
+                        if (s.exists) {
+                            enemyMap[s.id] = s.data().name; 
+                        } else {
+                            // Try to look up by ID as a fallback if the ID might be a name itself
+                            enemyMap[s.id] = null;
+                        }
+                    });
+                }
+
+                bc.forEach(d => { 
+                    const data = d.data(); 
+                    let mType = data.isBoss ? 'boss' : (data.type === 'rare_mantis' ? 'rare_mantis' : 'mantis');
+                    const eName = data.name || enemyMap[data.enemyId] || data.enemyId || 'Enemigo';
+                    
+                    if (data.locations && Array.isArray(data.locations) && data.locations.length > 0) {
+                        data.locations.forEach((loc, idx) => {
+                            AppState.markers.push({id:`${d.id}_${idx}`, type:mType, x:loc.x, y:loc.y, entityName:eName, label:eName, count: parseInt(data.count) || 1}); 
+                        });
+                    } else if (data.x != null && data.y != null) {
+                        AppState.markers.push({id:d.id, type:mType, x:data.x, y:data.y, entityName:eName, label:eName, count: parseInt(data.count) || 1}); 
+                    }
+
+                    if(eName) AppState.filters.entities.add(eName); 
+
+                    if(data.routePath){ 
+                        const col = data.isBoss ? MARKER_UI.boss.color : MARKER_UI.mantis.color;
+                        renderRoutePath(data.routePath, eName, col); 
+                        AppState.filters.routes.add(eName); 
+                    } 
+                });
+                const dbdy = document.getElementById('dropsTableBody'); dbdy.innerHTML = '';
+                dc.forEach(d => { 
+                    const data = d.data(); 
+                    if(data.itemName) AppState.filters.entities.add(data.itemName); 
+                    
+                    let firstMarkerId = `drop_${d.id}`;
+                    if (data.locations && Array.isArray(data.locations) && data.locations.length > 0) {
+                        data.locations.forEach((loc, idx) => {
+                            const mId = `drop_${d.id}_${idx}`;
+                            if (idx === 0) firstMarkerId = mId;
+                            AppState.markers.push({id:mId, type:'collectible', x:loc.x, y:loc.y, entityName:data.itemName, label:data.itemName, count: parseInt(data.count) || 1}); 
+                        });
+                    } else if (data.x != null && data.y != null) {
+                        AppState.markers.push({id:firstMarkerId, type:'collectible', x:data.x, y:data.y, entityName:data.itemName, label:data.itemName, count: parseInt(data.count) || 1}); 
+                    }
+                    
+                    const row = document.createElement('tr'); 
+                    const rty = data.frequency==='Raro'?'rarity-rare':(data.frequency==='Legendario'?'rarity-epic':'rarity-common'); 
+                    
+                    const ids = data.enemyIds || (data.enemyId ? [data.enemyId] : []);
+                    const names = ids.map(id => enemyMap[id] || (id.length > 15 ? "Enemigo Desconocido" : id)).join(', ');
+                    const srce = names ? `<div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:4px;"><i class="fas fa-skull me-1"></i>${names}</div>` : '';
+
+                    const hasCoords = (data.locations && data.locations.length > 0) || (data.x != null && data.y != null);
+                    row.innerHTML = `<td><strong>${data.itemName}</strong></td><td><span class="badge badge-premium badge-type">${data.category||'Componente'}</span>${srce}</td><td><span class="badge badge-premium ${rty}">${data.frequency||'Común'}</span></td><td>${hasCoords?`<button class="btn-view-map" onclick="focusOnMarker('${firstMarkerId}')"><i class="fas fa-map-marker-alt me-1"></i> Ver en Mapa</button>`:'---'}</td>`; 
+                    dbdy.appendChild(row); 
+                });
+                if (dc.empty) document.getElementById('dropsEmpty').style.display = 'block';
+                rc.forEach(d => { const data = d.data(); if(data.name&&data.description?.includes(',')){ renderRoutePath(data.description,data.name,'#4ade80'); AppState.filters.routes.add(data.name); } });
+                renderSidebarFilters(); renderMarkers(); initMapEvents();
+                if (window.GWComments) window.GWComments.init({collection:'planets',docId:AppState.planetId,containerId:'planet-comments-section'});
+            } catch (e) { console.error(e); }
+        }
+
+        function toggleAllGroups(show) {
+            if (show) { Object.keys(MARKER_UI).forEach(k=>AppState.filters.activeGroups.add(k)); AppState.markers.forEach(m=>m.entityName&&AppState.filters.entities.add(m.entityName)); AppState.filters.routes = new Set(Array.from(document.querySelectorAll('#routesOverlay polyline')).map(p=>p.dataset.routeName)); }
+            else { AppState.filters.activeGroups.clear(); AppState.filters.entities.clear(); AppState.filters.routes.clear(); }
+            renderSidebarFilters(); renderMarkers();
+        }
+
+        function focusOnMarker(id) { switchTab('map'); setTimeout(() => { const m = AppState.markers.find(x=>x.id===id); if(!m) return; AppState.map.zoom = 2.5; const r = document.getElementById('mapMainCanvas').getBoundingClientRect(), ih = document.getElementById('planetMapImage').offsetHeight; AppState.map.pan.x = (r.width/2)-(m.x*r.width/100*AppState.map.zoom); AppState.map.pan.y = (r.height/2)-(m.y*ih/100*AppState.map.zoom); updateTransform(); }, 400); }
+
+        function renderRoutePath(pts, name, col) {
+            const w = document.getElementById('planetMapWrap'); let s = document.getElementById('routesOverlay');
+            if (!s) { s = document.createElementNS("http://www.w3.org/2000/svg","svg"); s.id = 'routesOverlay'; s.setAttribute("viewBox","0 0 100 100"); s.setAttribute("preserveAspectRatio","none"); s.style.cssText="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;filter:drop-shadow(0 0 1px rgba(0,0,0,0.5));"; s.innerHTML = `<defs><marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="${col}" /></marker></defs>`; w.appendChild(s); }
+            const p = pts.split(';').map(x=>x.trim()).filter(x=>x.includes(',')).join(' '); if(!p) return;
+            
+            // Capa de fondo (borde)
+            const bg = document.createElementNS("http://www.w3.org/2000/svg","polyline"); 
+            bg.setAttribute("points",p); bg.setAttribute("fill","none"); bg.setAttribute("stroke","#000"); 
+            bg.setAttribute("stroke-width","1.1"); bg.dataset.routeName = name; bg.style.display = AppState.filters.routes.has(name)?'block':'none';
+            s.appendChild(bg);
+
+            // Capa de color
+            const poly = document.createElementNS("http://www.w3.org/2000/svg","polyline"); 
+            poly.setAttribute("points",p); poly.setAttribute("fill","none"); poly.setAttribute("stroke",col); 
+            poly.setAttribute("stroke-width","0.6"); poly.setAttribute("stroke-dasharray","1,1"); 
+            poly.setAttribute("marker-end","url(#arr)"); poly.dataset.routeName = name; 
+            poly.style.display = AppState.filters.routes.has(name)?'block':'none';
+            s.appendChild(poly);
+        }
+
+        window.addEventListener('DOMContentLoaded', loadPlanet);
+    </script>
+</body>
+</html>

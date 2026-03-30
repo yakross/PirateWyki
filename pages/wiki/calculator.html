@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Calculadora de costes</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+    <style>
+        .calc-section { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .calc-total { font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color); }
+        .calc-row { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-secondary); }
+        .calc-row strong { color: var(--text-primary); }
+        .calc-components-list { max-height: 280px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-input); }
+        .calc-component-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.15s; }
+        .calc-component-row:last-child { border-bottom: none; }
+        .calc-component-row:hover { background: var(--bg-card); }
+        .calc-component-row.selected { background: rgba(102, 126, 234, 0.15); }
+        .calc-component-row .calc-component-check { width: 24px; color: var(--text-tertiary); font-size: 1.1em; }
+        .calc-component-row.selected .calc-component-check { color: var(--accent); }
+        .calc-component-row .calc-component-name { flex: 1; color: var(--text-primary); }
+        .calc-component-row .calc-component-meta { font-size: 12px; color: var(--text-secondary); }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            }
+        }
+    </script>
+    <script src="../../js/components/footer-component.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link active"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+    <main class="main-container">
+        <h1 class="page-title"><i class="fas fa-calculator me-2"></i>Calculadora de costes</h1>
+        <p class="page-subtitle">Suma el precio de la nave, blindajes, ranuras de drones, ranuras de cortex y componentes.</p>
+
+        <div class="calc-section">
+            <label class="form-label">Nave</label>
+            <select id="shipSelect" class="form-control">
+                <option value="">-- Selecciona una nave --</option>
+            </select>
+        </div>
+
+        <div class="calc-section" id="shipDetails" style="display: none;">
+            <h3 class="h6 mb-3">Opciones de la nave</h3>
+            <div class="mb-3">
+                <label class="form-label">Blindajes a incluir (coste cada uno)</label>
+                <div id="armorsList"></div>
+            </div>
+            <div class="form-row mb-3">
+                <div class="form-group">
+                    <label class="form-label">Ranuras de drones a desbloquear (1 = gratis)</label>
+                    <select id="droneSlots" class="form-control">
+                        <option value="1">1 ranura (solo la primera)</option>
+                        <option value="2">2 ranuras</option>
+                        <option value="3">3 ranuras</option>
+                        <option value="4">4 ranuras</option>
+                        <option value="5">5 ranuras</option>
+                        <option value="6">6 ranuras</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ranuras de cortex a desbloquear (1 = gratis)</label>
+                    <select id="cortexSlots" class="form-control">
+                        <option value="1">1 ranura</option>
+                        <option value="2">2 ranuras</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="calc-section" id="componentSlotsByTypeSection" style="display: none;">
+            <h3 class="h6 mb-3">Un componente por tipo de ranura (segÃºn la nave)</h3>
+            <div id="componentSlotsByTypeList"></div>
+        </div>
+
+        <div class="calc-section">
+            <label class="form-label">Filtrar por tipo de componente</label>
+            <select id="componentTypeFilter" class="form-control mb-2">
+                <option value="">-- Todos los tipos --</option>
+            </select>
+            <label class="form-label">Componentes adicionales (click en el âœ“ para aÃ±adir o quitar; las opciones se mantienen al cambiar el filtro)</label>
+            <div id="componentsListContainer" class="calc-components-list"></div>
+        </div>
+
+        <div class="calc-section">
+            <h3 class="h6 mb-2">Resumen</h3>
+            <div id="calcSummary"></div>
+            <div class="calc-total" id="calcTotal">Total: 0 crionita Â· 0 CrÃ©ditos Raven</div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/header-auth.js"></script>
+    <script src="../../js/calculator.js"></script>
+</body>
+</html>
+

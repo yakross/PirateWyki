@@ -1,0 +1,80 @@
+/* ============================================
+   GalaxWiki - Skeleton Loaders genéricos
+   ============================================ */
+
+/* Animación base del shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: var(--bg-input);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0px,
+    rgba(255, 255, 255, 0.04) 40px,
+    transparent 80px
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="light"] .skeleton {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0px,
+    rgba(0, 0, 0, 0.04) 40px,
+    transparent 80px
+  );
+}
+
+/* Variaciones aplicables a elementos internos */
+.skeleton-text {
+  height: 14px;
+  margin-bottom: 8px;
+  width: 100%;
+  border-radius: 4px;
+}
+.skeleton-text.short {
+  width: 60%;
+}
+.skeleton-title {
+  height: 22px;
+  margin-bottom: 12px;
+  width: 80%;
+  border-radius: 6px;
+}
+.skeleton-base {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+}
+.skeleton-img {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+.skeleton-badge {
+  width: 60px;
+  height: 20px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-right: 6px;
+}
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}

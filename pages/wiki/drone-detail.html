@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Drone</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text"><span class="logo-title">GalaxWiki</span><span class="logo-subtitle">PIRATE GALAXY</span></div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon theme-icon" id="themeIcon"></i></div>
+                <div class="auth-buttons" id="authButtons" style="display: none;"><a href="../../login.html" class="btn-header btn-login">Iniciar sesiÃ³n</a><a href="../../register.html" class="btn-header btn-register">Registrarse</a></div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info"><span class="user-name" id="userName">Usuario</span><span class="user-fleet" id="userFleet">Flota</span><span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span></div>
+                        <i class="fas fa-chevron-down" style="color: var(--accent);"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi ColecciÃ³n</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>ConfiguraciÃ³n</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;">Cerrar sesiÃ³n</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link active"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <p class="mb-3"><a href="components.html?tab=drones" class="nav-link" style="display: inline-flex;"><i class="fas fa-arrow-left me-2"></i>Volver a Drones</a></p>
+        <div id="droneContent"></div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/content-utils.js"></script>
+    <script src="../../js/header-auth.js"></script>
+    <script src="../../js/favorites.js"></script>
+    <script>
+(function() {
+    const db = window.db;
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    const container = document.getElementById('droneContent');
+    if (!id || !db) { container.innerHTML = '<div class="empty-state">Drone no especificado. <a href="components.html?tab=drones">Volver</a></div>'; return; }
+    function esc(s) { return (s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function escA(s) { return (s+'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    async function load() {
+        container.innerHTML = '<div class="empty-state">Cargando...</div>';
+        try {
+            const doc = await db.collection('drones').doc(id).get();
+            if (!doc.exists) { container.innerHTML = '<div class="empty-state">Drone no encontrado. <a href="components.html?tab=drones">Volver</a></div>'; return; }
+            const d = doc.data();
+            const auth = window.auth;
+            let favStar = 'far';
+            if (typeof window.isFavorite === 'function' && auth && auth.currentUser) favStar = await window.isFavorite('drone', id) ? 'fas' : 'far';
+            const meta = [];
+            if (d.type) meta.push('<span class="badge badge-type">' + esc(d.type) + '</span>');
+            if (d.bonusPercent != null) meta.push('Bono +' + d.bonusPercent + '%');
+            if (d.crionita != null && d.crionita > 0) meta.push('Crionita: ' + d.crionita);
+            if (d.creditsRaven != null && d.creditsRaven > 0) meta.push('CrÃ©ditos Raven: ' + d.creditsRaven);
+            if (d.howToGet) meta.push(esc(d.howToGet));
+            container.innerHTML = '<div class="profile-card" style="text-align: left; position: relative;">' +
+                '<button type="button" class="btn-fav" data-type="drone" data-id="' + escA(id) + '" data-name="' + escA(d.name || '') + '" title="AÃ±adir a favoritos" style="position:absolute;top:16px;right:16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;color:var(--accent);cursor:pointer;padding:8px 12px;"><i class="' + favStar + ' fa-star"></i></button>' +
+                (d.image ? '<img src="' + escA(d.image) + '" alt="" style="width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-bottom:16px;">' : '') +
+                '<h1 class="page-title">' + esc(d.name || 'Drone') + '</h1>' +
+                '<p class="profile-meta">' + meta.join(' Â· ') + '</p>' +
+                (d.description ? '<div class="item-description" style="margin-top:16px;">' + (typeof formatContentWithImages === 'function' ? formatContentWithImages(d.description) : esc(d.description).replace(/\n/g, '<br>')) + '</div>' : '') +
+                '</div>';
+            var btn = container.querySelector('.btn-fav');
+            if (btn) btn.addEventListener('click', async function() {
+                if (typeof window.toggleFavorite !== 'function') return;
+                var r = await window.toggleFavorite('drone', id, d.name || '');
+                var icon = this.querySelector('i');
+                if (r && r.ok && icon) icon.className = r.isNowFavorite ? 'fas fa-star' : 'far fa-star';
+            });
+        } catch (e) { console.error(e); container.innerHTML = '<div class="empty-state">Error al cargar. <a href="components.html?tab=drones">Volver</a></div>'; }
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load);
+    else load();
+})();
+    </script>
+</body>
+</html>
+

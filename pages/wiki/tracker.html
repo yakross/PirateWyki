@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Mi Colección (Tracker)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            }
+        }
+    </script>
+    <style>
+        .tracker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .tracker-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .tracker-card.obtained {
+            border-color: rgba(16, 185, 129, 0.5);
+            background: linear-gradient(145deg, var(--bg-card), rgba(16, 185, 129, 0.05));
+        }
+        .tracker-card.obtained::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #10B981;
+        }
+        .tracker-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.2);
+            padding: 4px;
+        }
+        .tracker-info {
+            flex: 1;
+        }
+        .tracker-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .tracker-meta {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            display: flex;
+            gap: 8px;
+        }
+        .tracker-action {
+            margin-left: auto;
+        }
+        .btn-toggle-bp {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            background: transparent;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .btn-toggle-bp:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        .obtained .btn-toggle-bp {
+            background: #10B981;
+            border-color: #10B981;
+            color: white;
+        }
+        .obtained .btn-toggle-bp:hover {
+            background: #059669;
+            border-color: #059669;
+        }
+        .stats-panel {
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .progress-circle {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(#667eea 0%, var(--bg-dark) 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .progress-circle::after {
+            content: '';
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            background: var(--bg-card);
+            border-radius: 50%;
+        }
+        .progress-value {
+            position: relative;
+            z-index: 1;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+    </style>
+    <script src="../../js/components/footer-component.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        
+        <div id="authOverlay" style="position: absolute; top:0; left:0; right:0; bottom:0; background: var(--bg-dark); z-index: 100; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+            <i class="fas fa-lock" style="font-size: 48px; color: var(--text-tertiary); margin-bottom: 16px;"></i>
+            <h2 style="color: var(--text-primary); margin-bottom: 8px;">Acceso Restringido</h2>
+            <p style="color: var(--text-secondary); text-align: center; max-width: 400px; margin-bottom: 24px;">Debes iniciar sesión para guardar el progreso de tu colección de planos.</p>
+            <div style="display: flex; gap: 16px;">
+                <a href="../../login.html" class="btn-primary" style="text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: bold; background: #667eea; color: white;">Iniciar Sesión</a>
+                <a href="../../index.html" class="btn-secondary" style="text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: bold; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color);">Volver al Inicio</a>
+            </div>
+        </div>
+
+        <div id="trackerContent" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h1 class="page-title"><i class="fas fa-check-double me-2"></i>Mi Colección de Planos</h1>
+                    <p class="page-subtitle">Marca los planos que ya tienes descubiertos para trackear tu progreso.</p>
+                </div>
+                
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <label for="systemFilter" style="font-weight: 600; color: var(--text-primary);">Sistema:</label>
+                    <select id="systemFilter" class="form-control" style="width: 200px;">
+                        <option value="">Todos los sistemas</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="stats-panel">
+                <div style="flex: 1; min-width: 200px;">
+                    <h3 style="font-size: 16px; margin: 0 0 4px; color: var(--text-primary);">Progreso General</h3>
+                    <p style="margin: 0; font-size: 13px; color: var(--text-secondary);" id="progressText">Calculando...</p>
+                </div>
+                <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: #10B981;" id="statObtained">0</div>
+                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-tertiary); font-weight: 600;">Obtenidos</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: #EF4444;" id="statMissing">0</div>
+                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-tertiary); font-weight: 600;">Faltantes</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: #667eea;" id="statTotal">0</div>
+                        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-tertiary); font-weight: 600;">Total Planos</div>
+                    </div>
+                </div>
+                <div class="progress-circle" id="progressCircle">
+                    <span class="progress-value" id="progressPercent">0%</span>
+                </div>
+            </div>
+
+            <div class="section-tabs">
+                <button class="section-tab active" data-tab="ships"><i class="fas fa-space-shuttle me-1"></i> Naves</button>
+                <button class="section-tab" data-tab="components"><i class="fas fa-cog me-1"></i> Componentes</button>
+                <button class="section-tab" data-tab="drones"><i class="fas fa-satellite-dish me-1"></i> Drones</button>
+                <button class="section-tab" data-tab="paints"><i class="fas fa-palette me-1"></i> Pinturas</button>
+            </div>
+
+            <div class="filters-bar" style="margin-bottom: 24px;">
+                <input id="searchInput" type="text" class="search-input" placeholder="Buscar por nombre, tipo o tecnología...">
+                <select id="statusFilter" class="form-control" style="max-width: 200px;">
+                    <option value="all">Ver Todos</option>
+                    <option value="obtained">Solo Obtenidos</option>
+                    <option value="missing">Solo Faltantes</option>
+                </select>
+            </div>
+
+            <div id="loadingGrid" class="empty-state">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 24px; margin-bottom: 12px; color: var(--accent-color);"></i>
+                Cargando tu colección desde Firestore...
+            </div>
+
+            <div id="shipsPanel" class="tab-panel active">
+                <div class="tracker-grid" id="shipsGrid"></div>
+                <div id="shipsEmpty" class="empty-state" style="display: none;">No se encontraron naves.</div>
+            </div>
+
+            <div id="componentsPanel" class="tab-panel">
+                <div class="tracker-grid" id="componentsGrid"></div>
+                <div id="componentsEmpty" class="empty-state" style="display: none;">No se encontraron componentes.</div>
+            </div>
+
+            <div id="paintsPanel" class="tab-panel">
+                <div class="tracker-grid" id="paintsGrid"></div>
+                <div id="paintsEmpty" class="empty-state" style="display: none;">No se encontraron pinturas.</div>
+            </div>
+
+            <div id="dronesPanel" class="tab-panel">
+                <div class="tracker-grid" id="dronesGrid"></div>
+                <div id="dronesEmpty" class="empty-state" style="display: none;">No se encontraron drones.</div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/header-auth.js"></script>
+    
+    <script>
+        let allShips = [];
+        let allComponents = [];
+        let allPaints = [];
+        let allDrones = [];
+        let obtainedBlueprints = new Set(); // Guardará strings como "ship_123" o "comp_456" o "paint_789"
+        let currentUserId = null;
+        let systemsMap = {};
+
+        // Tab switching
+        document.querySelectorAll('.section-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.section-tab').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab + 'Panel').classList.add('active');
+                renderGrids();
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', renderGrids);
+        document.getElementById('systemFilter').addEventListener('change', renderGrids);
+        document.getElementById('statusFilter').addEventListener('change', renderGrids);
+
+        // Require Auth
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                document.getElementById('authOverlay').style.display = 'none';
+                document.getElementById('trackerContent').style.display = 'block';
+                await loadTrackerData();
+            } else {
+                currentUserId = null;
+                document.getElementById('authOverlay').style.display = 'flex';
+                document.getElementById('trackerContent').style.display = 'none';
+            }
+        });
+
+        async function loadTrackerData() {
+            try {
+                // 1. Load User's Progress
+                const userDoc = await db.collection('users').doc(currentUserId).get();
+                if (userDoc.exists && userDoc.data().obtainedBlueprints) {
+                    obtainedBlueprints = new Set(userDoc.data().obtainedBlueprints);
+                } else {
+                    obtainedBlueprints = new Set();
+                }
+
+                // 2. Load Systems for filter
+                const sysSnap = await db.collection('systems').get();
+                const systemSelect = document.getElementById('systemFilter');
+                sysSnap.forEach(doc => {
+                    const data = doc.data();
+                    systemsMap[doc.id] = data.name || 'Desconocido';
+                    const opt = document.createElement('option');
+                    opt.value = doc.id;
+                    opt.textContent = data.name || 'Desconocido';
+                    systemSelect.appendChild(opt);
+                });
+
+                // 3. Load Ships
+                const shipsSnap = await db.collection('ships').get();
+                allShips = [];
+                shipsSnap.forEach(doc => allShips.push({ id: doc.id, typePrefix: 'ship', ...doc.data() }));
+
+                // 4. Load Components
+                const compSnap = await db.collection('components').get();
+                allComponents = [];
+                compSnap.forEach(doc => allComponents.push({ id: doc.id, typePrefix: 'comp', ...doc.data() }));
+
+                // 5. Load Paints
+                const paintsSnap = await db.collection('paints').get().catch(() => ({ empty: true, forEach: () => {} }));
+                allPaints = [];
+                if (!paintsSnap.empty) {
+                    paintsSnap.forEach(doc => allPaints.push({ id: doc.id, typePrefix: 'paint', ...doc.data() }));
+                }
+
+                // 6. Load Drones
+                const dronesSnap = await db.collection('drones').get().catch(() => ({ empty: true, forEach: () => {} }));
+                allDrones = [];
+                if (!dronesSnap.empty) {
+                    dronesSnap.forEach(doc => allDrones.push({ id: doc.id, typePrefix: 'drone', ...doc.data() }));
+                }
+
+                document.getElementById('loadingGrid').style.display = 'none';
+                renderGrids();
+            } catch (error) {
+                console.error("Error loading tracker data:", error);
+                document.getElementById('loadingGrid').innerHTML = '<span style="color:#ef4444;">Error al cargar datos. Actualiza la página e inténtalo de nuevo.</span>';
+            }
+        }
+
+        async function toggleBlueprint(itemId) {
+            if (!currentUserId) return;
+            
+            // Optimistic update
+            const card = document.getElementById(`card-${itemId}`);
+            const isObtained = obtainedBlueprints.has(itemId);
+            
+            if (isObtained) {
+                obtainedBlueprints.delete(itemId);
+                if(card) {
+                    card.classList.remove('obtained');
+                    card.querySelector('i').className = 'fas fa-plus';
+                }
+            } else {
+                obtainedBlueprints.add(itemId);
+                if(card) {
+                    card.classList.add('obtained');
+                    card.querySelector('i').className = 'fas fa-check';
+                }
+            }
+            
+            updateStats();
+
+            // Save to Firebase
+            try {
+                await db.collection('users').doc(currentUserId).set({
+                    obtainedBlueprints: Array.from(obtainedBlueprints)
+                }, { merge: true });
+            } catch (e) {
+                console.error("Error saving progress:", e);
+                // Revert via silent reload if error
+            }
+        }
+
+        function renderGrids() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const systemFilter = document.getElementById('systemFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            const filterFn = (item) => {
+                const combinedId = `${item.typePrefix}_${item.id}`;
+                
+                // Search filter
+                const nameMatch = (item.name || '').toLowerCase().includes(search);
+                const techMatch = (item.tech || item.role || item.type || '').toLowerCase().includes(search);
+                if (search && !nameMatch && !techMatch) return false;
+
+                // System filter
+                if (systemFilter && item.systemId !== systemFilter) return false;
+
+                // Status filter
+                const isObtained = obtainedBlueprints.has(combinedId);
+                if (statusFilter === 'obtained' && !isObtained) return false;
+                if (statusFilter === 'missing' && isObtained) return false;
+
+                return true;
+            };
+
+            const filteredShips = allShips.filter(filterFn);
+            const filteredComps = allComponents.filter(filterFn);
+            const filteredPaints = allPaints.filter(filterFn);
+            const filteredDrones = allDrones.filter(filterFn);
+
+            const renderCard = (item) => {
+                const combinedId = `${item.typePrefix}_${item.id}`;
+                const isObtained = obtainedBlueprints.has(combinedId);
+                const sysName = systemsMap[item.systemId] || item.systemId || 'General';
+                let subTitle = '';
+                let defaultImg = '../../assets/images/placeholder-comp.png';
+                
+                if (item.typePrefix === 'ship') {
+                    subTitle = item.role || item.faction || '';
+                    defaultImg = '../../assets/images/placeholder-ship.png';
+                } else if (item.typePrefix === 'comp') {
+                    subTitle = item.type || item.tech || '';
+                } else if (item.typePrefix === 'paint') {
+                    subTitle = item.color || item.type || 'Pintura';
+                } else if (item.typePrefix === 'drone') {
+                    subTitle = item.type || 'Dron';
+                }
+
+                const img = item.image || item.iconUrl || defaultImg;
+                
+                return `
+                    <div class="tracker-card ${isObtained ? 'obtained' : ''}" id="card-${combinedId}">
+                        <img src="${img}" alt="${item.name}" class="tracker-img" onerror="this.src='../../assets/images/placeholder-ship.png'">
+                        <div class="tracker-info">
+                            <div class="tracker-name">${item.name || 'Sin nombre'}</div>
+                            <div class="tracker-meta">
+                                <span><i class="fas fa-globe me-1"></i>${sysName}</span>
+                                ${subTitle ? `<span>• ${subTitle}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="tracker-action">
+                            <button class="btn-toggle-bp" onclick="toggleBlueprint('${combinedId}')" title="${isObtained ? 'Marcar como faltante' : 'Marcar como obtenido'}">
+                                <i class="${isObtained ? 'fas fa-check' : 'fas fa-plus'}"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            };
+
+            // Render Ships
+            const shipsGrid = document.getElementById('shipsGrid');
+            if (filteredShips.length > 0) {
+                shipsGrid.innerHTML = filteredShips.map(renderCard).join('');
+                document.getElementById('shipsEmpty').style.display = 'none';
+            } else {
+                shipsGrid.innerHTML = '';
+                document.getElementById('shipsEmpty').style.display = 'block';
+            }
+
+            // Render Components
+            const compGrid = document.getElementById('componentsGrid');
+            if (filteredComps.length > 0) {
+                compGrid.innerHTML = filteredComps.map(renderCard).join('');
+                document.getElementById('componentsEmpty').style.display = 'none';
+            } else {
+                compGrid.innerHTML = '';
+                document.getElementById('componentsEmpty').style.display = 'block';
+            }
+
+            // Render Paints
+            const paintsGrid = document.getElementById('paintsGrid');
+            if (filteredPaints.length > 0) {
+                paintsGrid.innerHTML = filteredPaints.map(renderCard).join('');
+                document.getElementById('paintsEmpty').style.display = 'none';
+            } else {
+                paintsGrid.innerHTML = '';
+                document.getElementById('paintsEmpty').style.display = 'block';
+            }
+
+            // Render Drones
+            const dronesGrid = document.getElementById('dronesGrid');
+            if (filteredDrones.length > 0) {
+                dronesGrid.innerHTML = filteredDrones.map(renderCard).join('');
+                document.getElementById('dronesEmpty').style.display = 'none';
+            } else {
+                dronesGrid.innerHTML = '';
+                document.getElementById('dronesEmpty').style.display = 'block';
+            }
+
+            updateStats();
+        }
+
+        function updateStats() {
+            // Only count items that match current System Filter (so you can see your progress *per system*!)
+            const systemFilter = document.getElementById('systemFilter').value;
+            
+            let total = 0;
+            let obtained = 0;
+
+            const checkProgress = (item) => {
+                if (systemFilter && item.systemId !== systemFilter) return;
+                total++;
+                if (obtainedBlueprints.has(`${item.typePrefix}_${item.id}`)) {
+                    obtained++;
+                }
+            };
+
+            allShips.forEach(checkProgress);
+            allComponents.forEach(checkProgress);
+            allPaints.forEach(checkProgress);
+            allDrones.forEach(checkProgress);
+
+            const missing = total - obtained;
+            const percent = total === 0 ? 0 : Math.round((obtained / total) * 100);
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statObtained').textContent = obtained;
+            document.getElementById('statMissing').textContent = missing;
+            
+            document.getElementById('progressPercent').textContent = percent + '%';
+            document.getElementById('progressCircle').style.background = `conic-gradient(#10B981 ${percent}%, var(--bg-dark) ${percent}%)`;
+            
+            const pText = document.getElementById('progressText');
+            if (percent === 100 && total > 0) {
+                pText.textContent = "¡Completaste todos los planos de este filtro!";
+                pText.style.color = "#10B981";
+            } else {
+                pText.textContent = systemFilter ? `Has obtenido el ${percent}% de los planos en ${systemsMap[systemFilter] || 'este sistema'}.` : `Has obtenido el ${percent}% de todos los planos del juego.`;
+                pText.style.color = "var(--text-secondary)";
+            }
+        }
+    </script>
+</body>
+</html>

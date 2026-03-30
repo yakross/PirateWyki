@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Builds de la Comunidad</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+    <script src="../../js/components/footer-component.js"></script>
+    <style>
+        .build-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .build-card:hover {
+            border-color: rgba(102,126,234,0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.15);
+        }
+        .build-ship-name {
+            font-size: 13px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .build-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .build-author {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+        .build-slots {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .build-slot-tag {
+            background: rgba(102,126,234,0.1);
+            border: 1px solid rgba(102,126,234,0.2);
+            color: #a78bfa;
+            border-radius: 8px;
+            padding: 3px 9px;
+            font-size: 11px;
+        }
+        .btn-create-build {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 28px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-create-build:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link active"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content" style="padding: 30px 20px; max-width: 1200px; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h1 style="font-size: 28px; font-weight: 800; background: linear-gradient(135deg,#667eea,#a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px;">
+                    <i class="fas fa-tools me-2" style="-webkit-text-fill-color: #667eea;"></i>Builds de la Comunidad
+                </h1>
+                <p style="color: var(--text-secondary); font-size: 14px; margin: 0;">Configuraciones de naves compartidas por los pilotos de GalaxWiki</p>
+            </div>
+            <a href="build-editor.html" class="btn-create-build" id="createBuildBtn" style="display:none;">
+                <i class="fas fa-plus"></i> Crear Build
+            </a>
+        </div>
+
+        <!-- Filters -->
+        <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: center;">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar build..." style="flex: 1; min-width: 180px; padding: 10px 16px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-input); color: var(--text-primary); font-size: 14px;">
+            <select id="shipFilter" style="padding: 10px 16px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-input); color: var(--text-primary); font-size: 14px;">
+                <option value="">Todas las naves</option>
+            </select>
+        </div>
+
+        <div class="items-grid" id="buildsGrid"></div>
+        <div id="emptyState" class="empty-state" style="display:none;">No hay builds publicadas todavía. ¡Sé el primero!</div>
+
+        <div style="text-align:center; margin: 20px 0;">
+            <button id="loadMoreBtn" onclick="loadMoreBuilds()" style="display:none; padding: 12px 32px; background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; font-size: 14px;">
+                <i class="fas fa-plus-circle me-2"></i>Cargar más builds
+            </button>
+        </div>
+    </main>
+    <galaxwiki-footer></galaxwiki-footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/header-auth.js"></script>
+    <script>
+        let allBuilds = [];
+        let lastBuildDoc = null;
+        const PAGE = 20;
+
+        auth.onAuthStateChanged(user => {
+            document.getElementById('createBuildBtn').style.display = user ? 'inline-flex' : 'none';
+        });
+
+        async function loadBuilds(append = false) {
+            const grid = document.getElementById('buildsGrid');
+            const empty = document.getElementById('emptyState');
+            const btn = document.getElementById('loadMoreBtn');
+            if (!append) {
+                allBuilds = [];
+                lastBuildDoc = null;
+                grid.innerHTML = Array(6).fill(`<div class="skeleton-base skeleton"><div class="skeleton-title"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>`).join('');
+                empty.style.display = 'none';
+                if (btn) btn.style.display = 'none';
+            }
+            try {
+                let query = db.collection('builds').orderBy('createdAt', 'desc').limit(PAGE);
+                if (lastBuildDoc) query = query.startAfter(lastBuildDoc);
+                const snap = await query.get();
+                snap.forEach(doc => allBuilds.push({ id: doc.id, ...doc.data() }));
+                if (snap.docs.length > 0) lastBuildDoc = snap.docs[snap.docs.length - 1];
+                if (btn) btn.style.display = (snap.docs.length === PAGE) ? 'inline-block' : 'none';
+                renderBuilds();
+            } catch(e) {
+                console.error(e);
+                grid.innerHTML = `<div class="empty-state">Error al cargar builds: ${e.message}</div>`;
+            }
+        }
+
+        function loadMoreBuilds() { loadBuilds(true); }
+
+        function renderBuilds() {
+            const grid = document.getElementById('buildsGrid');
+            const empty = document.getElementById('emptyState');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const shipFilter = document.getElementById('shipFilter').value;
+            const filtered = allBuilds.filter(b => {
+                const matchSearch = !search || (b.title || '').toLowerCase().includes(search) || (b.shipName || '').toLowerCase().includes(search);
+                const matchShip = !shipFilter || b.shipId === shipFilter;
+                return matchSearch && matchShip;
+            });
+            if (filtered.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            grid.innerHTML = '';
+            filtered.forEach(build => {
+                const slots = Array.isArray(build.slots) ? build.slots.filter(Boolean) : [];
+                const card = document.createElement('article');
+                card.className = 'build-card';
+                card.onclick = () => location.href = `build-editor.html?id=${encodeURIComponent(build.id)}`;
+                card.innerHTML = `
+                    <div class="build-ship-name"><i class="fas fa-space-shuttle me-1"></i>${build.shipName || 'Nave'}</div>
+                    <div class="build-title">${(build.title || 'Sin título').replace(/</g,'&lt;')}</div>
+                    <div class="build-author"><i class="fas fa-user me-1"></i>${build.authorName || 'Piloto'} &nbsp;·&nbsp; <i class="fas fa-clock me-1"></i>${build.createdAt?.toDate ? build.createdAt.toDate().toLocaleDateString('es-ES') : ''}</div>
+                    ${build.description ? `<p style="font-size:13px; color:var(--text-secondary); margin:0; line-height:1.5;">${(build.description).substring(0,120).replace(/</g,'&lt;')}${build.description.length > 120 ? '…' : ''}</p>` : ''}
+                    <div class="build-slots">
+                        ${slots.slice(0,6).map(s => `<span class="build-slot-tag">${(s.componentName || s).replace(/</g,'&lt;')}</span>`).join('')}
+                        ${slots.length > 6 ? `<span class="build-slot-tag">+${slots.length - 6} más</span>` : ''}
+                    </div>
+                    <div style="display:flex; gap:12px; font-size:12px; color:var(--text-tertiary); margin-top:4px;">
+                        <span><i class="fas fa-thumbs-up me-1"></i>${build.likes || 0}</span>
+                        <span><i class="fas fa-eye me-1"></i>${build.views || 0}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Load ships for filter
+        async function loadShipFilter() {
+            try {
+                const snap = await db.collection('ships').orderBy('name').get();
+                const sel = document.getElementById('shipFilter');
+                snap.forEach(doc => {
+                    const opt = document.createElement('option');
+                    opt.value = doc.id;
+                    opt.textContent = doc.data().name || 'Nave';
+                    sel.appendChild(opt);
+                });
+            } catch(e) {}
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderBuilds);
+        document.getElementById('shipFilter').addEventListener('change', renderBuilds);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadBuilds();
+            loadShipFilter();
+        });
+    </script>
+</body>
+</html>

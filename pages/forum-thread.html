@@ -1,0 +1,480 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Foro - Hilo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { corePlugins: { preflight: false } }
+    </script>
+    <script src="../js/components/footer-component.js"></script>
+    <style>
+        .post-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            transition: border-color 0.2s;
+        }
+        .post-card:first-child { border-color: rgba(102,126,234,0.3); }
+        .post-author-bar {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+            padding-bottom: 12px; border-bottom: 1px solid var(--border-color);
+        }
+        .post-avatar {
+            width: 46px; height: 46px; border-radius: 50%;
+            background: linear-gradient(135deg, rgba(102,126,234,0.3), rgba(118,75,162,0.3));
+            border: 2px solid rgba(102,126,234,0.3);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; flex-shrink: 0; color: #a78bfa;
+        }
+        .post-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .post-author-info { flex: 1; min-width: 0; }
+        .post-author-name { font-weight: 700; color: var(--text-primary); font-size: 15px; }
+        .post-author-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+        .post-date { font-size: 12px; color: var(--text-tertiary); }
+        .post-content {
+            color: var(--text-secondary); font-size: 14px; line-height: 1.7;
+            white-space: pre-wrap; word-break: break-word;
+        }
+        .post-content img { max-width: 100%; height: auto; border-radius: 10px; margin: 8px 0; display: block; }
+        .post-actions { display: flex; justify-content: flex-end; margin-top: 12px; gap: 8px; }
+        .btn-delete-post {
+            background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 8px; padding: 5px 12px; font-size: 12px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-delete-post:hover { background: rgba(239,68,68,0.2); }
+
+        .thread-header-card {
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.08) 100%);
+            border: 1px solid rgba(102,126,234,0.25);
+            border-radius: 18px; padding: 24px; margin-bottom: 24px;
+        }
+        .thread-header-title {
+            font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 14px; line-height: 1.3;
+        }
+        .reply-form {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 22px; margin-top: 24px;
+        }
+        .reply-form textarea {
+            width: 100%; background: var(--bg-input); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 12px; color: var(--text-primary);
+            font-size: 14px; resize: vertical; min-height: 100px;
+        }
+        .reply-form textarea:focus { outline: none; border-color: rgba(102,126,234,0.5); }
+        .btn-reply {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none;
+            padding: 11px 22px; border-radius: 12px;
+            font-weight: 600; font-size: 14px; cursor: pointer;
+            transition: all 0.2s ease; margin-top: 12px;
+        }
+        .btn-reply:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-reply:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .replies-header {
+            font-size: 13px; font-weight: 700;
+            color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1.2px;
+            margin: 24px 0 14px 0;
+            padding-bottom: 8px; border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .category-breadcrumb {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 20px; font-size: 13px; color: var(--text-secondary);
+        }
+        .category-breadcrumb a { color: var(--accent); text-decoration: none; }
+        .category-breadcrumb a:hover { text-decoration: underline; }
+        .locked-notice {
+            background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+            border-radius: 12px; padding: 14px 18px; margin-top: 20px;
+            color: #f87171; font-size: 14px; display: flex; align-items: center; gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="wiki/tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="wiki/ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="wiki/builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="wiki/components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="wiki/enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="wiki/systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="wiki/missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="wiki/misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="wiki/calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="forum.html" class="nav-link active"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <!-- Breadcrumb -->
+        <div class="category-breadcrumb" id="breadcrumb">
+            <a href="forum.html"><i class="fas fa-comments me-1"></i>Foro</a>
+            <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+            <a href="#" id="categoryLink">Categoría</a>
+            <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+            <span style="color: var(--text-primary);" id="breadcrumbTitle">Hilo</span>
+        </div>
+
+        <!-- Thread header -->
+        <div id="threadHeader"></div>
+
+        <!-- Replies section -->
+        <div id="repliesSection"></div>
+
+        <!-- Load more -->
+        <div id="loadMorePostsDiv" style="text-align: center; margin-top: 12px; display: none;">
+            <button type="button" id="loadMorePostsBtn" style="background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 10px 24px; border-radius: 10px; cursor: pointer; font-size: 13px;" onclick="loadMorePosts()">
+                <i class="fas fa-chevron-down me-2"></i>Cargar más respuestas
+            </button>
+        </div>
+
+        <!-- Reply form -->
+        <div id="replyFormContainer"></div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/header-auth.js"></script>
+    <script>
+        (function() {
+            const db = window.db;
+            const params = new URLSearchParams(location.search);
+            const threadId = params.get('threadId');
+
+            if (!threadId) {
+                document.getElementById('threadHeader').innerHTML = '<div class="empty-state">Hilo no especificado. <a href="forum.html">Volver al foro</a></div>';
+                return;
+            }
+
+            let threadData = null;
+            let isAdmin = false;
+            const POSTS_PAGE_SIZE = 25;
+            let lastPostDoc = null;
+            let reachedPostsEnd = false;
+
+            function escapeHtml(s) {
+                return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            function formatContent(text) {
+                let s = escapeHtml(text);
+                s = s.replace(/\n/g, '<br>');
+                s = s.replace(/(https?:\/\/[^\s<>"']+\.(?:png|jpg|jpeg|gif|webp)(?:\?[^\s<>"']*)?)/gi,
+                    '<img src="$1" alt="" style="max-width:100%; height:auto; border-radius:10px; margin:10px 0;" loading="lazy">');
+                return s;
+            }
+
+            function renderPost(p, isFirst = false) {
+                const avatar = escapeHtml(p.authorAvatar || '');
+                const name = escapeHtml(p.authorName || '—');
+                const fleet = escapeHtml(p.authorFleet || '');
+                const level = p.authorLevel != null ? p.authorLevel : null;
+                const date = p.createdAt && p.createdAt.toDate ? p.createdAt.toDate().toLocaleString('es') : '';
+                const canDelete = isAdmin || (window.auth && window.auth.currentUser && window.auth.currentUser.uid === p.authorId && !isFirst);
+
+                return `<div class="post-card" id="post-${escapeHtml(p.id)}">
+                    <div class="post-author-bar">
+                        <div class="post-avatar">
+                            ${avatar ? `<img src="${avatar}" alt="" loading="lazy">` : '<i class="fas fa-user"></i>'}
+                        </div>
+                        <div class="post-author-info">
+                            <div class="post-author-name">${name}</div>
+                            <div class="post-author-meta">
+                                ${fleet ? `<span class="badge badge-type" style="font-size:10px;">${fleet}</span>` : ''}
+                                ${level != null ? `<span class="badge" style="background:rgba(102,126,234,0.15); color:#a78bfa; font-size:10px;">Nivel ${level}</span>` : ''}
+                                ${isFirst ? '<span class="badge badge-admin" style="font-size:10px;">OP</span>' : ''}
+                                <span class="post-date"><i class="fas fa-clock me-1"></i>${date}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-content">${formatContent(p.content || '')}</div>
+                    ${canDelete ? `<div class="post-actions"><button type="button" class="btn-delete-post" onclick="deletePost('${escapeHtml(p.id)}')"><i class="fas fa-trash me-1"></i>Eliminar</button></div>` : ''}
+                </div>`;
+            }
+
+            window.deletePost = async (postId) => {
+                if (!confirm('¿Eliminar este mensaje?')) return;
+                try {
+                    await db.collection('forum_threads').doc(threadId).collection('posts').doc(postId).delete();
+                    const el = document.getElementById(`post-${postId}`);
+                    if (el) el.remove();
+                    // Update post count
+                    const threadSnap = await db.collection('forum_threads').doc(threadId).get();
+                    if (threadSnap.exists) {
+                        const curr = (threadSnap.data().postCount || 1) - 1;
+                        await db.collection('forum_threads').doc(threadId).update({ postCount: Math.max(0, curr) });
+                    }
+                } catch (e) {
+                    alert('Error al eliminar: ' + (e.message || e));
+                }
+            };
+
+            async function loadThread() {
+                const header = document.getElementById('threadHeader');
+                header.innerHTML = '<div class="skeleton-base skeleton" style="height:120px; border-radius:18px;"></div>';
+
+                try {
+                    const threadDoc = await db.collection('forum_threads').doc(threadId).get();
+                    if (!threadDoc.exists) {
+                        header.innerHTML = '<div class="empty-state">Hilo no encontrado. <a href="forum.html">Volver al foro</a></div>';
+                        return false;
+                    }
+                    threadData = threadDoc.data();
+                    document.title = `GalaxWiki - ${threadData.title || 'Hilo del foro'}`;
+
+                    // Update breadcrumb
+                    const catLink = document.getElementById('categoryLink');
+                    if (catLink && threadData.categoryId) {
+                        catLink.href = `forum-thread-list.html?categoryId=${encodeURIComponent(threadData.categoryId)}`;
+                        try {
+                            const catDoc = await db.collection('forum_categories').doc(threadData.categoryId).get();
+                            if (catDoc.exists) catLink.textContent = catDoc.data().name || 'Categoría';
+                        } catch (_) {}
+                    }
+                    const bTitle = document.getElementById('breadcrumbTitle');
+                    if (bTitle) bTitle.textContent = (threadData.title || 'Hilo').substring(0, 60);
+
+                    const date = threadData.createdAt && threadData.createdAt.toDate ? threadData.createdAt.toDate().toLocaleDateString('es') : '';
+                    const locked = threadData.locked;
+                    const pinned = threadData.pinned;
+
+                    header.innerHTML = `<div class="thread-header-card">
+                        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap;">
+                            ${pinned ? '<span class="badge" style="background:rgba(251,191,36,0.15); color:#fbbf24; font-size:11px;"><i class="fas fa-thumbtack me-1"></i>Fijado</span>' : ''}
+                            ${locked ? '<span class="badge" style="background:rgba(239,68,68,0.15); color:#f87171; font-size:11px;"><i class="fas fa-lock me-1"></i>Cerrado</span>' : ''}
+                        </div>
+                        <h1 class="thread-header-title">${escapeHtml(threadData.title || 'Sin título')}</h1>
+                        <div style="font-size:13px; color:var(--text-secondary); display:flex; gap:16px; flex-wrap:wrap;">
+                            <span><i class="fas fa-calendar me-1"></i>${date}</span>
+                            <span><i class="fas fa-reply me-1"></i>${(threadData.postCount || 0)} respuesta${(threadData.postCount || 0) !== 1 ? 's' : ''}</span>
+                        </div>
+                    </div>`;
+
+                    return true;
+                } catch (e) {
+                    console.error(e);
+                    header.innerHTML = `<div class="empty-state">Error al cargar el hilo: ${escapeHtml(e.message || '')}</div>`;
+                    return false;
+                }
+            }
+
+            async function loadPosts(initial = true) {
+                if (reachedPostsEnd && !initial) return;
+                const section = document.getElementById('repliesSection');
+                const loadMoreDiv = document.getElementById('loadMorePostsDiv');
+
+                if (initial) {
+                    section.innerHTML = '<div class="skeleton-base skeleton" style="height:100px; border-radius:16px; margin-bottom:14px;"></div>'.repeat(3);
+                    lastPostDoc = null;
+                    reachedPostsEnd = false;
+                }
+
+                try {
+                    let q = db.collection('forum_threads').doc(threadId).collection('posts')
+                        .orderBy('createdAt', 'asc').limit(POSTS_PAGE_SIZE);
+                    if (lastPostDoc) q = q.startAfter(lastPostDoc);
+
+                    const snap = await q.get();
+                    const posts = [];
+                    snap.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
+                    if (snap.docs.length > 0) lastPostDoc = snap.docs[snap.docs.length - 1];
+                    if (snap.docs.length < POSTS_PAGE_SIZE) reachedPostsEnd = true;
+
+                    const postsCount = snap.size;
+
+                    if (initial) {
+                        section.innerHTML = '';
+                        if (postsCount > 0) {
+                            section.innerHTML = `<div class="replies-header"><span><i class="fas fa-comments me-2"></i>Mensajes</span><span>${posts.length} mensaje${posts.length !== 1 ? 's' : ''}</span></div>`;
+                        }
+                        posts.forEach((p, i) => {
+                            section.insertAdjacentHTML('beforeend', renderPost(p, i === 0));
+                        });
+                    } else {
+                        posts.forEach(p => {
+                            section.insertAdjacentHTML('beforeend', renderPost(p, false));
+                        });
+                    }
+
+                    loadMoreDiv.style.display = reachedPostsEnd ? 'none' : 'block';
+
+                } catch (e) {
+                    console.error(e);
+                    section.innerHTML = `<div class="empty-state">Error al cargar los mensajes: ${escapeHtml(e.message || '')}</div>`;
+                }
+            }
+
+            window.loadMorePosts = () => loadPosts(false);
+
+            function buildReplyForm(isLocked) {
+                const container = document.getElementById('replyFormContainer');
+                if (isLocked) {
+                    container.innerHTML = '<div class="locked-notice"><i class="fas fa-lock"></i><span>Este hilo está cerrado. No se pueden agregar nuevas respuestas.</span></div>';
+                    return;
+                }
+                const user = window.auth && window.auth.currentUser;
+                if (!user) {
+                    container.innerHTML = `<div class="reply-form" style="text-align:center;">
+                        <p style="color:var(--text-secondary); margin-bottom:12px;"><i class="fas fa-lock me-2"></i>Inicia sesión para responder en este hilo.</p>
+                        <a href="../login.html" class="btn-reply" style="text-decoration:none;"><i class="fas fa-sign-in-alt me-1"></i>Iniciar sesión</a>
+                    </div>`;
+                    return;
+                }
+
+                container.innerHTML = `<div class="reply-form">
+                    <h3 style="font-size:16px; font-weight:700; margin-bottom:14px;"><i class="fas fa-reply me-2"></i>Responder</h3>
+                    <textarea id="replyContent" placeholder="Escribe tu respuesta... Puedes pegar URLs de imágenes (.png, .jpg, .gif) y se mostrarán automáticamente."></textarea>
+                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                        <button type="button" class="btn-reply" id="btnSubmitReply"><i class="fas fa-paper-plane me-1"></i>Enviar respuesta</button>
+                        <p id="replyError" style="color:#f87171; font-size:13px; margin:0; display:none;"></p>
+                    </div>
+                </div>`;
+
+                document.getElementById('btnSubmitReply').onclick = async () => {
+                    const auth = window.auth;
+                    if (!auth || !auth.currentUser) return;
+                    const content = (document.getElementById('replyContent').value || '').trim();
+                    const errEl = document.getElementById('replyError');
+                    if (!content) { errEl.textContent = 'Escribe tu respuesta antes de enviar.'; errEl.style.display = 'block'; return; }
+                    errEl.style.display = 'none';
+                    const btn = document.getElementById('btnSubmitReply');
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Enviando...';
+
+                    try {
+                        const u = auth.currentUser;
+                        let authorName = (u.displayName || u.email || 'Anónimo').substring(0, 80);
+                        let authorAvatar = '', authorFleet = '', authorLevel = null;
+                        try {
+                            const userDoc = await db.collection('users').doc(u.uid).get();
+                            if (userDoc.exists) {
+                                const ud = userDoc.data();
+                                if (ud.username) authorName = (ud.username + '').substring(0, 80);
+                                authorAvatar = ud.avatar || '';
+                                authorFleet = ud.fleet || '';
+                                authorLevel = ud.level != null ? ud.level : null;
+                            }
+                        } catch (_) {}
+
+                        const postRef = await db.collection('forum_threads').doc(threadId).collection('posts').add({
+                            authorId: u.uid, authorName, authorAvatar, authorFleet, authorLevel,
+                            content,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        const threadSnap = await db.collection('forum_threads').doc(threadId).get();
+                        const curr = (threadSnap.data().postCount || 0) + 1;
+                        await db.collection('forum_threads').doc(threadId).update({
+                            postCount: curr,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+
+                        document.getElementById('replyContent').value = '';
+                        // Append the new post visually
+                        const newPost = { id: postRef.id, authorId: u.uid, authorName, authorAvatar, authorFleet, authorLevel, content, createdAt: { toDate: () => new Date() } };
+                        const section = document.getElementById('repliesSection');
+                        section.insertAdjacentHTML('beforeend', renderPost(newPost, false));
+                        section.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                    } catch (e) {
+                        errEl.textContent = e.message || 'Error al enviar la respuesta.';
+                        errEl.style.display = 'block';
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Enviar respuesta';
+                    }
+                };
+            }
+
+            async function init() {
+                if (!db) {
+                    document.getElementById('threadHeader').innerHTML = '<div class="empty-state">Firebase no inicializado.</div>';
+                    return;
+                }
+
+                // Check if current user is admin
+                if (window.auth) {
+                    window.auth.onAuthStateChanged(async user => {
+                        if (user) {
+                            try {
+                                const userDoc = await db.collection('users').doc(user.uid).get();
+                                if (userDoc.exists && userDoc.data().role === 'admin') isAdmin = true;
+                            } catch (_) {}
+                        }
+                        buildReplyForm(threadData && threadData.locked);
+                    });
+                }
+
+                const ok = await loadThread();
+                if (!ok) return;
+                await loadPosts(true);
+                buildReplyForm(threadData && threadData.locked);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>

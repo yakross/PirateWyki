@@ -1,0 +1,519 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Comparador de Naves</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: { preflight: false }
+        }
+    </script>
+    <script src="../../js/components/footer-component.js"></script>
+    <style>
+        .compare-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .compare-container { grid-template-columns: 1fr; }
+        }
+        .ship-selector-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+        .ship-selector {
+            width: 100%;
+            padding: 10px 15px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 15px;
+            margin-bottom: 20px;
+            outline: none;
+        }
+        .ship-selector:focus { border-color: var(--accent); }
+        .ship-image-container {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        .ship-image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-top: 30px;
+            overflow: hidden;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        .comparison-table th {
+            background: rgba(102,126,234,0.1);
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .comparison-table td.stat-label {
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            width: 30%;
+        }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .stat-better { color: #22c55e !important; font-weight: bold; }
+        .stat-worse { color: #ef4444 !important; }
+        .stat-equal { color: var(--text-secondary); }
+
+        .radar-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <!-- User UI dynamically populated by header-auth.js -->
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesiÃ³n</a>
+                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi ColecciÃ³n</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>ConfiguraciÃ³n</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesiÃ³n</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <!-- Main Navigation Links -->
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+                <li class="nav-item"><a href="ship-compare.html" class="nav-link active"><i class="fas fa-balance-scale"></i> Comparar</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+                <h1 class="page-title"><i class="fas fa-balance-scale me-2"></i>Comparador de Naves</h1>
+                <p class="page-subtitle">Selecciona dos naves para enfrentar sus estadÃ­sticas base y radar de roles.</p>
+            </div>
+            <button class="btn btn-secondary" onclick="location.href='ships.html'"><i class="fas fa-arrow-left me-2"></i>Volver a Naves</button>
+        </div>
+
+        <div id="loadingIndicator" class="empty-state">
+            Cargando naves para comparar...
+        </div>
+
+        <div id="compareApp" style="display: none;">
+            <div class="compare-container">
+                <!-- Nave 1 -->
+                <div class="ship-selector-card">
+                    <select id="selectShip1" class="ship-selector">
+                        <option value="">-- Selecciona Nave 1 --</option>
+                    </select>
+                    <div class="ship-image-container" id="imgContainer1">
+                        <i class="fas fa-space-shuttle" style="font-size: 64px; color: rgba(255,255,255,0.05);"></i>
+                    </div>
+                    <h3 id="nameShip1" style="color: var(--text-primary); margin: 0;">Nave 1</h3>
+                    <div id="typeShip1" style="font-size: 13px; color: var(--text-tertiary); margin-top: 5px;"></div>
+                </div>
+
+                <!-- Nave 2 -->
+                <div class="ship-selector-card">
+                    <select id="selectShip2" class="ship-selector">
+                        <option value="">-- Selecciona Nave 2 --</option>
+                    </select>
+                    <div class="ship-image-container" id="imgContainer2">
+                        <i class="fas fa-space-shuttle" style="font-size: 64px; color: rgba(255,255,255,0.05);"></i>
+                    </div>
+                    <h3 id="nameShip2" style="color: var(--text-primary); margin: 0;">Nave 2</h3>
+                    <div id="typeShip2" style="font-size: 13px; color: var(--text-tertiary); margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <!-- GrÃ¡fico superpuesto -->
+            <div class="radar-container" id="radarWrapper" style="display: none;">
+                <div style="width: 100%; max-width: 500px;">
+                    <h4 style="text-align: center; color: var(--text-secondary); margin-bottom: 15px; font-size: 14px; text-transform: uppercase;">Comparativa de Roles (Radar)</h4>
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Tabla de estadÃ­sticas -->
+            <table class="comparison-table" id="comparisonTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th style="text-align: left;">EstadÃ­stica / Atributo</th>
+                        <th id="thShip1">Nave 1</th>
+                        <th id="thShip2">Nave 2</th>
+                    </tr>
+                </thead>
+                <tbody id="comparisonBody">
+                    <!-- Filas generadas por JS -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/header-auth.js"></script>
+    <script>
+        let allShips = [];
+        let radarChartInstance = null;
+
+        const STAT_GRADES = ['', 'E', 'D', 'C', 'B', 'A', 'S'];
+        const STAT_LABELS = ['Burst', 'DPS Mono', 'DPS AoE', 'Tanqueo', 'Movilidad', 'Soporte', 'Control'];
+
+        // Utilidades para normalizar datos
+        function gradeToValue(val) {
+            const n = parseInt(val);
+            return isNaN(n) ? 0 : Math.max(1, Math.min(6, n));
+        }
+
+        function extractStats(ship) {
+            return ship.stats && typeof ship.stats === 'object' ? ship.stats : {};
+        }
+
+        function extractReq(ship) {
+            return ship.requirements && typeof ship.requirements === 'object' ? ship.requirements : {};
+        }
+
+        function getRadarData(ship) {
+            if (ship.radarStats && Object.keys(ship.radarStats).length) {
+                return ship.radarStats;
+            }
+            return {
+                burst: ship.statBurst, monoDps: ship.statMonoDps, aoeDps: ship.statAoeDps,
+                tankiness: ship.statTankiness, mobility: ship.statMobility, support: ship.statSupport, control: ship.statControl
+            };
+        }
+
+        function compareValues(val1, val2, invert = false) {
+            const v1 = parseFloat(val1);
+            const v2 = parseFloat(val2);
+            if (isNaN(v1) || isNaN(v2)) return { c1: 'stat-equal', c2: 'stat-equal' };
+            if (v1 === v2) return { c1: 'stat-equal', c2: 'stat-equal' };
+            const isV1Better = invert ? v1 < v2 : v1 > v2;
+            return {
+                c1: isV1Better ? 'stat-better' : 'stat-worse',
+                c2: !isV1Better ? 'stat-better' : 'stat-worse'
+            };
+        }
+
+        async function initComparator() {
+            try {
+                const snap = await db.collection('ships').orderBy('name').get();
+                snap.forEach(doc => {
+                    allShips.push({ id: doc.id, ...doc.data() });
+                });
+
+                const sel1 = document.getElementById('selectShip1');
+                const sel2 = document.getElementById('selectShip2');
+                const optionsHTML = allShips.map(s => `<option value="${s.id}">${s.name || 'Sin nombre'} (${s.location || 'Local desconocido'})</option>`).join('');
+                sel1.innerHTML += optionsHTML;
+                sel2.innerHTML += optionsHTML;
+
+                sel1.addEventListener('change', updateComparison);
+                sel2.addEventListener('change', updateComparison);
+
+                // Auto select from URL
+                const params = new URLSearchParams(window.location.search);
+                const s1 = params.get('s1');
+                const s2 = params.get('s2');
+                if (s1) sel1.value = s1;
+                if (s2) sel2.value = s2;
+                
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('compareApp').style.display = 'block';
+
+                if (s1 || s2) updateComparison();
+
+            } catch(e) {
+                console.error(e);
+                document.getElementById('loadingIndicator').textContent = 'Error cargando datos de la base de datos.';
+            }
+        }
+
+        function clearShipCard(num) {
+            document.getElementById(`imgContainer${num}`).innerHTML = '<i class="fas fa-space-shuttle" style="font-size: 64px; color: rgba(255,255,255,0.05);"></i>';
+            document.getElementById(`nameShip${num}`).textContent = `Nave ${num}`;
+            document.getElementById(`typeShip${num}`).textContent = '';
+            if (num === 1) document.getElementById('thShip1').textContent = 'Nave 1';
+            if (num === 2) document.getElementById('thShip2').textContent = 'Nave 2';
+        }
+
+        function updateShipCard(num, ship) {
+            if (!ship) return clearShipCard(num);
+            if (ship.image) {
+                document.getElementById(`imgContainer${num}`).innerHTML = `<img src="${ship.image.replace(/"/g, '&quot;')}" alt="">`;
+            } else {
+                document.getElementById(`imgContainer${num}`).innerHTML = '<i class="fas fa-space-shuttle" style="font-size: 64px; color: rgba(255,255,255,0.1);"></i>';
+            }
+            const badgeType = ship.type ? `<span class="badge badge-type me-1">${ship.type}</span>` : '';
+            const badgeRole = ship.role ? `<span class="badge" style="background:linear-gradient(135deg, rgba(102,126,234,0.4), rgba(118,75,162,0.4)); color:#a78bfa;"><i class="fas fa-star me-1"></i>${ship.role}</span>` : '';
+            
+            document.getElementById(`nameShip${num}`).textContent = ship.name || 'Nave sin nombre';
+            document.getElementById(`typeShip${num}`).innerHTML = `${badgeType} ${badgeRole}`;
+            
+            if (num === 1) document.getElementById('thShip1').textContent = ship.name || 'Nave 1';
+            if (num === 2) document.getElementById('thShip2').textContent = ship.name || 'Nave 2';
+        }
+
+        function buildRadar(ship1, ship2) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            if (radarChartInstance) radarChartInstance.destroy();
+
+            const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+            const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+            const labelColor = isDark ? '#94a3b8' : '#475569';
+
+            const datasets = [];
+
+            if (ship1) {
+                const r = getRadarData(ship1);
+                const values = [ gradeToValue(r.burst), gradeToValue(r.monoDps), gradeToValue(r.aoeDps), gradeToValue(r.tankiness), gradeToValue(r.mobility), gradeToValue(r.support), gradeToValue(r.control) ];
+                if (values.some(v => v > 0)) {
+                    datasets.push({
+                        label: ship1.name,
+                        data: values,
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        borderColor: '#667eea',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#667eea',
+                        pointBorderColor: '#fff'
+                    });
+                }
+            }
+
+            if (ship2) {
+                const r = getRadarData(ship2);
+                const values = [ gradeToValue(r.burst), gradeToValue(r.monoDps), gradeToValue(r.aoeDps), gradeToValue(r.tankiness), gradeToValue(r.mobility), gradeToValue(r.support), gradeToValue(r.control) ];
+                if (values.some(v => v > 0)) {
+                    datasets.push({
+                        label: ship2.name,
+                        data: values,
+                        backgroundColor: 'rgba(234, 102, 102, 0.2)',
+                        borderColor: '#ea6666',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#ea6666',
+                        pointBorderColor: '#fff'
+                    });
+                }
+            }
+
+            if (datasets.length === 0) {
+                document.getElementById('radarWrapper').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('radarWrapper').style.display = 'flex';
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: STAT_LABELS,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 6,
+                            ticks: {
+                                stepSize: 1,
+                                callback: v => STAT_GRADES[v] || '',
+                                color: labelColor,
+                                backdropColor: 'transparent'
+                            },
+                            pointLabels: { color: labelColor, font: { size: 11 } },
+                            grid: { color: gridColor },
+                            angleLines: { color: gridColor }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: labelColor } },
+                        tooltip: {
+                            callbacks: {
+                                label: context => ` ${context.dataset.label}: ${STAT_GRADES[context.raw] || context.raw}`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createRow(label, v1, v2, compareClasses) {
+            return `<tr>
+                <td class="stat-label">${label}</td>
+                <td class="${compareClasses ? compareClasses.c1 : ''}">${v1}</td>
+                <td class="${compareClasses ? compareClasses.c2 : ''}">${v2}</td>
+            </tr>`;
+        }
+
+        function updateComparison() {
+            const id1 = document.getElementById('selectShip1').value;
+            const id2 = document.getElementById('selectShip2').value;
+
+            // Reflect in URL without reload
+            const url = new URL(window.location);
+            if (id1) url.searchParams.set('s1', id1); else url.searchParams.delete('s1');
+            if (id2) url.searchParams.set('s2', id2); else url.searchParams.delete('s2');
+            window.history.replaceState({}, '', url);
+
+            const ship1 = allShips.find(s => s.id === id1) || null;
+            const ship2 = allShips.find(s => s.id === id2) || null;
+
+            updateShipCard(1, ship1);
+            updateShipCard(2, ship2);
+
+            buildRadar(ship1, ship2);
+
+            const table = document.getElementById('comparisonTable');
+            const tbody = document.getElementById('comparisonBody');
+            
+            if (!ship1 && !ship2) {
+                table.style.display = 'none';
+                return;
+            }
+
+            table.style.display = 'table';
+            let rowsStr = '';
+
+            const s1 = ship1 ? extractStats(ship1) : {};
+            const s2 = ship2 ? extractStats(ship2) : {};
+            const r1 = ship1 ? extractReq(ship1) : {};
+            const r2 = ship2 ? extractReq(ship2) : {};
+
+            const armor1 = s1.armor || 0; const armor2 = s2.armor || 0;
+            const hp1 = s1.hp || 0; const hp2 = s2.hp || 0;
+            const speed1 = s1.speed || 0; const speed2 = s2.speed || 0;
+            const dmg1 = s1.damage || 0; const dmg2 = s2.damage || 0;
+            const eng1 = s1.energy || 0; const eng2 = s2.energy || 0;
+
+            const lvl1 = r1.level || 0; const lvl2 = r2.level || 0;
+            const cryo1 = r1.credits || 0; const cryo2 = r2.credits || 0;
+            const raven1 = ship1 ? (ship1.creditsRaven || 0) : 0;
+            const raven2 = ship2 ? (ship2.creditsRaven || 0) : 0;
+
+            rowsStr += createRow('<i class="fas fa-shield-alt me-2" style="color: #64748b;"></i> Blindaje Max.', 
+                                  armor1 || 'â€”', armor2 || 'â€”', compareValues(armor1, armor2));
+            if (hp1 || hp2) {
+                rowsStr += createRow('<i class="fas fa-heart me-2" style="color: #ef4444;"></i> Vitalidad (HP)', 
+                                      hp1 || 'â€”', hp2 || 'â€”', compareValues(hp1, hp2));
+            }
+            rowsStr += createRow('<i class="fas fa-space-shuttle me-2" style="color: #3b82f6;"></i> Velocidad Max.', 
+                                  speed1 || 'â€”', speed2 || 'â€”', compareValues(speed1, speed2));
+            rowsStr += createRow('<i class="fas fa-crosshairs me-2" style="color: #ef4444;"></i> DaÃ±o Max.', 
+                                  dmg1 || 'â€”', dmg2 || 'â€”', compareValues(dmg1, dmg2));
+            if (eng1 || eng2) {
+                rowsStr += createRow('<i class="fas fa-bolt me-2" style="color: #eab308;"></i> EnergÃ­a Max.', 
+                                      eng1 || 'â€”', eng2 || 'â€”', compareValues(eng1, eng2));
+            }
+
+            // Slots de Componentes (ej: 13, 14, 15)
+            const comp1 = ship1 ? (ship1.componentSlotsMax || 0) : 0;
+            const comp2 = ship2 ? (ship2.componentSlotsMax || 0) : 0;
+            rowsStr += createRow('<i class="fas fa-microchip me-2" style="color: #6366f1;"></i> Slots de Componentes', 
+                                  comp1 || 'â€”', comp2 || 'â€”', compareValues(comp1, comp2));
+
+            rowsStr += createRow('<i class="fas fa-star me-2" style="color: #eab308;"></i> Nivel de Acceso', 
+                                  lvl1 || 'â€”', lvl2 || 'â€”');
+            // Menor coste es mejor en crÃ©ditos
+            rowsStr += createRow('<i class="fas fa-coins me-2" style="color: #22c55e;"></i> Coste (Crionita)', 
+                                  cryo1 ? cryo1.toLocaleString() : 'â€”', cryo2 ? cryo2.toLocaleString() : 'â€”', compareValues(cryo1, cryo2, true));
+            if (raven1 || raven2) {
+                rowsStr += createRow('<i class="fas fa-gem me-2" style="color: #a855f7;"></i> Coste (Raven)', 
+                                      raven1 ? raven1.toLocaleString() : 'â€”', raven2 ? raven2.toLocaleString() : 'â€”', compareValues(raven1, raven2, true));
+            }
+
+            tbody.innerHTML = rowsStr;
+        }
+
+        window.addEventListener('DOMContentLoaded', initComparator);
+    </script>
+</body>
+</html>
+

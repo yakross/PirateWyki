@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Componentes</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            }
+        }
+    </script>
+    <script src="../../js/components/footer-component.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link active"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <h1 class="page-title"><i class="fas fa-microchip me-2"></i>Componentes</h1>
+        <p class="page-subtitle">Componentes, pinturas, drones, cortex y gravitones. Usa las pestañas para cambiar de sección.</p>
+
+        <div class="section-tabs mb-3">
+            <button type="button" class="section-tab active" data-tab="componentes"><i class="fas fa-cog me-1"></i> Componentes</button>
+            <button type="button" class="section-tab" data-tab="pinturas"><i class="fas fa-palette me-1"></i> Pinturas</button>
+            <button type="button" class="section-tab" data-tab="drones"><i class="fas fa-satellite-dish me-1"></i> Drones</button>
+            <button type="button" class="section-tab" data-tab="cortex"><i class="fas fa-brain me-1"></i> Cortex</button>
+            <button type="button" class="section-tab" data-tab="gravitones"><i class="fas fa-gem me-1"></i> Gravitones</button>
+        </div>
+
+        <div id="filtersComponentes" class="filters-bar">
+            <input id="searchInput" type="text" class="search-input" placeholder="Buscar por nombre, drop, descripción...">
+            <select id="typeFilter" class="filter-select">
+                <option value="">Tipo: todos</option>
+            </select>
+            <select id="rarityFilter" class="filter-select">
+                <option value="">Rareza: todas</option>
+            </select>
+            <div class="view-toggle">
+                <button type="button" class="btn-toggle active" id="btnViewGrid" onclick="setViewMode('grid')" title="Vista cuadrícula"><i class="fas fa-th"></i></button>
+                <button type="button" class="btn-toggle" id="btnViewTable" onclick="setViewMode('table')" title="Vista lista"><i class="fas fa-list"></i></button>
+            </div>
+        </div>
+
+        <div id="filtersPinturas" class="filters-bar" style="display: none;">
+            <input id="searchInputPinturas" type="text" class="search-input" placeholder="Buscar por nombre o descripción...">
+            <select id="rarityFilterPinturas" class="filter-select">
+                <option value="">Rareza: todas</option>
+            </select>
+            <div class="view-toggle">
+                <button type="button" class="btn-toggle active btnViewGrid" onclick="setViewMode('grid')" title="Vista cuadrícula"><i class="fas fa-th"></i></button>
+                <button type="button" class="btn-toggle btnViewTable" onclick="setViewMode('table')" title="Vista lista"><i class="fas fa-list"></i></button>
+            </div>
+        </div>
+
+        <div id="filtersDrones" class="filters-bar" style="display: none;">
+            <input id="searchInputDrones" type="text" class="search-input" placeholder="Buscar por nombre...">
+            <select id="typeFilterDrones" class="filter-select">
+                <option value="">Tipo: todos</option>
+                <option value="armor">Blindaje</option>
+                <option value="firepower">Potencia de fuego</option>
+            </select>
+            <div class="view-toggle">
+                <button type="button" class="btn-toggle active btnViewGrid" onclick="setViewMode('grid')" title="Vista cuadrícula"><i class="fas fa-th"></i></button>
+                <button type="button" class="btn-toggle btnViewTable" onclick="setViewMode('table')" title="Vista lista"><i class="fas fa-list"></i></button>
+            </div>
+        </div>
+
+        <div id="filtersCortex" class="filters-bar" style="display: none;">
+            <input id="searchInputCortex" type="text" class="search-input" placeholder="Buscar por nombre o efecto...">
+            <div class="view-toggle">
+                <button type="button" class="btn-toggle active btnViewGrid" onclick="setViewMode('grid')" title="Vista cuadrícula"><i class="fas fa-th"></i></button>
+                <button type="button" class="btn-toggle btnViewTable" onclick="setViewMode('table')" title="Vista lista"><i class="fas fa-list"></i></button>
+            </div>
+        </div>
+
+        <div id="filtersGravitones" class="filters-bar" style="display: none;">
+            <input id="searchInputGravitones" type="text" class="search-input" placeholder="Buscar gravitón...">
+            <div class="view-toggle">
+                <button type="button" class="btn-toggle active btnViewGrid" onclick="setViewMode('grid')" title="Vista cuadrícula"><i class="fas fa-th"></i></button>
+                <button type="button" class="btn-toggle btnViewTable" onclick="setViewMode('table')" title="Vista lista"><i class="fas fa-list"></i></button>
+            </div>
+        </div>
+
+        <div id="container">
+            <div class="items-grid" id="itemsGrid"></div>
+            <div id="emptyState" class="empty-state" style="display: none;">No hay componentes registrados todavía.</div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/header-auth.js"></script>
+    <script src="../../js/favorites.js"></script>
+    <script>
+        function bindFavButtons(container) {
+            if (!container) return;
+            container.querySelectorAll('.btn-fav').forEach(function(btn) {
+                btn.onclick = async function() {
+                    var type = btn.getAttribute('data-type') || 'component';
+                    var id = btn.getAttribute('data-id');
+                    var name = btn.getAttribute('data-name') || '';
+                    if (!id || typeof toggleFavorite !== 'function') return;
+                    var icon = btn.querySelector('i');
+                    var r = await toggleFavorite(type, id, name);
+                    if (r && r.ok !== false && icon) {
+                        icon.className = r.isNowFavorite ? 'fas fa-star' : 'far fa-star';
+                    }
+                };
+            });
+        }
+        let allItems = [];
+        let allPaints = [];
+        let allDrones = [];
+        let allCortex = [];
+        let allGravitons = [];
+        let componentTypeIcons = {}; // Global map for type icons
+        let currentTab = 'componentes';
+        let currentViewMode = 'grid'; // 'grid' | 'table'
+
+        function setViewMode(mode) {
+            currentViewMode = mode;
+            document.querySelectorAll('.btnViewGrid').forEach(btn => btn.classList.toggle('active', mode === 'grid'));
+            document.querySelectorAll('.btnViewTable').forEach(btn => btn.classList.toggle('active', mode === 'table'));
+            
+            // To ensure compatibility with the original button IDs
+            const bg = document.getElementById('btnViewGrid'); if(bg) bg.classList.toggle('active', mode === 'grid');
+            const bt = document.getElementById('btnViewTable'); if(bt) bt.classList.toggle('active', mode === 'table');
+
+            if (currentTab === 'componentes') renderItems();
+            else if (currentTab === 'pinturas') renderPaints();
+            else if (currentTab === 'drones') renderDrones();
+            else if (currentTab === 'cortex') renderCortex();
+            else if (currentTab === 'gravitones') renderGravitons();
+        }
+
+        function getRarityBadgeClass(rarity) {
+            if (!rarity) return 'badge-type';
+            const r = (rarity + '').toLowerCase();
+            if (r.includes('azul')) return 'badge-azul';
+            if (r.includes('dorado')) return 'badge-dorado';
+            if (r.includes('conquista')) return 'badge-conquista';
+            if (r.includes('evento')) return 'badge-evento';
+            if (r.includes('arcano')) return 'badge-arcano';
+            return 'badge-type';
+        }
+
+        function renderItems() {
+            const grid = document.getElementById('itemsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value.toLowerCase();
+            const rarityFilter = document.getElementById('rarityFilter').value.toLowerCase();
+
+            const filtered = allItems.filter(item => {
+                const name = (item.name || '').toLowerCase();
+                const desc = (item.description || '').toLowerCase();
+                const drop = (item.dropLocation || '').toLowerCase();
+                const type = (item.type || '').toLowerCase();
+                const rarity = (item.rarity || '').toLowerCase();
+
+                const matchesSearch = !search || name.includes(search) || desc.includes(search) || drop.includes(search);
+                // Lowercase comparison for more flexibility
+                const matchesType = !typeFilter || type === typeFilter || type.includes(typeFilter);
+                const matchesRarity = !rarityFilter || rarity === rarityFilter || rarity.includes(rarityFilter);
+
+                return matchesSearch && matchesType && matchesRarity;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            if (currentViewMode === 'table') {
+                grid.className = ''; // Remove items-grid to allow full width
+                let html = '<div style="overflow-x:auto;"><table class="items-table"><thead><tr><th>Nombre</th><th>Tipo / Rareza</th><th>Drop / Nivel</th><th>Extra</th><th>Acciones</th></tr></thead><tbody>';
+                filtered.forEach(item => {
+                    const badgeClass = getRarityBadgeClass(item.rarity);
+                    const name = (item.name || 'Sin nombre').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+                    
+                    let metaInfo = [];
+                    if (item.dropLocation) metaInfo.push('<i class="fas fa-map-marker-alt"></i> ' + item.dropLocation.replace(/</g, '&lt;'));
+                    if (item.dropRate != null) metaInfo.push(item.dropRate + '% drop');
+                    if (item.level != null) metaInfo.push('Niv ' + item.level);
+
+                    let extras = [];
+                    if (item.decryptShip) extras.push(`<span class="badge badge-decrypt">Nave: ${item.decryptShip}</span>`);
+                    if (Array.isArray(item.decryptComponents) && item.decryptComponents.length) {
+                        extras.push(item.decryptComponents.map(c => `<span class="badge badge-decrypt">Comp: ${c}</span>`).join(' '));
+                    }
+
+                    const typeIcons = componentTypeIcons[item.type] || {};
+                    let typeIconsHtml = '';
+                    const rLower = (item.rarity || '').toLowerCase();
+                    let iconPath = '';
+                    let title = '';
+                    if (rLower.includes('azul')) { iconPath = typeIcons.blue; title = 'Azul'; }
+                    else if (rLower.includes('dorado')) { iconPath = typeIcons.gold; title = 'Dorado'; }
+                    else if (rLower.includes('arcano')) { iconPath = typeIcons.arcane; title = 'Arcano'; }
+
+                    if (iconPath) {
+                        typeIconsHtml = `<img src="../../${iconPath}" style="width:16px;height:16px;object-fit:contain;" title="${title}">`;
+                    }
+
+                    html += `<tr>
+                        <td>
+                            <div class="item-name-link" onclick="location.href='component-detail.html?id=${encodeURIComponent(item.id)}'">${name}</div>
+                        </td>
+                        <td>
+                            <div style="display:inline-flex; align-items:center; gap:4px; vertical-align:middle;">
+                                ${typeIconsHtml ? `<div style="display:flex; gap:2px; margin-right:4px;">${typeIconsHtml}</div>` : ''}
+                                ${item.type ? `<span class="badge badge-type">${item.type}</span>` : ''}
+                            </div>
+                            ${item.rarity ? `<span class="badge ${badgeClass} ms-1">${item.rarity}</span>` : ''}
+                        </td>
+                        <td style="font-size:12px;">${metaInfo.join(' · ') || '—'}</td>
+                        <td style="font-size:12px;">${extras.join(' ') || '—'}</td>
+                        <td>
+                            <button type="button" class="btn-fav" data-type="component" data-id="${item.id}" data-name="${name}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:6px; font-size:16px;"><i class="far fa-star"></i></button>
+                        </td>
+                    </tr>`;
+                });
+                html += '</tbody></table></div>';
+                grid.innerHTML = html;
+            } else {
+                grid.className = 'items-grid';
+                grid.innerHTML = '';
+                filtered.forEach(item => {
+                    const created = item.createdAt && item.createdAt.toDate ? item.createdAt.toDate().toLocaleDateString() : '';
+                    const badgeClass = getRarityBadgeClass(item.rarity);
+
+                    const card = document.createElement('article');
+                    card.className = 'item-card';
+                    card.dataset.entityType = 'component';
+                    card.dataset.entityId = item.id;
+                    card.style.cursor = 'pointer';
+                    card.innerHTML = `
+                        <div class="item-header">
+                            <div>
+                                <div class="item-name">${item.name || 'Sin nombre'}</div>
+                                <div class="item-meta">
+                                                        ${item.dropLocation ? `<span><i class="fas fa-map-marker-alt me-1"></i>${item.dropLocation}</span>` : ''}
+                        ${item.dropRate != null ? `<span>${item.dropRate}% drop</span>` : ''}
+                        ${item.level != null ? `<span>Nivel ${item.level}</span>` : ''}
+                        ${item.decryptShip ? `<span class="badge badge-decrypt">Nave: ${item.decryptShip}</span>` : ''}
+                        ${Array.isArray(item.decryptComponents) && item.decryptComponents.length ? item.decryptComponents.map(c => `<span class="badge badge-decrypt">Comp: ${c}</span>`).join('') : ''}
+                                </div>
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+                                <div style="display:flex; gap:4px; margin-bottom:2px;">
+                                    ${(function(){
+                                        const ti = componentTypeIcons[item.type] || {};
+                                        const rl = (item.rarity || '').toLowerCase();
+                                        let ip = '';
+                                        if (rl.includes('azul')) ip = ti.blue;
+                                        else if (rl.includes('dorado')) ip = ti.gold;
+                                        else if (rl.includes('arcano')) ip = ti.arcane;
+                                        return ip ? `<img src="../../${ip}" style="width:18px;height:18px;object-fit:contain;">` : '';
+                                    })()}
+                                </div>
+                                ${item.type ? `<span class="badge badge-type">${item.type}</span>` : ''}
+                                ${item.rarity ? `<span class="badge ${badgeClass}">${item.rarity}</span>` : ''}
+                            </div>
+                        </div>
+                        ${item.description ? `<p class="item-description">${item.description}</p>` : ''}
+                        <div class="item-footer" style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>${created ? `Actualizado: ${created}` : ''}</span>
+                            <button type="button" class="btn-fav" data-type="component" data-id="${item.id}" data-name="${(item.name || 'Sin nombre').replace(/"/g, '&quot;')}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:4px;"><i class="far fa-star"></i></button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+            bindFavButtons(grid);
+            const gridEl = document.getElementById('itemsGrid');
+            gridEl.removeEventListener('click', handleComponentGridClick);
+            gridEl.addEventListener('click', handleComponentGridClick);
+        }
+
+        function handleComponentGridClick(e) {
+            if (e.target.closest('.btn-fav')) return;
+            const card = e.target.closest('.item-card[data-entity-type="component"]');
+            if (card && card.dataset.entityId)
+                location.href = 'component-detail.html?id=' + encodeURIComponent(card.dataset.entityId);
+        }
+
+        function renderPaints() {
+            const grid = document.getElementById('itemsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const search = (document.getElementById('searchInputPinturas').value || '').toLowerCase();
+            const rarityFilter = (document.getElementById('rarityFilterPinturas').value || '').toLowerCase();
+
+            const filtered = allPaints.filter(item => {
+                const name = (item.name || '').toLowerCase();
+                const desc = (item.description || '').toLowerCase();
+                const rarity = (item.rarity || '').toLowerCase();
+                const matchesSearch = !search || name.includes(search) || desc.includes(search);
+                const matchesRarity = !rarityFilter || rarity.includes(rarityFilter);
+                return matchesSearch && matchesRarity;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            emptyState.style.display = 'none';
+
+            if (currentViewMode === 'table') {
+                grid.className = '';
+                let html = '<div style="overflow-x:auto;"><table class="items-table"><thead><tr><th>Imagen</th><th>Nombre</th><th>Rareza</th><th>Descripción</th><th>Acciones</th></tr></thead><tbody>';
+                filtered.forEach(item => {
+                    const badgeClass = getRarityBadgeClass(item.rarity);
+                    const name = (item.name || 'Sin nombre').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+                    html += `<tr>
+                        <td style="width: 60px; text-align: center;">
+                            ${item.image ? `<img src="${item.image}" alt="${name}" style="max-width: 40px; max-height: 40px; border-radius: 4px;">` : '—'}
+                        </td>
+                        <td><strong>${name}</strong></td>
+                        <td>${item.rarity ? `<span class="badge ${badgeClass}">${item.rarity}</span>` : '—'}</td>
+                        <td style="max-width: 300px; font-size: 13px;">${item.description || '—'}</td>
+                        <td style="text-align: center;">
+                            <button type="button" class="btn-fav" data-type="paint" data-id="${item.id}" data-name="${name}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:6px; font-size:16px;"><i class="far fa-star"></i></button>
+                        </td>
+                    </tr>`;
+                });
+                html += '</tbody></table></div>';
+                grid.innerHTML = html;
+            } else {
+                grid.className = 'items-grid';
+                grid.innerHTML = '';
+                filtered.forEach(item => {
+                    const card = document.createElement('article');
+                    card.className = 'item-card';
+                    card.dataset.entityType = 'paint';
+                    card.dataset.entityId = item.id;
+                    card.style.cursor = 'pointer';
+                    card.innerHTML = `
+                        ${item.image ? `<img class="item-card-img" src="${item.image}" alt="${(item.name || 'Pintura').replace(/"/g, '&quot;')}" style="width:100%; max-height:120px; object-fit:contain; border-radius:8px; margin-bottom:10px;">` : ''}
+                        <div class="item-header">
+                            <div class="item-name">${item.name || 'Sin nombre'}</div>
+                            ${item.rarity ? `<span class="badge badge-type">${item.rarity}</span>` : ''}
+                        </div>
+                        ${item.description ? `<p class="item-description">${item.description}</p>` : ''}
+                        <div class="item-footer" style="display:flex; justify-content:space-between; align-items:center;">
+                            <span></span>
+                            <button type="button" class="btn-fav" data-type="paint" data-id="${item.id}" data-name="${(item.name || 'Sin nombre').replace(/"/g, '&quot;')}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:4px;"><i class="far fa-star"></i></button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+            bindFavButtons(grid);
+            const gridEl = document.getElementById('itemsGrid');
+            gridEl.removeEventListener('click', handleItemsGridClick);
+            gridEl.addEventListener('click', handleItemsGridClick);
+        }
+
+        function renderDrones() {
+            const grid = document.getElementById('itemsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const search = (document.getElementById('searchInputDrones').value || '').toLowerCase();
+            const typeFilter = (document.getElementById('typeFilterDrones').value || '').toLowerCase();
+            const filtered = allDrones.filter(item => {
+                const name = (item.name || '').toLowerCase();
+                const type = (item.type || '').toLowerCase();
+                return (!search || name.includes(search)) && (!typeFilter || type === typeFilter);
+            });
+            if (filtered.length === 0) { grid.innerHTML = ''; emptyState.style.display = 'block'; return; }
+            emptyState.style.display = 'none';
+            
+            if (currentViewMode === 'table') {
+                grid.className = '';
+                let html = '<div style="overflow-x:auto;"><table class="items-table"><thead><tr><th>Imagen</th><th>Nombre</th><th>Tipo</th><th>Bono</th><th>Descripción</th><th>Acciones</th></tr></thead><tbody>';
+                filtered.forEach(item => {
+                    const name = (item.name || 'Sin nombre').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+                    html += `<tr>
+                        <td style="width: 60px; text-align: center;">
+                            ${item.image ? `<img src="${item.image}" alt="${name}" style="max-width: 40px; max-height: 40px; border-radius: 4px;">` : '—'}
+                        </td>
+                        <td><strong>${name}</strong></td>
+                        <td>${item.type ? `<span class="badge badge-type">${item.type}</span>` : '—'}</td>
+                        <td>${item.bonusPercent != null ? `+${item.bonusPercent}%` : '—'}</td>
+                        <td style="max-width: 300px; font-size: 13px;">${item.description || '—'}</td>
+                        <td style="text-align: center;">
+                            <button type="button" class="btn-fav" data-type="drone" data-id="${item.id}" data-name="${name}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:6px; font-size:16px;"><i class="far fa-star"></i></button>
+                        </td>
+                    </tr>`;
+                });
+                html += '</tbody></table></div>';
+                grid.innerHTML = html;
+            } else {
+                grid.className = 'items-grid';
+                grid.innerHTML = '';
+                filtered.forEach(item => {
+                    const card = document.createElement('article');
+                    card.className = 'item-card';
+                    card.dataset.entityType = 'drone';
+                    card.dataset.entityId = item.id;
+                    card.style.cursor = 'pointer';
+                    card.innerHTML = `
+                        ${item.image ? `<img class="item-card-img" src="${item.image}" alt="${(item.name || 'Drone').replace(/"/g, '&quot;')}" style="width:100%; max-height:100px; object-fit:contain; border-radius:8px; margin-bottom:10px;">` : ''}
+                        <div class="item-header"><div class="item-name">${item.name || 'Sin nombre'}</div>${item.type ? `<span class="badge badge-type">${item.type}</span>` : ''}</div>
+                        ${item.bonusPercent != null ? `<div class="item-meta">+${item.bonusPercent}%</div>` : ''}
+                        ${item.description ? `<p class="item-description">${item.description}</p>` : ''}
+                        <div class="item-footer" style="display:flex; justify-content:space-between; align-items:center;"><span></span><button type="button" class="btn-fav" data-type="drone" data-id="${item.id}" data-name="${(item.name || '').replace(/"/g, '&quot;')}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:4px;"><i class="far fa-star"></i></button></div>`;
+                    grid.appendChild(card);
+                });
+            }
+            bindFavButtons(grid);
+            const gridEl = document.getElementById('itemsGrid');
+            gridEl.removeEventListener('click', handleItemsGridClick);
+            gridEl.addEventListener('click', handleItemsGridClick);
+        }
+
+        function renderCortex() {
+            const grid = document.getElementById('itemsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const search = (document.getElementById('searchInputCortex').value || '').toLowerCase();
+            const filtered = allCortex.filter(item => {
+                const name = (item.name || '').toLowerCase();
+                const effect = (item.effect || '').toLowerCase();
+                return !search || name.includes(search) || effect.includes(search);
+            });
+            if (filtered.length === 0) { grid.innerHTML = ''; emptyState.style.display = 'block'; return; }
+            emptyState.style.display = 'none';
+
+            if (currentViewMode === 'table') {
+                grid.className = '';
+                let html = '<div style="overflow-x:auto;"><table class="items-table"><thead><tr><th>Imagen</th><th>Nombre</th><th>Efecto</th><th>Descripción</th><th>Acciones</th></tr></thead><tbody>';
+                filtered.forEach(item => {
+                    const name = (item.name || 'Sin nombre').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+                    html += `<tr>
+                        <td style="width: 60px; text-align: center;">
+                            ${item.image ? `<img src="${item.image}" alt="${name}" style="max-width: 40px; max-height: 40px; border-radius: 4px;">` : '—'}
+                        </td>
+                        <td><strong>${name}</strong></td>
+                        <td>${item.effect ? `<span class="badge badge-type">${item.effect}</span>` : '—'}</td>
+                        <td style="max-width: 300px; font-size: 13px;">${item.description || '—'}</td>
+                        <td style="text-align: center;">
+                            <button type="button" class="btn-fav" data-type="cortex" data-id="${item.id}" data-name="${name}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:6px; font-size:16px;"><i class="far fa-star"></i></button>
+                        </td>
+                    </tr>`;
+                });
+                html += '</tbody></table></div>';
+                grid.innerHTML = html;
+            } else {
+                grid.className = 'items-grid';
+                grid.innerHTML = '';
+                filtered.forEach(item => {
+                    const card = document.createElement('article');
+                    card.className = 'item-card';
+                    card.dataset.entityType = 'cortex';
+                    card.dataset.entityId = item.id;
+                    card.style.cursor = 'pointer';
+                    card.innerHTML = `
+                        ${item.image ? `<img class="item-card-img" src="${item.image}" alt="${(item.name || 'Cortex').replace(/"/g, '&quot;')}" style="width:100%; max-height:100px; object-fit:contain; border-radius:8px; margin-bottom:10px;">` : ''}
+                        <div class="item-header"><div class="item-name">${item.name || 'Sin nombre'}</div>${item.effect ? `<span class="badge badge-type">${item.effect}</span>` : ''}</div>
+                        ${item.description ? `<p class="item-description">${item.description}</p>` : ''}
+                        <div class="item-footer" style="display:flex; justify-content:space-between; align-items:center;"><span></span><button type="button" class="btn-fav" data-type="cortex" data-id="${item.id}" data-name="${(item.name || '').replace(/"/g, '&quot;')}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:4px;"><i class="far fa-star"></i></button></div>`;
+                    grid.appendChild(card);
+                });
+            }
+            bindFavButtons(grid);
+            const gridEl = document.getElementById('itemsGrid');
+            gridEl.removeEventListener('click', handleItemsGridClick);
+            gridEl.addEventListener('click', handleItemsGridClick);
+        }
+
+        function renderGravitons() {
+            const grid = document.getElementById('itemsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const search = (document.getElementById('searchInputGravitones').value || '').toLowerCase();
+            const filtered = allGravitons.filter(item => {
+                const name = (item.name || '').toLowerCase();
+                const effect = (item.effect || '').toLowerCase();
+                return !search || name.includes(search) || effect.includes(search);
+            });
+            if (filtered.length === 0) { grid.innerHTML = ''; emptyState.style.display = 'block'; return; }
+            emptyState.style.display = 'none';
+
+            if (currentViewMode === 'table') {
+                grid.className = '';
+                let html = '<div style="overflow-x:auto;"><table class="items-table"><thead><tr><th>Imagen</th><th>Nombre</th><th>Efecto</th><th>Descripción</th><th>Acciones</th></tr></thead><tbody>';
+                filtered.forEach(item => {
+                    const name = (item.name || 'Sin nombre').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+                    html += `<tr>
+                        <td style="width: 60px; text-align: center;">
+                            ${item.image ? `<img src="${item.image}" alt="${name}" style="max-width: 40px; max-height: 40px; border-radius: 4px;">` : '—'}
+                        </td>
+                        <td><strong>${name}</strong></td>
+                        <td>${item.effect ? `<span class="badge badge-type">${item.effect}</span>` : '—'}</td>
+                        <td style="max-width: 300px; font-size: 13px;">${item.description || '—'}</td>
+                        <td style="text-align: center;">
+                            <button type="button" class="btn-fav" data-type="graviton" data-id="${item.id}" data-name="${name}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:6px; font-size:16px;"><i class="far fa-star"></i></button>
+                        </td>
+                    </tr>`;
+                });
+                html += '</tbody></table></div>';
+                grid.innerHTML = html;
+            } else {
+                grid.className = 'items-grid';
+                grid.innerHTML = '';
+                filtered.forEach(item => {
+                    const card = document.createElement('article');
+                    card.className = 'item-card';
+                    card.dataset.entityType = 'graviton';
+                    card.dataset.entityId = item.id;
+                    card.style.cursor = 'pointer';
+                    card.innerHTML = `
+                        ${item.image ? `<img class="item-card-img" src="${item.image}" alt="${(item.name || 'Gravitón').replace(/"/g, '&quot;')}" style="width:100%; max-height:100px; object-fit:contain; border-radius:8px; margin-bottom:10px;">` : ''}
+                        <div class="item-header"><div class="item-name">${item.name || 'Sin nombre'}</div>${item.effect ? `<span class="badge badge-type">${item.effect}</span>` : ''}</div>
+                        ${item.description ? `<p class="item-description">${item.description}</p>` : ''}
+                        <div class="item-footer" style="display:flex; justify-content:space-between; align-items:center;"><span></span><button type="button" class="btn-fav" data-type="graviton" data-id="${item.id}" data-name="${(item.name || '').replace(/"/g, '&quot;')}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:4px;"><i class="far fa-star"></i></button></div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+            bindFavButtons(grid);
+            const gridEl = document.getElementById('itemsGrid');
+            gridEl.removeEventListener('click', handleItemsGridClick);
+            gridEl.addEventListener('click', handleItemsGridClick);
+        }
+
+        function handleItemsGridClick(e) {
+            if (e.target.closest('.btn-fav')) return;
+            const card = e.target.closest('.item-card[data-entity-type][data-entity-id]');
+            if (!card || !card.dataset.entityId) return;
+            const type = card.dataset.entityType;
+            const id = card.dataset.entityId;
+            const routes = { paint: 'paint-detail.html', drone: 'drone-detail.html', cortex: 'cortex-detail.html', graviton: 'graviton-detail.html' };
+            if (routes[type]) location.href = routes[type] + '?id=' + encodeURIComponent(id);
+        }
+
+        let compLastDoc = null;
+        let compIsLoading = false;
+        const COMP_PAGE_SIZE = 20;
+
+        async function loadItems(append = false) {
+            if (compIsLoading) return;
+            compIsLoading = true;
+            const grid = document.getElementById('itemsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const loadMoreBtn = document.getElementById('compLoadMoreBtn');
+
+            if (!append) {
+                allItems = [];
+                compLastDoc = null;
+                grid.innerHTML = Array(8).fill(`
+                    <div class="skeleton-base skeleton">
+                        <div class="skeleton-title" style="width: 50%;"></div>
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text short"></div>
+                    </div>
+                `).join('');
+                emptyState.style.display = 'none';
+                if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            }
+
+            try {
+                let query = db.collection('components').orderBy('name').limit(COMP_PAGE_SIZE);
+                if (compLastDoc) query = query.startAfter(compLastDoc);
+                const snapshot = await query.get();
+                const docs = snapshot.docs;
+                docs.forEach(doc => {
+                    const d = doc.data();
+                    allItems.push({ id: doc.id, name: d.name || d.Name, type: d.type || d.Type, rarity: d.rarity, level: d.level, dropLocation: d.dropLocation, dropRate: d.dropRate, description: d.description, image: d.image, createdAt: d.createdAt, decryptShip: d.decryptShip, decryptComponents: d.decryptComponents });
+                });
+                if (docs.length > 0) compLastDoc = docs[docs.length - 1];
+                if (loadMoreBtn) loadMoreBtn.style.display = (docs.length === COMP_PAGE_SIZE) ? 'inline-block' : 'none';
+
+                // Cargar opciones de filtros desde admin panel (only on first load)
+                if (!append) await loadFilterOptions();
+
+                renderItems();
+            } catch (error) {
+                console.error('Error cargando componentes:', error);
+                grid.innerHTML = '<div class="empty-state">Error al cargar componentes. Revisa la consola y las reglas de Firestore.</div>';
+            } finally {
+                compIsLoading = false;
+            }
+        }
+
+        function loadMoreComponents() { loadItems(true); }
+
+
+        async function loadFilterOptions() {
+            try {
+                // Cargar tipos de componentes
+                const typeFilter = document.getElementById('typeFilter');
+                const typesSnap = await db.collection('component_types').orderBy('order').get();
+                const types = [];
+                typesSnap.forEach(doc => types.push({ id: doc.id, ...doc.data() }));
+                
+                typeFilter.innerHTML = '<option value="">Tipo: todos</option>';
+                types.forEach(type => {
+                    const option = document.createElement('option');
+                    // Store both id and name/label for better matching
+                    option.value = (type.name || type.id).toLowerCase();
+                    option.textContent = type.label || type.name || type.id;
+                    typeFilter.appendChild(option);
+                    
+                    // Populate icon map
+                    componentTypeIcons[type.name || type.id] = {
+                        blue: type.imageBlue,
+                        gold: type.imageGold,
+                        arcane: type.imageArcane
+                    };
+                });
+
+                // Cargar rarezas de componentes
+                const rarityFilter = document.getElementById('rarityFilter');
+                const raritiesSnap = await db.collection('component_rarities').orderBy('order').get();
+                const rarities = [];
+                raritiesSnap.forEach(doc => rarities.push({ id: doc.id, ...doc.data() }));
+                
+                rarityFilter.innerHTML = '<option value="">Rareza: todas</option>';
+                rarities.forEach(rarity => {
+                    const option = document.createElement('option');
+                    option.value = (rarity.name || rarity.id).toLowerCase();
+                    option.textContent = rarity.label || rarity.name || rarity.id;
+                    rarityFilter.appendChild(option);
+                });
+
+            } catch (e) {
+                console.warn('Error cargando filtros de componentes:', e);
+            }
+        }
+
+        async function loadPaints() {
+            const grid = document.getElementById('itemsGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = Array(8).fill(`
+                <div class="skeleton-base skeleton">
+                    <div class="skeleton-img" style="aspect-ratio: 16/9;"></div>
+                    <div class="skeleton-title"></div>
+                    <div class="skeleton-text short"></div>
+                </div>
+            `).join('');
+            emptyState.style.display = 'none';
+            try {
+                const snapshot = await db.collection('paints').get();
+                allPaints = []; snapshot.forEach(doc => allPaints.push({ id: doc.id, ...doc.data() }));
+                allPaints.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                
+                // Cargar opciones de filtros de pinturas desde admin panel
+                await loadPaintFilterOptions();
+                
+                renderPaints();
+            } catch (error) { console.error('Error cargando pinturas:', error); grid.innerHTML = '<div class="empty-state">Error al cargar pinturas.</div>'; }
+        }
+
+        async function loadPaintFilterOptions() {
+            try {
+                // Cargar rarezas de pinturas
+                const rarityFilter = document.getElementById('rarityFilterPinturas');
+                const raritiesSnap = await db.collection('paint_rarities').orderBy('order').get();
+                const rarities = [];
+                raritiesSnap.forEach(doc => rarities.push({ id: doc.id, ...doc.data() }));
+                
+                rarityFilter.innerHTML = '<option value="">Rareza: todas</option>';
+                rarities.forEach(rarity => {
+                    const option = document.createElement('option');
+                    option.value = (rarity.name || rarity.id).toLowerCase();
+                    option.textContent = rarity.label || rarity.name || rarity.id;
+                    rarityFilter.appendChild(option);
+                });
+
+            } catch (e) {
+                console.warn('Error cargando filtros de pinturas:', e);
+            }
+        }
+
+        async function loadDrones() {
+            const grid = document.getElementById('itemsGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = Array(8).fill(`
+                <div class="skeleton-base skeleton">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-title" style="width: 60%;"></div>
+                    <div class="skeleton-text"></div>
+                </div>
+            `).join('');
+            emptyState.style.display = 'none';
+            try {
+                const snapshot = await db.collection('drones').get();
+                allDrones = []; snapshot.forEach(doc => allDrones.push({ id: doc.id, ...doc.data() }));
+                allDrones.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                renderDrones();
+            } catch (error) { console.error('Error cargando drones:', error); grid.innerHTML = '<div class="empty-state">Error al cargar drones.</div>'; }
+        }
+
+        async function loadCortex() {
+            const grid = document.getElementById('itemsGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = Array(8).fill(`
+                <div class="skeleton-base skeleton">
+                    <div class="skeleton-img" style="aspect-ratio: 1;"></div>
+                    <div class="skeleton-title" style="width: 60%;"></div>
+                    <div class="skeleton-text"></div>
+                </div>
+            `).join('');
+            emptyState.style.display = 'none';
+            try {
+                const snapshot = await db.collection('cortex').get();
+                allCortex = []; snapshot.forEach(doc => allCortex.push({ id: doc.id, ...doc.data() }));
+                allCortex.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                renderCortex();
+            } catch (error) { console.error('Error cargando cortex:', error); grid.innerHTML = '<div class="empty-state">Error al cargar cortex.</div>'; }
+        }
+
+        async function loadGravitons() {
+            const grid = document.getElementById('itemsGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = Array(8).fill(`
+                <div class="skeleton-base skeleton">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-title" style="width: 70%;"></div>
+                    <div class="skeleton-text"></div>
+                </div>
+            `).join('');
+            emptyState.style.display = 'none';
+            try {
+                const snapshot = await db.collection('gravitons').get();
+                allGravitons = []; snapshot.forEach(doc => allGravitons.push({ id: doc.id, ...doc.data() }));
+                allGravitons.sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+                renderGravitons();
+            } catch (error) { console.error('Error cargando gravitones:', error); grid.innerHTML = '<div class="empty-state">Error al cargar gravitones.</div>'; }
+        }
+
+        const emptyMessages = { componentes: 'No hay componentes registrados todavía.', pinturas: 'No hay pinturas registradas todavía.', drones: 'No hay drones registrados todavía.', cortex: 'No hay cortex registrados todavía.', gravitones: 'No hay gravitones registrados todavía.' };
+
+        function setTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.section-tab[data-tab]').forEach(function(b) {
+                b.classList.toggle('active', b.getAttribute('data-tab') === tab);
+            });
+            document.getElementById('filtersComponentes').style.display = tab === 'componentes' ? '' : 'none';
+            document.getElementById('filtersPinturas').style.display = tab === 'pinturas' ? '' : 'none';
+            document.getElementById('filtersDrones').style.display = tab === 'drones' ? '' : 'none';
+            document.getElementById('filtersCortex').style.display = tab === 'cortex' ? '' : 'none';
+            document.getElementById('filtersGravitones').style.display = tab === 'gravitones' ? '' : 'none';
+            document.getElementById('emptyState').textContent = emptyMessages[tab] || '';
+            if (tab === 'componentes') renderItems();
+            else if (tab === 'pinturas') { if (allPaints.length === 0) loadPaints(); else renderPaints(); }
+            else if (tab === 'drones') { if (allDrones.length === 0) loadDrones(); else renderDrones(); }
+            else if (tab === 'cortex') { if (allCortex.length === 0) loadCortex(); else renderCortex(); }
+            else if (tab === 'gravitones') { if (allGravitons.length === 0) loadGravitons(); else renderGravitons(); }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function() { if (currentTab === 'componentes') renderItems(); });
+        document.getElementById('typeFilter').addEventListener('change', renderItems);
+        document.getElementById('rarityFilter').addEventListener('change', renderItems);
+        document.getElementById('searchInputPinturas').addEventListener('input', function() { if (currentTab === 'pinturas') renderPaints(); });
+        document.getElementById('rarityFilterPinturas').addEventListener('change', function() { if (currentTab === 'pinturas') renderPaints(); });
+        document.getElementById('searchInputDrones').addEventListener('input', function() { if (currentTab === 'drones') renderDrones(); });
+        document.getElementById('typeFilterDrones').addEventListener('change', function() { if (currentTab === 'drones') renderDrones(); });
+        document.getElementById('searchInputCortex').addEventListener('input', function() { if (currentTab === 'cortex') renderCortex(); });
+        document.getElementById('searchInputGravitones').addEventListener('input', function() { if (currentTab === 'gravitones') renderGravitons(); });
+
+        document.querySelectorAll('.section-tab[data-tab]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                setTab(btn.getAttribute('data-tab'));
+            });
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            var params = new URLSearchParams(window.location.search);
+            var tab = params.get('tab');
+            if (tab === 'pinturas') { setTab('pinturas'); if (allPaints.length === 0) loadPaints(); }
+            else if (tab === 'drones') { setTab('drones'); if (allDrones.length === 0) loadDrones(); }
+            else if (tab === 'cortex') { setTab('cortex'); if (allCortex.length === 0) loadCortex(); }
+            else if (tab === 'gravitones') { setTab('gravitones'); if (allGravitons.length === 0) loadGravitons(); }
+            else { loadItems(); }
+        });
+    </script>
+</body>
+</html>

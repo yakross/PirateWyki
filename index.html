@@ -1,646 +1,317 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Pirate Galaxy Database - Complete guide for ships, planets, equipment, missions and strategies">
-    <title>Pirate Galaxy Database - Complete Wiki & Guide</title>
-    
+    <title>GalaxWiki - Pirate Galaxy Wiki</title>
+    <meta name="description" content="La enciclopedia definitiva de Pirate Galaxy. Información sobre naves, componentes, enemigos, misiones, sistemas y mucho más.">
+    <meta name="keywords" content="Pirate Galaxy, wiki, naves, componentes, enemigos, misiones, GalaxWiki, Splitscreen">
+    <meta name="theme-color" content="#0f1419" id="themeColorMeta">
+    <link rel="canonical" href="https://galaxwiki.com/">
+    <!-- Open Graph -->
+    <meta property="og:title" content="GalaxWiki - Pirate Galaxy Wiki">
+    <meta property="og:description" content="La enciclopedia definitiva de Pirate Galaxy. Naves, componentes, enemigos, misiones y más.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://galaxwiki.com/">
+    <meta property="og:image" content="https://galaxwiki.com/assets/img/png/logos/pirategalaxy_logo.png">
+    <meta property="og:locale" content="es_ES">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="assets/img/png/logos/pirategalaxy_logo.png" type="image/png">
+    <!-- Preconnect y fuentes -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="js/auth.js"></script>
-    <link rel="stylesheet" href="css/game-styles.css">
-</head>
-<body class="bg-gray-950 text-gray-100">
-
-    <!-- Header Component -->
-    <div id="header-placeholder"></div>
-
-    <!-- Hero Section with 3D Background -->
-    <section class="relative overflow-hidden min-h-screen">
-        <!-- 3D Background Canvas -->
-        <canvas id="hero-3d-canvas" class="absolute inset-0 w-full h-full"></canvas>
-        
-        <!-- Gradient Overlay -->
-        <div class="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-purple-900/40 to-gray-950/90 pointer-events-none"></div>
-        
-        <div class="container mx-auto px-6 py-20 relative z-10">
-            <div class="text-center max-w-4xl mx-auto">
-                <h1 class="text-6xl md:text-7xl font-bold mb-6 animate-fadeIn">
-                    <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                        Pirate Galaxy
-                    </span>
-                    <br>
-                    <span class="text-4xl md:text-5xl text-gray-300">Complete Database</span>
-                </h1>
-                <p class="text-xl text-gray-400 mb-8 leading-relaxed animate-fadeIn" style="animation-delay: 0.2s;">
-                    Your ultimate guide to ships, colonies, systems, equipment, and strategies. 
-                    Everything you need to dominate the galaxy.
-                </p>
-                
-                <!-- Quick Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 animate-fadeIn" style="animation-delay: 0.4s;">
-                    <div class="content-panel p-4">
-                        <div class="text-3xl font-bold text-blue-400 mb-1">17+</div>
-                        <div class="text-sm text-gray-400">Ships</div>
-                    </div>
-                    <div class="content-panel p-4">
-                        <div class="text-3xl font-bold text-green-400 mb-1">9+</div>
-                        <div class="text-sm text-gray-400">Systems</div>
-                    </div>
-                    <div class="content-panel p-4">
-                        <div class="text-3xl font-bold text-purple-400 mb-1">15+</div>
-                        <div class="text-sm text-gray-400">Planets</div>
-                    </div>
-                    <div class="content-panel p-4">
-                        <div class="text-3xl font-bold text-yellow-400 mb-1">17+</div>
-                        <div class="text-sm text-gray-400">Missions</div>
-                    </div>
-                </div>
-                
-                <!-- CTA Buttons -->
-                <div class="flex flex-wrap gap-4 justify-center animate-fadeIn" style="animation-delay: 0.6s;">
-                    <a href="ships.html" class="game-nav-item active px-8 py-4 text-lg">
-                        <i data-lucide="rocket" class="inline w-6 h-6 mr-2"></i>
-                        Browse Ships
-                    </a>
-                    <a href="universe.html" class="game-nav-item px-8 py-4 text-lg">
-                        <i data-lucide="globe" class="inline w-6 h-6 mr-2"></i>
-                        Explore Universe
-                    </a>
-                    <a href="guides.html" class="game-nav-item px-8 py-4 text-lg">
-                        <i data-lucide="book-open" class="inline w-6 h-6 mr-2"></i>
-                        Guides
-                    </a>
-                </div>
-
-                <!-- Login/User Status -->
-                <div id="user-status" class="mt-8">
-                    <!-- Will be populated by JS -->
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Navigation -->
-    <div class="container mx-auto px-6">
-        <div id="main-navbar-placeholder"></div>
-    </div>
-
-    <!-- Featured 3D Ship Showcase -->
-    <section class="container mx-auto px-6 py-12">
-        <h2 class="text-3xl font-bold text-blue-300 mb-8 flex items-center">
-            <i data-lucide="rocket" class="w-8 h-8 mr-3"></i>
-            Featured Ship - 3D Viewer
-        </h2>
-        
-        <div class="content-panel p-6">
-            <div class="grid lg:grid-cols-2 gap-6">
-                <!-- 3D Viewer -->
-                <div class="relative">
-                    <canvas id="ship-3d-canvas" class="w-full h-96 rounded-lg bg-gray-900"></canvas>
-                    <div class="absolute bottom-4 right-4 flex gap-2">
-                        <button onclick="resetShipCamera()" class="px-3 py-2 bg-gray-800/90 rounded-lg hover:bg-gray-700 transition">
-                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                        </button>
-                        <button onclick="toggleAutoRotate()" id="auto-rotate-btn" class="px-3 py-2 bg-gray-800/90 rounded-lg hover:bg-gray-700 transition">
-                            <i data-lucide="rotate-3d" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Ship Info -->
-                <div>
-                    <h3 class="text-2xl font-bold text-blue-300 mb-4">Sirius Storm</h3>
-                    <p class="text-gray-400 mb-6">
-                        Popular mid-game frigate with excellent balance and versatility. 
-                        Perfect for both solo and group content.
-                    </p>
-                    
-                    <div class="space-y-3 mb-6">
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Class</span>
-                            <span class="text-blue-400 font-semibold">Frigate • Tier 2</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Level Required</span>
-                            <span class="text-yellow-400 font-semibold">12</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Hull</span>
-                            <span class="text-green-400 font-semibold">2,200</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Speed</span>
-                            <span class="text-cyan-400 font-semibold">75</span>
-                        </div>
-                    </div>
-
-                    <a href="ship-detail.html?ship=sirius-storm" class="game-nav-item w-full text-center block">
-                        <i data-lucide="arrow-right" class="inline w-4 h-4 mr-2"></i>
-                        View Full Details
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Featured Ships by Type -->
-    <section class="container mx-auto px-6 py-12">
-        <h2 class="text-3xl font-bold text-blue-300 mb-8 flex items-center">
-            <i data-lucide="zap" class="w-8 h-8 mr-3"></i>
-            Ships by Type
-        </h2>
-        
-        <!-- Storm Ships -->
-        <div class="mb-12">
-            <div class="flex items-center gap-3 mb-6">
-                <i data-lucide="zap" class="w-6 h-6 text-red-400"></i>
-                <h3 class="text-2xl font-bold text-red-400">Storm Ships (DPS)</h3>
-                <span class="text-sm text-gray-500 ml-auto">
-                    <a href="ships.html?type=storm" class="hover:text-blue-400 transition">View all →</a>
-                </span>
-            </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <a href="ship-detail.html?ship=starblaze" class="content-panel p-4 hover:border-red-400 transition group">
-                    <div class="flex items-center gap-3 mb-3">
-                        <i data-lucide="rocket" class="w-10 h-10 text-red-400"></i>
-                        <div>
-                            <h4 class="font-bold text-red-300 group-hover:text-red-200">Starblaze</h4>
-                            <p class="text-xs text-gray-400">Scout • Tier 1</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <span class="badge badge-tier">Level 1</span>
-                        <span class="px-2 py-1 bg-green-500/20 rounded text-green-300">Starter</span>
-                    </div>
-                </a>
-
-                <a href="ship-detail.html?ship=corsair-storm" class="content-panel p-4 hover:border-red-400 transition group">
-                    <div class="flex items-center gap-3 mb-3">
-                        <i data-lucide="rocket" class="w-10 h-10 text-red-400"></i>
-                        <div>
-                            <h4 class="font-bold text-red-300 group-hover:text-red-200">Corsair Storm</h4>
-                            <p class="text-xs text-gray-400">Corvette • Tier 1</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <span class="badge badge-tier">Level 5</span>
-                        <span class="px-2 py-1 bg-blue-500/20 rounded text-blue-300">Popular</span>
-                    </div>
-                </a>
-
-                <a href="ship-detail.html?ship=sirius-storm" class="content-panel p-4 hover:border-red-400 transition group">
-                    <div class="flex items-center gap-3 mb-3">
-                        <i data-lucide="rocket" class="w-10 h-10 text-red-400"></i>
-                        <div>
-                            <h4 class="font-bold text-red-300 group-hover:text-red-200">Sirius Storm</h4>
-                            <p class="text-xs text-gray-400">Frigate • Tier 2</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <span class="badge badge-tier">Level 12</span>
-                        <span class="px-2 py-1 bg-purple-500/20 rounded text-purple-300">Mid-Game</span>
-                    </div>
-                </a>
-
-                <a href="ship-detail.html?ship=dreadnought-storm" class="content-panel p-4 hover:border-red-400 transition group">
-                    <div class="flex items-center gap-3 mb-3">
-                        <i data-lucide="rocket" class="w-10 h-10 text-red-400"></i>
-                        <div>
-                            <h4 class="font-bold text-red-300 group-hover:text-red-200">Dreadnought Storm</h4>
-                            <p class="text-xs text-gray-400">Battleship • Tier 4</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <span class="badge badge-tier">Level 40</span>
-                        <span class="px-2 py-1 bg-red-500/20 rounded text-red-300">End-Game</span>
-                    </div>
-                </a>
-            </div>
-        </div>
-
-        <!-- Tank Ships -->
-        <div class="mb-12">
-            <div class="flex items-center gap-3 mb-6">
-                <i data-lucide="shield" class="w-6 h-6 text-blue-400"></i>
-                <h3 class="text-2xl font-bold text-blue-400">Tank Ships (Defense)</h3>
-                <span class="text-sm text-gray-500 ml-auto">
-                    <a href="ships.html?type=tank" class="hover:text-blue-400 transition">View all →</a>
-                </span>
-            </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <a href="ship-detail.html?ship=parsec-tank" class="content-panel p-4 hover:border-blue-400 transition group">
-                    <div class="flex items-center gap-3 mb-3">
-                        <i data-lucide="shield" class="w-10 h-10 text-blue-400"></i>
-                        <div>
-                            <h4 class="font-bold text-blue-300 group-hover:text-blue-200">Parsec Tank</h4>
-                            <p class="text-xs text-gray-400">Corvette • Tier 1</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <span class="badge badge-tier">Level 3</span>
-                        <span class="px-2 py-1 bg-cyan-500/20 rounded text-cyan-300">Hybrid</span>
-                    </div>
-                </a>
-
-                <a href="ship-detail.html?ship=corsair-tank" class="content-panel p-4 hover:border-blue-400 transition group">
-                    <div class="flex items-center gap-3 mb-3">
-                        <i data-lucide="shield" class="w-10 h-10 text-blue-400"></i>
-                        <div>
-                            <h4 class="font-bold text-blue-300 group-hover:text-blue-200">Corsair Tank</h4>
-                            <p class="text-xs text-gray-400">Corvette • Tier 1</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <span class="badge badge-tier">Level 5</span>
-                    </div>
-                </a>
-
-                <a href="ship-detail.html?ship=sirius-tank" class="content-panel p-4 hover:border-blue-400 transition group">
-                    <div class="flex items-center gap-3 mb-3">
-                        <i data-lucide="shield" class="w-10 h-10 text-blue-400"></i>
-                        <div>
-                            <h4 class="font-bold text-blue-300 group-hover:text-blue-200">Sirius Tank</h4>
-                            <p class="text-xs text-gray-400">Frigate • Tier 2</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <span class="badge badge-tier">Level 12</span>
-                    </div>
-                </a>
-
-                <a href="ship-detail.html?ship=dreadnought-tank" class="content-panel p-4 hover:border-blue-400 transition group">
-                    <div class="flex items-center gap-3 mb-3">
-                        <i data-lucide="shield" class="w-10 h-10 text-blue-400"></i>
-                        <div>
-                            <h4 class="font-bold text-blue-300 group-hover:text-blue-200">Dreadnought Tank</h4>
-                            <p class="text-xs text-gray-400">Battleship • Tier 4</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <span class="badge badge-tier">Level 40</span>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Quick Access Cards -->
-    <section class="container mx-auto px-6 py-12">
-        <h2 class="text-3xl font-bold text-blue-300 mb-8">Quick Access</h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            <a href="universe.html" class="content-panel p-6 hover:border-blue-400 transition group">
-                <i data-lucide="map" class="w-12 h-12 text-blue-400 mb-4 group-hover:scale-110 transition-transform"></i>
-                <h3 class="text-xl font-bold mb-2 group-hover:text-blue-300">Universe Map</h3>
-                <p class="text-sm text-gray-400 mb-4">
-                    Explore all systems, planets, and colonies across the galaxy.
-                </p>
-                <div class="text-xs text-gray-500">9+ Systems • 15+ Planets</div>
-            </a>
-
-            <a href="components.html" class="content-panel p-6 hover:border-purple-400 transition group">
-                <i data-lucide="wrench" class="w-12 h-12 text-purple-400 mb-4 group-hover:scale-110 transition-transform"></i>
-                <h3 class="text-xl font-bold mb-2 group-hover:text-purple-300">Equipment</h3>
-                <p class="text-sm text-gray-400 mb-4">
-                    Browse weapons, shields, engines, and special equipment.
-                </p>
-                <div class="text-xs text-gray-500">All Categories</div>
-            </a>
-
-            <a href="mission.html" class="content-panel p-6 hover:border-green-400 transition group">
-                <i data-lucide="scroll-text" class="w-12 h-12 text-green-400 mb-4 group-hover:scale-110 transition-transform"></i>
-                <h3 class="text-xl font-bold mb-2 group-hover:text-green-300">Missions</h3>
-                <p class="text-sm text-gray-400 mb-4">
-                    Track story missions, side quests, and special events.
-                </p>
-                <div class="text-xs text-gray-500">17+ Missions</div>
-            </a>
-
-            <a href="guides.html" class="content-panel p-6 hover:border-yellow-400 transition group">
-                <i data-lucide="book-open" class="w-12 h-12 text-yellow-400 mb-4 group-hover:scale-110 transition-transform"></i>
-                <h3 class="text-xl font-bold mb-2 group-hover:text-yellow-300">Strategy Guides</h3>
-                <p class="text-sm text-gray-400 mb-4">
-                    Learn strategies, builds, and tips from experienced players.
-                </p>
-                <div class="text-xs text-gray-500">Beginner • Advanced • PvP</div>
-            </a>
-
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <div id="footer-placeholder"></div>
-
-    <!-- Scripts -->
-    <script src="js/component-loader.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/data-loader.js"></script>
     <script>
-        // 3D Scene Variables
-        let heroScene, heroCamera, heroRenderer;
-        let shipScene, shipCamera, shipRenderer;
-        let planetMesh, shipMesh;
-        let autoRotate = false;
-
-        // Initialize Hero 3D Background
-        function initHero3D() {
-            const canvas = document.getElementById('hero-3d-canvas');
-            
-            heroScene = new THREE.Scene();
-            heroCamera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-            heroRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-            heroRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            heroRenderer.setClearColor(0x000000, 0);
-
-            // Create animated planet
-            const geometry = new THREE.SphereGeometry(5, 32, 32);
-            const material = new THREE.MeshPhongMaterial({
-                color: 0x4299E1,
-                emissive: 0x1a365d,
-                wireframe: false,
-                transparent: true,
-                opacity: 0.6
-            });
-            planetMesh = new THREE.Mesh(geometry, material);
-            heroScene.add(planetMesh);
-
-            // Add stars
-            const starGeometry = new THREE.BufferGeometry();
-            const starVertices = [];
-            for (let i = 0; i < 1000; i++) {
-                const x = (Math.random() - 0.5) * 200;
-                const y = (Math.random() - 0.5) * 200;
-                const z = (Math.random() - 0.5) * 200;
-                starVertices.push(x, y, z);
-            }
-            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-            const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
-            const stars = new THREE.Points(starGeometry, starMaterial);
-            heroScene.add(stars);
-
-            // Lights
-            const ambientLight = new THREE.AmbientLight(0x404040, 2);
-            heroScene.add(ambientLight);
-            const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-            pointLight.position.set(10, 10, 10);
-            heroScene.add(pointLight);
-
-            heroCamera.position.z = 15;
-
-            animateHero();
-        }
-
-        function animateHero() {
-            requestAnimationFrame(animateHero);
-            
-            if (planetMesh) {
-                planetMesh.rotation.y += 0.002;
-                planetMesh.rotation.x += 0.001;
-            }
-
-            heroRenderer.render(heroScene, heroCamera);
-        }
-
-        // Initialize Ship 3D Viewer
-        function initShip3D() {
-            const canvas = document.getElementById('ship-3d-canvas');
-            
-            shipScene = new THREE.Scene();
-            shipCamera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-            shipRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-            shipRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            shipRenderer.setClearColor(0x0a0e17, 1);
-
-            // Create simple ship representation
-            const geometry = new THREE.ConeGeometry(1, 3, 4);
-            const material = new THREE.MeshPhongMaterial({
-                color: 0x3b82f6,
-                emissive: 0x1e3a8a,
-                shininess: 100
-            });
-            shipMesh = new THREE.Mesh(geometry, material);
-            shipMesh.rotation.x = Math.PI / 2;
-            shipScene.add(shipMesh);
-
-            // Grid helper
-            const gridHelper = new THREE.GridHelper(10, 10, 0x444444, 0x222222);
-            shipScene.add(gridHelper);
-
-            // Lights
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            shipScene.add(ambientLight);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            directionalLight.position.set(5, 5, 5);
-            shipScene.add(directionalLight);
-
-            shipCamera.position.set(5, 3, 5);
-            shipCamera.lookAt(0, 0, 0);
-
-            // Mouse controls
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
-
-            canvas.addEventListener('mousedown', () => isDragging = true);
-            canvas.addEventListener('mouseup', () => isDragging = false);
-            canvas.addEventListener('mousemove', (e) => {
-                if (isDragging) {
-                    const deltaX = e.offsetX - previousMousePosition.x;
-                    const deltaY = e.offsetY - previousMousePosition.y;
-                    
-                    shipMesh.rotation.y += deltaX * 0.01;
-                    shipMesh.rotation.x += deltaY * 0.01;
-                }
-                previousMousePosition = { x: e.offsetX, y: e.offsetY };
-            });
-
-            animateShip();
-        }
-
-        function animateShip() {
-            requestAnimationFrame(animateShip);
-            
-            if (autoRotate && shipMesh) {
-                shipMesh.rotation.y += 0.005;
-            }
-
-            shipRenderer.render(shipScene, shipCamera);
-        }
-
-        function resetShipCamera() {
-            if (shipMesh) {
-                shipMesh.rotation.set(Math.PI / 2, 0, 0);
-            }
-            shipCamera.position.set(5, 3, 5);
-            shipCamera.lookAt(0, 0, 0);
-        }
-
-        function toggleAutoRotate() {
-            autoRotate = !autoRotate;
-            const btn = document.getElementById('auto-rotate-btn');
-            if (autoRotate) {
-                btn.classList.add('bg-blue-600');
-            } else {
-                btn.classList.remove('bg-blue-600');
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
             }
         }
-
-        // Update User Status
-        function updateUserStatus() {
-            const userStatusDiv = document.getElementById('user-status');
-            
-            if (navigation.isLoggedIn()) {
-                userStatusDiv.innerHTML = `
-                    <div class="content-panel p-4 inline-block">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="user" class="w-5 h-5 text-blue-400"></i>
-                            <span class="text-gray-300">Welcome back, <strong class="text-blue-400">${navigation.user.username}</strong></span>
-                            <button onclick="navigation.logout()" class="game-nav-item px-4 py-2 text-sm">
-                                <i data-lucide="log-out" class="inline w-4 h-4 mr-1"></i>
-                                Logout
-                            </button>
-                        </div>
-                    </div>
-                `;
-            } else {
-                userStatusDiv.innerHTML = `
-                    <div class="flex gap-3 justify-center">
-                        <a href="login.html" class="game-nav-item px-6 py-3">
-                            <i data-lucide="log-in" class="inline w-5 h-5 mr-2"></i>
-                            Login
-                        </a>
-                        <a href="register.html" class="game-nav-item px-6 py-3">
-                            <i data-lucide="user-plus" class="inline w-5 h-5 mr-2"></i>
-                            Register
-                        </a>
-                    </div>
-                `;
-            }
-            
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-        }
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            if (heroRenderer && heroCamera) {
-                const canvas = document.getElementById('hero-3d-canvas');
-                heroCamera.aspect = canvas.clientWidth / canvas.clientHeight;
-                heroCamera.updateProjectionMatrix();
-                heroRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            }
-            
-            if (shipRenderer && shipCamera) {
-                const canvas = document.getElementById('ship-3d-canvas');
-                shipCamera.aspect = canvas.clientWidth / canvas.clientHeight;
-                shipCamera.updateProjectionMatrix();
-                shipRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            }
-        });
-
-        // Initialize
-        async function init() {
-            await componentLoader.loadAll({
-                'header': 'components/header.html',
-                'mainNavbar': 'components/main-navbar.html',
-                'footer': 'components/footer.html'
-            });
-
-            componentLoader.renderAll({
-                'header-placeholder': 'header',
-                'main-navbar-placeholder': 'mainNavbar',
-                'footer-placeholder': 'footer'
-            });
-            
-            lucide.createIcons();
-            
-            // Initialize 3D scenes
-            initHero3D();
-            initShip3D();
-            
-            // Update user status
-            updateUserStatus();
-        }
-        
-        init();
     </script>
+    <script src="js/components/footer-component.js"></script>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-img">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">GalaxWiki</span>
+                    <span class="logo-subtitle">PIRATE GALAXY</span>
+                </div>
+            </div>
 
-    <style>
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()" role="button" tabindex="0" aria-label="Alternar tema claro u oscuro" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); toggleTheme(); }">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
 
-        .animate-fadeIn {
-            animation: fadeIn 0.8s ease-out forwards;
-            opacity: 0;
-        }
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="login.html" class="btn-header btn-login" data-i18n="auth.login">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Iniciar Sesión
+                    </a>
+                    <a href="register.html" class="btn-header btn-register" data-i18n="auth.register">
+                        <i class="fas fa-user-plus"></i>
+                        Registrarse
+                    </a>
+                </div>
 
-        #hero-3d-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota Alpha</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="pages/profile.html" data-i18n="profile.myprofile"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="pages/wiki/tracker.html" data-i18n="profile.collection"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="pages/favorites.html" data-i18n="profile.favorites"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="pages/settings.html" data-i18n="profile.settings"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;">
+                            <a class="dropdown-item" href="pages/admin/dashboard.html" data-i18n="profile.admin">
+                                <i class="fas fa-shield-alt me-2"></i>Panel Admin
+                            </a>
+                        </li>
+                        <li><button type="button" class="dropdown-item dropdown-item-button" onclick="logout()" data-i18n="auth.logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                        </button></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
 
-        .badge-tier {
-            background: rgba(234, 179, 8, 0.2);
-            color: #FDE047;
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.25rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link active" aria-current="page" data-i18n="nav.home">
+                        <i class="fas fa-home"></i>
+                        Inicio
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/wiki/ships.html" class="nav-link" data-i18n="nav.ships">
+                        <i class="fas fa-space-shuttle"></i>
+                        Naves
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/wiki/builds.html" class="nav-link" data-i18n="nav.builds">
+                        <i class="fas fa-tools"></i>
+                        Builds
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/wiki/components.html" class="nav-link" data-i18n="nav.components">
+                        <i class="fas fa-cog"></i>
+                        Componentes
+                    </a>
+                </li>
 
-        /* Corrección específica para el formulario */
-        .game-search {
-            /* Corrección específica para el formulario */
-            background: #2d3748 !important;
-            border: 1.5px solid rgba(100, 120, 150, 0.3) !important;
-            color: #e0e0e0 !important;
-            padding: 10px 12px 10px 40px !important;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: all 0.3s ease !important;
-            width: 100%;
-        }
-        
-        .game-search::placeholder {
-            color: #9ca3af !important;
-        }
-        
-        .game-search:focus {
-            border-color: #9ca3af !important;
-            box-shadow: 0 0 20px rgba(150, 150, 150, 0.25) !important;
-            outline: none;
-        }
-        
-        input, textarea, select {
-            background: #1a1a2e !important;
-            border: 1.5px solid rgba(100, 120, 150, 0.3) !important;
-            color: #e0e0e0 !important;
-            padding: 10px 12px !important;
-            border-radius: 6px;
-        }
-        
-        input::placeholder, textarea::placeholder, select::placeholder {
-            color: #9ca3af !important;
-        }
-        
-        input:focus, textarea:focus, select:focus {
-            border-color: #9ca3af !important;
-            box-shadow: 0 0 20px rgba(150, 150, 150, 0.25) !important;
-            outline: none;
-        }
-    </style>
+                <li class="nav-item">
+                    <a href="pages/wiki/enemies.html" class="nav-link" data-i18n="nav.enemies">
+                        <i class="fas fa-skull"></i>
+                        Enemigos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/wiki/systems.html" class="nav-link" data-i18n="nav.systems">
+                        <i class="fas fa-globe"></i>
+                        Sistemas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/wiki/missions.html" class="nav-link" data-i18n="nav.missions">
+                        <i class="fas fa-tasks"></i>
+                        Misiones
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/wiki/misc-info.html" class="nav-link" data-i18n="nav.misc">
+                        <i class="fas fa-info-circle"></i>
+                        Misc Info
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/wiki/calculator.html" class="nav-link" data-i18n="nav.calculator">
+                        <i class="fas fa-calculator"></i>
+                        Calculadora
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/forum.html" class="nav-link" data-i18n="nav.forum">
+                        <i class="fas fa-comments"></i>
+                        Foro
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/news.html" class="nav-link" data-i18n="nav.news">
+                        <i class="fas fa-newspaper"></i>
+                        Noticias
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
+    <main id="main-content" class="main-content">
+        <section class="hero-section">
+            <h1 class="hero-title">Bienvenido a GalaxWiki</h1>
+            <p class="hero-description">
+                La enciclopedia definitiva de Pirate Galaxy. Encuentra información sobre naves, componentes, enemigos, misiones y mucho más.
+            </p>
+            
+            <form class="search-container" action="pages/search.html" method="get" role="search" aria-label="Buscar en la wiki">
+                <input type="search" class="search-input" name="q" id="searchInput" placeholder="Buscar naves, componentes, enemigos... (Ctrl+K)" minlength="2" required aria-label="Buscar naves, componentes, enemigos">
+                <i class="fas fa-search search-icon"></i>
+            </form>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="shipsCount">0</span>
+                    <span class="stat-label">Naves</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="componentsCount">0</span>
+                    <span class="stat-label">Componentes</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="enemiesCount">0</span>
+                    <span class="stat-label">Enemigos</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="usersCount">0</span>
+                    <span class="stat-label">Usuarios</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="home-cards-section">
+            <h2 class="home-section-title"><i class="fas fa-book-open"></i> Explora la Wiki</h2>
+            <div class="features-grid features-grid--wiki">
+                <a href="pages/wiki/ships.html" class="feature-card feature-card--link feature-card--animate" style="--delay: 0">
+                    <div class="feature-icon"><i class="fas fa-space-shuttle"></i></div>
+                    <h3 class="feature-title">Base de Naves</h3>
+                    <p class="feature-description">Explora todas las naves disponibles en Pirate Galaxy, estadísticas, requisitos y dónde conseguirlas.</p>
+                </a>
+                <a href="pages/wiki/components.html" class="feature-card feature-card--link feature-card--animate" style="--delay: 1">
+                    <div class="feature-icon"><i class="fas fa-microchip"></i></div>
+                    <h3 class="feature-title">Componentes</h3>
+                    <p class="feature-description">Descubre todos los componentes, atributos y cómo mejorar tu nave al máximo.</p>
+                </a>
+                <a href="pages/wiki/enemies.html" class="feature-card feature-card--link feature-card--animate" style="--delay: 2">
+                    <div class="feature-icon"><i class="fas fa-skull-crossbones"></i></div>
+                    <h3 class="feature-title">Enemigos y Drops</h3>
+                    <p class="feature-description">Información sobre enemigos, drops y las mejores estrategias para farmear.</p>
+                </a>
+                <a href="pages/wiki/systems.html" class="feature-card feature-card--link feature-card--animate" style="--delay: 3">
+                    <div class="feature-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    <h3 class="feature-title">Sistemas Universales</h3>
+                    <p class="feature-description">Mapas de sistemas, planetas y sectores con recursos disponibles.</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="home-cards-section home-cards-section--featured">
+            <h2 class="home-section-title"><i class="fas fa-star"></i> Misiones, Noticias y Foro</h2>
+            <div class="features-grid features-grid--featured">
+                <a href="pages/wiki/missions.html" class="feature-card feature-card--large feature-card--link feature-card--animate" style="--delay: 4">
+                    <div class="feature-icon feature-icon--large"><i class="fas fa-tasks"></i></div>
+                    <h3 class="feature-title feature-title--large">Misiones</h3>
+                    <p class="feature-description">Guías de misiones, recompensas y objetivos. Planifica tu progreso en el juego.</p>
+                    <span class="feature-cta">Ver misiones <i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="pages/news.html" class="feature-card feature-card--large feature-card--link feature-card--animate" style="--delay: 5">
+                    <div class="feature-icon feature-icon--large"><i class="fas fa-newspaper"></i></div>
+                    <h3 class="feature-title feature-title--large">Noticias</h3>
+                    <p class="feature-description">Últimas actualizaciones, eventos y cambios del juego. No te pierdas nada.</p>
+                    <span class="feature-cta">Leer noticias <i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="pages/forum.html" class="feature-card feature-card--large feature-card--link feature-card--animate" style="--delay: 6">
+                    <div class="feature-icon feature-icon--large"><i class="fas fa-comments"></i></div>
+                    <h3 class="feature-title feature-title--large">Foro</h3>
+                    <p class="feature-description">Comparte estrategias, preguntas y conecta con la comunidad de jugadores.</p>
+                    <span class="feature-cta">Ir al foro <i class="fas fa-arrow-right"></i></span>
+                </a>
+            </div>
+        </section>
+
+        <section class="home-cards-section home-cards-section--news" id="ultimas-noticias">
+            <h2 class="home-section-title"><i class="fas fa-newspaper"></i> Últimas noticias</h2>
+            <div id="newsPreview" class="news-preview-grid">
+                <div class="news-skeleton news-skeleton-card" aria-hidden="true">
+                    <div class="news-skeleton-img"></div>
+                    <div class="news-skeleton-line news-skeleton-title"></div>
+                    <div class="news-skeleton-line news-skeleton-text"></div>
+                    <div class="news-skeleton-line news-skeleton-text short"></div>
+                </div>
+                <div class="news-skeleton news-skeleton-card" aria-hidden="true">
+                    <div class="news-skeleton-img"></div>
+                    <div class="news-skeleton-line news-skeleton-title"></div>
+                    <div class="news-skeleton-line news-skeleton-text"></div>
+                    <div class="news-skeleton-line news-skeleton-text short"></div>
+                </div>
+                <div class="news-skeleton news-skeleton-card" aria-hidden="true">
+                    <div class="news-skeleton-img"></div>
+                    <div class="news-skeleton-line news-skeleton-title"></div>
+                    <div class="news-skeleton-line news-skeleton-text"></div>
+                    <div class="news-skeleton-line news-skeleton-text short"></div>
+                </div>
+            </div>
+            <p class="news-load-error" id="newsLoadError" style="display: none;" role="alert">No se pudieron cargar las noticias.</p>
+        </section>
+    </main>
+
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <wiki-footer basepath=""></wiki-footer>
+
+    <!-- Firebase SDK + configuración centralizada -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="js/index.js"></script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "GalaxWiki",
+        "alternateName": "Pirate Galaxy Wiki",
+        "url": "https://galaxwiki.com/",
+        "description": "La enciclopedia definitiva de Pirate Galaxy. Información sobre naves, componentes, enemigos, misiones y sistemas.",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://galaxwiki.com/pages/search.html?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    <script>
+        (function(){ var y = document.getElementById('footer-year'); if(y) y.textContent = new Date().getFullYear(); })();
+    </script>
 </body>
 </html>

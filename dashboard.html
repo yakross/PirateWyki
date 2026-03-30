@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - GalaxWiki</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root[data-theme="dark"] {
+            --bg-primary: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b3d 100%);
+            --bg-card: rgba(15, 20, 40, 0.85);
+            --bg-sidebar: rgba(10, 14, 30, 0.95);
+            --bg-input: rgba(30, 35, 55, 0.6);
+            --border-color: rgba(100, 150, 255, 0.2);
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --text-tertiary: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+        }
+
+        .sidebar-logo i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .sidebar-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-item {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .sidebar-section-title {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            padding: 0 15px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-primary-custom {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(20px);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-card-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-card-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Form Styles */
+        .form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            background: rgba(30, 35, 55, 0.8);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* Table */
+        .data-table {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .table {
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .table thead {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .table th {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        .table td {
+            border-color: var(--border-color);
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            transition: background 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 3px;
+        }
+
+        .btn-edit {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        /* Badge */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-common { background: #9CA3AF; color: white; }
+        .badge-uncommon { background: #10B981; color: white; }
+        .badge-rare { background: #3B82F6; color: white; }
+        .badge-epic { background: #A855F7; color: white; }
+        .badge-legendary { background: #F59E0B; color: white; }
+
+        /* Planet Map Admin Preview */
+        .admin-map-preview {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 15px auto;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.3);
+            cursor: crosshair;
+        }
+
+        .admin-map-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .admin-map-marker {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.3);
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+            z-index: 10;
+        }
+
+        .admin-map-marker::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .map-coords-display {
+            font-family: monospace;
+            font-size: 12px;
+            color: #667eea;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar-logo-text,
+            .sidebar-link span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fas fa-shield-alt"></i>
+                <span class="sidebar-logo-text">Panel Admin</span>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a class="sidebar-link active" data-section="dashboard">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Gestión de Contenido</div>
+                    
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" data-section="ships">
+                            <i class="fas fa-space-shuttle"></i>
+                            <span>Naves</span>
+                        </a>
+                    </li>
+                    
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" data-section="components">
+                            <i class="fas fa-cog"></i>
+                            <span>Componentes</span>
+                        </a>
+                    </li>
+                    
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" data-section="enemies">
+                            <i class="fas fa-skull"></i>
+                            <span>Enemigos</span>
+                        </a>
+                    </li>
+                    
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" data-section="systems">
+                            <i class="fas fa-atlas"></i>
+                            <span>Sistemas</span>
+                        </a>
+                    </li>
+                    
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" data-section="planets">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Planetas</span>
+                        </a>
+                    </li>
+                    
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" data-section="news">
+                            <i class="fas fa-newspaper"></i>
+                            <span>Noticias</span>
+                        </a>
+                    </li>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Sistema</div>
+                    
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" data-section="users">
+                            <i class="fas fa-users"></i>
+                            <span>Usuarios</span>
+                        </a>
+                    </li>
+                    
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="../../index.html">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Volver a la Wiki</span>
+                        </a>
+                    </li>
+                </div>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="page-header">
+                    <h1 class="page-title">Dashboard</h1>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-space-shuttle"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-number" id="dashShipsCount">0</div>
+                        <div class="stat-card-label">Naves Totales</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-number" id="dashComponentsCount">0</div>
+                        <div class="stat-card-label">Componentes</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-skull"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-number" id="dashEnemiesCount">0</div>
+                        <div class="stat-card-label">Enemigos</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-atlas"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-number" id="dashSystemsCount">0</div>
+                        <div class="stat-card-label">Sistemas</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-number" id="dashPlanetsCount">0</div>
+                        <div class="stat-card-label">Planetas</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-number" id="dashUsersCount">0</div>
+                        <div class="stat-card-label">Usuarios</div>
+                    </div>
+                </div>
+
+                <!-- Inicializar base de datos -->
+                <div class="form-card" style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 10px; color: var(--text-primary);">
+                        <i class="fas fa-database me-2"></i>Base de datos de la Wiki
+                    </h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 14px;">
+                        En Firestore las "tablas" son <strong>colecciones</strong>. Las colecciones <strong>ships</strong>, <strong>components</strong> y <strong>enemies</strong> se crean al agregar el primer elemento desde sus secciones. Para que existan <strong>planets</strong>, <strong>systems</strong> y <strong>events</strong>, pulsa el botón y se creará un documento de ejemplo en cada una.
+                    </p>
+                    <div class="alert alert-success" id="dbInitSuccessAlert" style="display: none;"></div>
+                    <div class="alert alert-error" id="dbInitErrorAlert" style="display: none;"></div>
+                    <button type="button" class="btn-primary-custom" id="btnInitDb" onclick="initWikiCollections()">
+                        <i class="fas fa-magic me-2"></i>Inicializar colecciones (planetas, sistemas, eventos)
+                    </button>
+                </div>
+            </section>
+
+            <!-- Ships Section -->
+            <section id="ships" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Gestión de Naves</h1>
+                    <button class="btn-primary-custom" onclick="showShipForm()">
+                        <i class="fas fa-plus me-2"></i>Agregar Nave
+                    </button>
+                </div>
+
+                <div class="alert alert-success" id="shipSuccessAlert"></div>
+                <div class="alert alert-error" id="shipErrorAlert"></div>
+
+                <!-- Ship Form -->
+                <div id="shipFormContainer" style="display: none;">
+                    <div class="form-card">
+                        <h3 style="margin-bottom: 20px; color: var(--text-primary);">
+                            <span id="shipFormTitle">Agregar Nueva Nave</span>
+                        </h3>
+                        <form id="shipForm">
+                            <input type="hidden" id="shipId">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nombre de la Nave *</label>
+                                    <input type="text" class="form-control" id="shipName" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Tipo *</label>
+                                    <select class="form-control" id="shipType" required>
+                                        <option value="">Seleccionar tipo...</option>
+                                        <option value="storm">Storm</option>
+                                        <option value="tank">Tank</option>
+                                        <option value="enginer">Enginer</option>
+                                        <option value="shock">Shock</option>
+                                        <option value="sniper">Sniper</option>
+                                        <option value="defendor">Defendor</option>
+                                        <option value="raider">Raider</option>
+                                        <option value="hybrid">Hybrid</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Facción *</label>
+                                    <select class="form-control" id="shipFaction" required>
+                                        <option value="">Seleccionar facción...</option>
+                                        <option value="antares industries">Antares Industries</option>
+                                        <option value="raven dynamics">Raven Dynamics</option>
+                                        <option value="arcanos">Arcanos</option>
+                                        <option value="stam">STAM</option>
+                                        <option value="mantis">Mantis</option>
+                                        <option value="methatronic industries">Methatronic Industries</option>
+                                        <option value="mizar stellar technologies">Mizar Stellar Technologies</option>
+                                        <option value="sol technologies">Sol Technologies</option>
+                                        <option value="gemini components">Gemini Components</option>
+                                        <option value="piratas">Piratas</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Blindaje</label>
+                                    <input type="number" class="form-control" id="shipArmor" value="1000">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Velocidad</label>
+                                    <input type="number" class="form-control" id="shipSpeed" value="200">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Energía</label>
+                                    <input type="number" class="form-control" id="shipEnergy" value="500">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Daño</label>
+                                    <input type="number" class="form-control" id="shipDamage" value="100">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nivel Requerido</label>
+                                    <input type="number" class="form-control" id="shipReqLevel" value="1">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Créditos Requeridos</label>
+                                    <input type="number" class="form-control" id="shipReqCredits" value="10000">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">URL de Imagen</label>
+                                    <input type="text" class="form-control" id="shipImage" placeholder="https://...">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" id="shipDescription" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Dónde Conseguirla</label>
+                                <input type="text" class="form-control" id="shipLocation" placeholder="Ej: Tienda - Vega">
+                            </div>
+
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button type="submit" class="btn-primary-custom">
+                                    <i class="fas fa-save me-2"></i>Guardar Nave
+                                </button>
+                                <button type="button" class="btn-primary-custom" onclick="hideShipForm()" style="background: rgba(239, 68, 68, 0.3);">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Ships List -->
+                <div class="data-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Facción</th>
+                                <th>Stats</th>
+                                <th>Nivel</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shipsTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-tertiary);">
+                                    Cargando naves...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Components Section -->
+            <section id="components" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Gestión de Componentes</h1>
+                    <button class="btn-primary-custom" onclick="showComponentForm()">
+                        <i class="fas fa-plus me-2"></i>Agregar Componente
+                    </button>
+                </div>
+
+                <div class="alert alert-success" id="componentSuccessAlert"></div>
+                <div class="alert alert-error" id="componentErrorAlert"></div>
+
+                <!-- Component Form -->
+                <div id="componentFormContainer" style="display: none;">
+                    <div class="form-card">
+                        <h3 style="margin-bottom: 20px; color: var(--text-primary);">
+                            <span id="componentFormTitle">Agregar Nuevo Componente</span>
+                        </h3>
+                        <form id="componentForm">
+                            <input type="hidden" id="componentId">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nombre del Componente *</label>
+                                    <input type="text" class="form-control" id="componentName" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Tipo *</label>
+                                    <select class="form-control" id="componentType" required>
+                                        <option value="">Seleccionar tipo...</option>
+                                        <option value="weapon">Arma</option>
+                                        <option value="armor">Blindaje</option>
+                                        <option value="engine">Motor</option>
+                                        <option value="tech">Tecnología</option>
+                                        <option value="special">Especial</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Rareza *</label>
+                                    <select class="form-control" id="componentRarity" required>
+                                        <option value="">Seleccionar rareza...</option>
+                                        <option value="common">Común</option>
+                                        <option value="uncommon">Poco Común</option>
+                                        <option value="rare">Raro</option>
+                                        <option value="epic">Épico</option>
+                                        <option value="legendary">Legendario</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nivel</label>
+                                    <input type="number" class="form-control" id="componentLevel" value="1">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Ubicación de Drop</label>
+                                    <input type="text" class="form-control" id="componentDrop" placeholder="Ej: Mantis Queen - Sirius">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">% de Drop</label>
+                                    <input type="number" class="form-control" id="componentDropRate" min="0" max="100" value="10">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" id="componentDescription" rows="3"></textarea>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button type="submit" class="btn-primary-custom">
+                                    <i class="fas fa-save me-2"></i>Guardar Componente
+                                </button>
+                                <button type="button" class="btn-primary-custom" onclick="hideComponentForm()" style="background: rgba(239, 68, 68, 0.3);">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Components List -->
+                <div class="data-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Rareza</th>
+                                <th>Nivel</th>
+                                <th>Drop</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="componentsTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-tertiary);">
+                                    Cargando componentes...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Enemies Section -->
+            <section id="enemies" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Gestión de Enemigos</h1>
+                    <button class="btn-primary-custom" onclick="showEnemyForm()">
+                        <i class="fas fa-plus me-2"></i>Agregar Enemigo
+                    </button>
+                </div>
+
+                <div class="alert alert-success" id="enemySuccessAlert"></div>
+                <div class="alert alert-error" id="enemyErrorAlert"></div>
+
+                <div id="enemyFormContainer" style="display: none;">
+                    <div class="form-card">
+                        <h3 style="margin-bottom: 20px; color: var(--text-primary);">
+                            <span id="enemyFormTitle">Agregar Nuevo Enemigo</span>
+                        </h3>
+                        <form id="enemyForm">
+                            <input type="hidden" id="enemyId">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nombre del Enemigo *</label>
+                                    <input type="text" class="form-control" id="enemyName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Tipo *</label>
+                                    <select class="form-control" id="enemyType" required>
+                                        <option value="">Seleccionar tipo...</option>
+                                        <option value="normal">Normal</option>
+                                        <option value="boss">Boss</option>
+                                        <option value="evento">Evento</option>
+                                        <option value="mision">Misión</option>
+                                        <option value="pks">PKs</option>
+                                        <option value="ligeros">Ligeros</option>
+                                        <option value="medianos">Medianos</option>
+                                        <option value="verdes">Verdes</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Sistema</label>
+                                    <input type="text" class="form-control" id="enemySystem" placeholder="Ej: Sol, Vega, Sirius">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Planeta / Zona</label>
+                                    <input type="text" class="form-control" id="enemyPlanet" placeholder="Opcional">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Nivel</label>
+                                    <input type="number" class="form-control" id="enemyLevel" value="1">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Drops (separados por coma)</label>
+                                <input type="text" class="form-control" id="enemyDrops" placeholder="Ej: Componente A, Componente B">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" id="enemyDescription" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">URL de Imagen</label>
+                                <input type="text" class="form-control" id="enemyImage" placeholder="https://...">
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button type="submit" class="btn-primary-custom">
+                                    <i class="fas fa-save me-2"></i>Guardar Enemigo
+                                </button>
+                                <button type="button" class="btn-primary-custom" onclick="hideEnemyForm()" style="background: rgba(239, 68, 68, 0.3);">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="data-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Sistema</th>
+                                <th>Planeta</th>
+                                <th>Nivel</th>
+                                <th>Drops</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="enemiesTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; color: var(--text-tertiary);">Cargando enemigos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Systems Section -->
+            <section id="systems" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Gestión de Sistemas</h1>
+                    <button class="btn-primary-custom" onclick="showSystemForm()">
+                        <i class="fas fa-plus me-2"></i>Agregar Sistema
+                    </button>
+                </div>
+
+                <div class="alert alert-success" id="systemSuccessAlert"></div>
+                <div class="alert alert-error" id="systemErrorAlert"></div>
+
+                <!-- System Form -->
+                <div id="systemFormContainer" style="display: none;">
+                    <div class="form-card">
+                        <h3 style="margin-bottom: 20px; color: var(--text-primary);">
+                            <span id="systemFormTitle">Agregar Nuevo Sistema</span>
+                        </h3>
+                        <form id="systemForm">
+                            <input type="hidden" id="systemId">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nombre del Sistema *</label>
+                                    <input type="text" class="form-control" id="systemName" required placeholder="Ej: Vega, Antares">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Orden</label>
+                                    <input type="number" class="form-control" id="systemOrder" value="1">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nivel Mínimo</label>
+                                    <input type="number" class="form-control" id="systemLevelMin" value="1">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Nivel Máximo</label>
+                                    <input type="number" class="form-control" id="systemLevelMax" value="15">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" id="systemDescription" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">URL de Imagen del Mapa</label>
+                                <input type="text" class="form-control" id="systemMapImage" placeholder="https://...">
+                            </div>
+
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button type="submit" class="btn-primary-custom">
+                                    <i class="fas fa-save me-2"></i>Guardar Sistema
+                                </button>
+                                <button type="button" class="btn-primary-custom" onclick="hideSystemForm()" style="background: rgba(239, 68, 68, 0.3);">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Systems List -->
+                <div class="data-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Orden</th>
+                                <th>Nombre</th>
+                                <th>Niveles</th>
+                                <th>Descripción</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="systemsTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-tertiary);">
+                                    Cargando sistemas...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Planets Section -->
+            <section id="planets" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Gestión de Planetas</h1>
+                    <button class="btn-primary-custom" onclick="showPlanetForm()">
+                        <i class="fas fa-plus me-2"></i>Agregar Planeta
+                    </button>
+                </div>
+
+                <div class="alert alert-success" id="planetSuccessAlert"></div>
+                <div class="alert alert-error" id="planetErrorAlert"></div>
+
+                <!-- Planet Form -->
+                <div id="planetFormContainer" style="display: none;">
+                    <div class="form-card">
+                        <h3 style="margin-bottom: 20px; color: var(--text-primary);">
+                            <span id="planetFormTitle">Agregar Nuevo Planeta</span>
+                        </h3>
+                        <form id="planetForm">
+                            <input type="hidden" id="planetId">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nombre del Planeta *</label>
+                                    <input type="text" class="form-control" id="planetName" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Sistema *</label>
+                                    <select class="form-control" id="planetSystemId" required>
+                                        <option value="">Seleccionar sistema...</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Tipo</label>
+                                    <select class="form-control" id="planetType">
+                                        <option value="normal">Normal</option>
+                                        <option value="conquest">Conquista</option>
+                                        <option value="story">Historia</option>
+                                        <option value="event">Evento</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Orden en el Sistema</label>
+                                    <input type="number" class="form-control" id="planetOrder" value="1">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Nivel Mínimo</label>
+                                    <input type="number" class="form-control" id="planetLevelMin" value="1">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Nivel Máximo</label>
+                                    <input type="number" class="form-control" id="planetLevelMax" value="5">
+                                </div>
+                                   <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Coordenada X (Mapa 0-100%)</label>
+                                    <input type="number" class="form-control" id="planetMapX" value="0" step="0.1" min="0" max="100">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Coordenada Y (Mapa 0-100%)</label>
+                                    <input type="number" class="form-control" id="planetMapY" value="0" step="0.1" min="0" max="100">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Nombre Imagen Mapa (ej: varkas.jpg)</label>
+                                    <input type="text" class="form-control" id="planetMapImage" placeholder="assets/img/planets/maps/..." onchange="updateAdminMapPreview()">
+                                </div>
+                            </div>
+
+                            <div id="adminMapSection" style="margin-bottom: 25px;">
+                                <label class="form-label">Mapa del Planeta (Haz clic para situar el planeta)</label>
+                                <div class="admin-map-preview" id="adminMapPreviewContainer" onclick="handleMapClick(event)">
+                                    <img id="adminMapImg" src="" alt="Vista previa del mapa" onerror="this.src='https://via.placeholder.com/600x300?text=Indica+el+nombre+de+la+imagen+del+mapa'">
+                                    <div class="admin-map-marker" id="adminMapMarker"></div>
+                                </div>
+                                <div class="map-coords-display" id="adminMapCoordsDisplay">X: 0.0% | Y: 0.0%</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Recursos (ej: crionita, oro)</label>
+                                <input type="text" class="form-control" id="planetResources" placeholder="Separados por coma">
+                            </div>
+                       </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" id="planetDescription" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">URL de Imagen</label>
+                                <input type="text" class="form-control" id="planetImage" placeholder="https://...">
+                            </div>
+
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button type="submit" class="btn-primary-custom">
+                                    <i class="fas fa-save me-2"></i>Guardar Planeta
+                                </button>
+                                <button type="button" class="btn-primary-custom" onclick="hidePlanetForm()" style="background: rgba(239, 68, 68, 0.3);">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Planets List -->
+                <div class="data-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Sistema</th>
+                                <th>Tipo</th>
+                                <th>Niveles</th>
+                                <th>Posición (X,Y)</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="planetsTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-tertiary);">
+                                    Cargando planetas...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="news" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Gestión de Noticias</h1>
+                </div>
+                <p style="color: var(--text-secondary);">Próximamente...</p>
+            </section>
+
+            <section id="users" class="content-section">
+                <div class="page-header">
+                    <h1 class="page-title">Gestión de Usuarios</h1>
+                </div>
+                <p style="color: var(--text-secondary);">Próximamente...</p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Firebase SDK + configuración centralizada -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+
+    <script>
+        // Verificar que el usuario sea admin
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = '../../login.html';
+                return;
+            }
+
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                
+                if (userData.role !== 'admin') {
+                    alert('No tienes permisos para acceder al panel de administración');
+                    window.location.href = '../../index.html';
+                }
+            } catch (error) {
+                console.error('Error verificando permisos:', error);
+            }
+        });
+
+        // Navigation
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (!this.getAttribute('href')) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('data-section');
+                    if (sectionId) {
+                        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                        
+                        this.classList.add('active');
+                        document.getElementById(sectionId).classList.add('active');
+                        
+                        if (sectionId === 'dashboard') loadDashboardStats();
+                        if (sectionId === 'ships') loadShips();
+                        if (sectionId === 'components') loadComponents();
+                        if (sectionId === 'enemies') loadEnemies();
+                        if (sectionId === 'systems') loadSystems();
+                        if (sectionId === 'planets') loadPlanets();
+                    }
+                }
+            });
+        });
+
+        // Dashboard Stats
+        async function loadDashboardStats() {
+            try {
+                const shipsCount = (await db.collection('ships').get()).size;
+                const componentsCount = (await db.collection('components').get()).size;
+                const enemiesCount = (await db.collection('enemies').get()).size;
+                const systemsCount = (await db.collection('systems').get()).size;
+                const planetsCount = (await db.collection('planets').get()).size;
+                const usersCount = (await db.collection('users').get()).size;
+
+                document.getElementById('dashShipsCount').textContent = shipsCount;
+                document.getElementById('dashComponentsCount').textContent = componentsCount;
+                document.getElementById('dashEnemiesCount').textContent = enemiesCount;
+                document.getElementById('dashSystemsCount').textContent = systemsCount;
+                document.getElementById('dashPlanetsCount').textContent = planetsCount;
+                document.getElementById('dashUsersCount').textContent = usersCount;
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+            }
+        }
+
+        // Inicializar colecciones de la wiki (planetas, sistemas, eventos)
+        async function initWikiCollections() {
+            const btn = document.getElementById('btnInitDb');
+            const successAlert = document.getElementById('dbInitSuccessAlert');
+            const errorAlert = document.getElementById('dbInitErrorAlert');
+            successAlert.style.display = 'none';
+            errorAlert.style.display = 'none';
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Creando colecciones...';
+
+            try {
+                const now = firebase.firestore.FieldValue.serverTimestamp();
+                const uid = auth.currentUser?.uid || 'system';
+
+                // Documento de ejemplo en 'planets'
+                await db.collection('planets').add({
+                    name: 'Tierra',
+                    systemId: 'sol',
+                    order: 1,
+                    levelMin: 1,
+                    levelMax: 5,
+                    resources: ['crionita', 'oro'],
+                    description: 'Planeta de inicio. Ejemplo para la wiki de Pirate Galaxy.',
+                    image: '',
+                    createdAt: now,
+                    updatedAt: now,
+                    createdBy: uid
+                });
+
+                // Documento de ejemplo en 'systems'
+                await db.collection('systems').add({
+                    name: 'Sistema Sol',
+                    order: 1,
+                    levelMin: 1,
+                    levelMax: 10,
+                    description: 'Sistema de inicio. Ejemplo para la wiki.',
+                    mapImage: '',
+                    createdAt: now,
+                    updatedAt: now,
+                    createdBy: uid
+                });
+
+                // Documento de ejemplo en 'events'
+                await db.collection('events').add({
+                    title: 'Bienvenida a GalaxWiki',
+                    type: 'news',
+                    description: 'Primera noticia de la wiki de Pirate Galaxy.',
+                    content: '',
+                    image: '',
+                    link: '',
+                    createdAt: now,
+                    updatedAt: now,
+                    createdBy: uid
+                });
+
+                successAlert.textContent = '✓ Colecciones creadas: planets, systems, events. Ya puedes verlas en Firebase Console y agregar más documentos desde el panel.';
+                successAlert.style.display = 'block';
+                loadDashboardStats();
+            } catch (error) {
+                console.error('Error inicializando colecciones:', error);
+                errorAlert.textContent = '✗ Error: ' + (error.message || 'No se pudieron crear las colecciones. Revisa las reglas de Firestore.');
+                errorAlert.style.display = 'block';
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-magic me-2"></i>Inicializar colecciones (planetas, sistemas, eventos)';
+        }
+
+        // SHIPS MANAGEMENT
+        function showShipForm() {
+            document.getElementById('shipFormContainer').style.display = 'block';
+            document.getElementById('shipForm').reset();
+            document.getElementById('shipId').value = '';
+            document.getElementById('shipFormTitle').textContent = 'Agregar Nueva Nave';
+        }
+
+        function hideShipForm() {
+            document.getElementById('shipFormContainer').style.display = 'none';
+            document.getElementById('shipForm').reset();
+        }
+
+        async function loadShips() {
+            try {
+            
+                const snapshot = await db.collection('ships').get();
+                const ships = [];
+                
+                snapshot.forEach(doc => {
+                    ships.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Ordenar en el cliente
+                ships.sort((a, b) => {
+                    const timeA = a.createdAt?.toMillis() || 0;
+                    const timeB = b.createdAt?.toMillis() || 0;
+                    return timeB - timeA;
+                });
+                
+                const tbody = document.getElementById('shipsTableBody');
+                
+                if (ships.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-tertiary);">No hay naves registradas. ¡Agrega la primera!</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                ships.forEach(ship => {
+                    const row = `
+                        <tr>
+                            <td><strong>${ship.name}</strong></td>
+                            <td>${ship.type}</td>
+                            <td>${ship.faction}</td>
+                            <td>
+                                <small>
+                                    A:${ship.stats?.armor || 0} | 
+                                    S:${ship.stats?.speed || 0} | 
+                                    E:${ship.stats?.energy || 0} | 
+                                    D:${ship.stats?.damage || 0}
+                                </small>
+                            </td>
+                            <td>${ship.requirements?.level || 1}</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editShip('${ship.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-action btn-delete" onclick="deleteShip('${ship.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Error cargando naves:', error);
+                const tbody = document.getElementById('shipsTableBody');
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #f87171;">Error al cargar naves. Verifica las reglas de Firestore.</td></tr>';
+            }
+        }
+
+        document.getElementById('shipForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const shipData = {
+                name: document.getElementById('shipName').value,
+                type: document.getElementById('shipType').value,
+                faction: document.getElementById('shipFaction').value,
+                stats: {
+                    armor: parseInt(document.getElementById('shipArmor').value),
+                    speed: parseInt(document.getElementById('shipSpeed').value),
+                    energy: parseInt(document.getElementById('shipEnergy').value),
+                    damage: parseInt(document.getElementById('shipDamage').value)
+                },
+                requirements: {
+                    level: parseInt(document.getElementById('shipReqLevel').value),
+                    credits: parseInt(document.getElementById('shipReqCredits').value)
+                },
+                image: document.getElementById('shipImage').value,
+                description: document.getElementById('shipDescription').value,
+                location: document.getElementById('shipLocation').value,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            const shipId = document.getElementById('shipId').value;
+
+            try {
+                if (shipId) {
+                    await db.collection('ships').doc(shipId).update(shipData);
+                    showAlert('shipSuccessAlert', '✓ Nave actualizada exitosamente');
+                } else {
+                    shipData.createdBy = auth.currentUser.uid;
+                    shipData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('ships').add(shipData);
+                    showAlert('shipSuccessAlert', '✓ Nave agregada exitosamente');
+                }
+
+                hideShipForm();
+                loadShips();
+            } catch (error) {
+                console.error('Error guardando nave:', error);
+                showAlert('shipErrorAlert', '✗ Error al guardar la nave');
+            }
+        });
+
+        async function editShip(shipId) {
+            try {
+                const doc = await db.collection('ships').doc(shipId).get();
+                const ship = doc.data();
+
+                document.getElementById('shipId').value = shipId;
+                document.getElementById('shipName').value = ship.name;
+                document.getElementById('shipType').value = ship.type;
+                document.getElementById('shipFaction').value = ship.faction;
+                document.getElementById('shipArmor').value = ship.stats?.armor || 0;
+                document.getElementById('shipSpeed').value = ship.stats?.speed || 0;
+                document.getElementById('shipEnergy').value = ship.stats?.energy || 0;
+                document.getElementById('shipDamage').value = ship.stats?.damage || 0;
+                document.getElementById('shipReqLevel').value = ship.requirements?.level || 1;
+                document.getElementById('shipReqCredits').value = ship.requirements?.credits || 0;
+                document.getElementById('shipImage').value = ship.image || '';
+                document.getElementById('shipDescription').value = ship.description || '';
+                document.getElementById('shipLocation').value = ship.location || '';
+                
+                document.getElementById('shipFormTitle').textContent = 'Editar Nave';
+                document.getElementById('shipFormContainer').style.display = 'block';
+            } catch (error) {
+                console.error('Error cargando nave:', error);
+            }
+        }
+
+        async function deleteShip(shipId) {
+            if (confirm('¿Estás seguro de eliminar esta nave?')) {
+                try {
+                    await db.collection('ships').doc(shipId).delete();
+                    showAlert('shipSuccessAlert', '✓ Nave eliminada exitosamente');
+                    loadShips();
+                } catch (error) {
+                    console.error('Error eliminando nave:', error);
+                    showAlert('shipErrorAlert', '✗ Error al eliminar la nave');
+                }
+            }
+        }
+
+        // COMPONENTS MANAGEMENT
+        function showComponentForm() {
+            document.getElementById('componentFormContainer').style.display = 'block';
+            document.getElementById('componentForm').reset();
+            document.getElementById('componentId').value = '';
+            document.getElementById('componentFormTitle').textContent = 'Agregar Nuevo Componente';
+        }
+
+        function hideComponentForm() {
+            document.getElementById('componentFormContainer').style.display = 'none';
+            document.getElementById('componentForm').reset();
+        }
+
+        async function loadComponents() {
+            try {
+                const snapshot = await db.collection('components').orderBy('createdAt', 'desc').get();
+                const tbody = document.getElementById('componentsTableBody');
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-tertiary);">No hay componentes registrados</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const comp = doc.data();
+                    const row = `
+                        <tr>
+                            <td><strong>${comp.name}</strong></td>
+                            <td>${comp.type}</td>
+                            <td><span class="badge badge-${comp.rarity}">${comp.rarity}</span></td>
+                            <td>${comp.level || 1}</td>
+                            <td><small>${comp.dropLocation || 'N/A'} (${comp.dropRate || 0}%)</small></td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editComponent('${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-action btn-delete" onclick="deleteComponent('${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Error cargando componentes:', error);
+            }
+        }
+
+        document.getElementById('componentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const componentData = {
+                name: document.getElementById('componentName').value,
+                type: document.getElementById('componentType').value,
+                rarity: document.getElementById('componentRarity').value,
+                level: parseInt(document.getElementById('componentLevel').value),
+                dropLocation: document.getElementById('componentDrop').value,
+                dropRate: parseInt(document.getElementById('componentDropRate').value),
+                description: document.getElementById('componentDescription').value,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            const componentId = document.getElementById('componentId').value;
+
+            try {
+                if (componentId) {
+                    await db.collection('components').doc(componentId).update(componentData);
+                    showAlert('componentSuccessAlert', '✓ Componente actualizado exitosamente');
+                } else {
+                    componentData.createdBy = auth.currentUser.uid;
+                    componentData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('components').add(componentData);
+                    showAlert('componentSuccessAlert', '✓ Componente agregado exitosamente');
+                }
+
+                hideComponentForm();
+                loadComponents();
+            } catch (error) {
+                console.error('Error guardando componente:', error);
+                showAlert('componentErrorAlert', '✗ Error al guardar el componente');
+            }
+        });
+
+        async function editComponent(componentId) {
+            try {
+                const doc = await db.collection('components').doc(componentId).get();
+                const comp = doc.data();
+
+                document.getElementById('componentId').value = componentId;
+                document.getElementById('componentName').value = comp.name;
+                document.getElementById('componentType').value = comp.type;
+                document.getElementById('componentRarity').value = comp.rarity;
+                document.getElementById('componentLevel').value = comp.level || 1;
+                document.getElementById('componentDrop').value = comp.dropLocation || '';
+                document.getElementById('componentDropRate').value = comp.dropRate || 10;
+                document.getElementById('componentDescription').value = comp.description || '';
+                
+                document.getElementById('componentFormTitle').textContent = 'Editar Componente';
+                document.getElementById('componentFormContainer').style.display = 'block';
+            } catch (error) {
+                console.error('Error cargando componente:', error);
+            }
+        }
+
+        async function deleteComponent(componentId) {
+            if (confirm('¿Estás seguro de eliminar este componente?')) {
+                try {
+                    await db.collection('components').doc(componentId).delete();
+                    showAlert('componentSuccessAlert', '✓ Componente eliminado exitosamente');
+                    loadComponents();
+                } catch (error) {
+                    console.error('Error eliminando componente:', error);
+                    showAlert('componentErrorAlert', '✗ Error al eliminar el componente');
+                }
+            }
+        }
+
+        // Utility Functions
+        function showAlert(alertId, message) {
+            const alert = document.getElementById(alertId);
+            alert.textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // ENEMIES MANAGEMENT
+        function showEnemyForm() {
+            document.getElementById('enemyFormContainer').style.display = 'block';
+            document.getElementById('enemyForm').reset();
+            document.getElementById('enemyId').value = '';
+            document.getElementById('enemyFormTitle').textContent = 'Agregar Nuevo Enemigo';
+        }
+
+        function hideEnemyForm() {
+            document.getElementById('enemyFormContainer').style.display = 'none';
+            document.getElementById('enemyForm').reset();
+        }
+
+        async function loadEnemies() {
+            try {
+                const snapshot = await db.collection('enemies').get();
+                const enemies = [];
+                snapshot.forEach(doc => {
+                    enemies.push({ id: doc.id, ...doc.data() });
+                });
+                enemies.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+                const tbody = document.getElementById('enemiesTableBody');
+                if (enemies.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-tertiary);">No hay enemigos registrados. ¡Agrega el primero!</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                enemies.forEach(enemy => {
+                    const drops = enemy.drops || enemy.drop;
+                    const dropsStr = Array.isArray(drops) ? drops.join(', ') : (drops || '');
+                    const row = `
+                        <tr>
+                            <td><strong>${enemy.name}</strong></td>
+                            <td>${enemy.type || '-'}</td>
+                            <td>${enemy.system || '-'}</td>
+                            <td>${enemy.planet || '-'}</td>
+                            <td>${enemy.level != null ? enemy.level : '-'}</td>
+                            <td><small>${dropsStr ? dropsStr.substring(0, 40) + (dropsStr.length > 40 ? '...' : '') : '-'}</small></td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editEnemy('${enemy.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteEnemy('${enemy.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Error cargando enemigos:', error);
+                document.getElementById('enemiesTableBody').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #f87171;">Error al cargar enemigos.</td></tr>';
+            }
+        }
+
+        document.getElementById('enemyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const dropsInput = document.getElementById('enemyDrops').value.trim();
+            const dropsArray = dropsInput ? dropsInput.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+            const enemyData = {
+                name: document.getElementById('enemyName').value,
+                type: document.getElementById('enemyType').value,
+                system: document.getElementById('enemySystem').value.trim() || null,
+                planet: document.getElementById('enemyPlanet').value.trim() || null,
+                level: parseInt(document.getElementById('enemyLevel').value) || null,
+                drops: dropsArray,
+                description: document.getElementById('enemyDescription').value.trim() || null,
+                image: document.getElementById('enemyImage').value.trim() || null,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            const enemyId = document.getElementById('enemyId').value;
+
+            try {
+                if (enemyId) {
+                    await db.collection('enemies').doc(enemyId).update(enemyData);
+                    showAlert('enemySuccessAlert', '✓ Enemigo actualizado exitosamente');
+                } else {
+                    enemyData.createdBy = auth.currentUser.uid;
+                    enemyData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('enemies').add(enemyData);
+                    showAlert('enemySuccessAlert', '✓ Enemigo agregado exitosamente');
+                }
+                hideEnemyForm();
+                loadEnemies();
+                loadDashboardStats();
+            } catch (error) {
+                console.error('Error guardando enemigo:', error);
+                showAlert('enemyErrorAlert', '✗ Error al guardar el enemigo');
+            }
+        });
+
+        async function editEnemy(id) {
+            try {
+                const doc = await db.collection('enemies').doc(id).get();
+                const e = doc.data();
+                const drops = e.drops || e.drop;
+                const dropsStr = Array.isArray(drops) ? drops.join(', ') : (drops || '');
+
+                document.getElementById('enemyId').value = id;
+                document.getElementById('enemyName').value = e.name || '';
+                document.getElementById('enemyType').value = e.type || '';
+                document.getElementById('enemySystem').value = e.system || '';
+                document.getElementById('enemyPlanet').value = e.planet || '';
+                document.getElementById('enemyLevel').value = e.level != null ? e.level : '';
+                document.getElementById('enemyDrops').value = dropsStr;
+                document.getElementById('enemyDescription').value = e.description || '';
+                document.getElementById('enemyImage').value = e.image || '';
+                document.getElementById('enemyFormTitle').textContent = 'Editar Enemigo';
+                document.getElementById('enemyFormContainer').style.display = 'block';
+            } catch (error) {
+                console.error('Error cargando enemigo:', error);
+            }
+        }
+
+        async function deleteEnemy(id) {
+            if (confirm('¿Estás seguro de eliminar este enemigo?')) {
+                try {
+                    await db.collection('enemies').doc(id).delete();
+                    showAlert('enemySuccessAlert', '✓ Enemigo eliminado exitosamente');
+                    loadEnemies();
+                    loadDashboardStats();
+                } catch (error) {
+                    console.error('Error eliminando enemigo:', error);
+                    showAlert('enemyErrorAlert', '✗ Error al eliminar el enemigo');
+                }
+            }
+        }
+
+        // SYSTEMS MANAGEMENT
+        function showSystemForm() {
+            document.getElementById('systemFormContainer').style.display = 'block';
+            document.getElementById('systemForm').reset();
+            document.getElementById('systemId').value = '';
+            document.getElementById('systemFormTitle').textContent = 'Agregar Nuevo Sistema';
+        }
+
+        function hideSystemForm() {
+            document.getElementById('systemFormContainer').style.display = 'none';
+        }
+
+        async function loadSystems() {
+            try {
+                const snapshot = await db.collection('systems').orderBy('order', 'asc').get();
+                const tbody = document.getElementById('systemsTableBody');
+                tbody.innerHTML = '';
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-tertiary);">No hay sistemas registrados</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${data.order || 0}</td>
+                            <td><strong>${data.name}</strong></td>
+                            <td>${data.levelMin || 1} - ${data.levelMax || 15}</td>
+                            <td><small>${data.description || '-'}</small></td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editSystem('${doc.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteSystem('${doc.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error cargando sistemas:', error);
+            }
+        }
+
+        document.getElementById('systemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('systemId').value;
+            const data = {
+                name: document.getElementById('systemName').value,
+                order: parseInt(document.getElementById('systemOrder').value) || 0,
+                levelMin: parseInt(document.getElementById('systemLevelMin').value) || 1,
+                levelMax: parseInt(document.getElementById('systemLevelMax').value) || 15,
+                description: document.getElementById('systemDescription').value,
+                mapImage: document.getElementById('systemMapImage').value,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                if (id) {
+                    await db.collection('systems').doc(id).update(data);
+                    showAlert('systemSuccessAlert', '✓ Sistema actualizado');
+                } else {
+                    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    data.createdBy = auth.currentUser.uid;
+                    await db.collection('systems').add(data);
+                    showAlert('systemSuccessAlert', '✓ Sistema agregado');
+                }
+                hideSystemForm();
+                loadSystems();
+                loadDashboardStats();
+            } catch (error) {
+                console.error('Error guardando sistema:', error);
+                showAlert('systemErrorAlert', '✗ Error al guardar sistema');
+            }
+        });
+
+        async function editSystem(id) {
+            try {
+                const doc = await db.collection('systems').doc(id).get();
+                const data = doc.data();
+                document.getElementById('systemId').value = id;
+                document.getElementById('systemName').value = data.name;
+                document.getElementById('systemOrder').value = data.order || 0;
+                document.getElementById('systemLevelMin').value = data.levelMin || 1;
+                document.getElementById('systemLevelMax').value = data.levelMax || 15;
+                document.getElementById('systemDescription').value = data.description || '';
+                document.getElementById('systemMapImage').value = data.mapImage || '';
+                document.getElementById('systemFormTitle').textContent = 'Editar Sistema';
+                document.getElementById('systemFormContainer').style.display = 'block';
+            } catch (error) {
+                console.error('Error cargando sistema:', error);
+            }
+        }
+
+        async function deleteSystem(id) {
+            if (confirm('¿Eliminar este sistema?')) {
+                try {
+                    await db.collection('systems').doc(id).delete();
+                    loadSystems();
+                    loadDashboardStats();
+                } catch (error) {
+                    console.error('Error eliminando sistema:', error);
+                }
+            }
+        }
+
+        // PLANETS MANAGEMENT
+        function showPlanetForm() {
+            document.getElementById('planetFormContainer').style.display = 'block';
+            document.getElementById('planetForm').reset();
+            document.getElementById('planetId').value = '';
+            document.getElementById('planetFormTitle').textContent = 'Agregar Nuevo Planeta';
+            loadSystemOptions();
+        }
+
+        function hidePlanetForm() {
+            document.getElementById('planetFormContainer').style.display = 'none';
+        }
+
+        async function loadSystemOptions(selectedId = null) {
+            const select = document.getElementById('planetSystemId');
+            try {
+                const snapshot = await db.collection('systems').orderBy('order', 'asc').get();
+                select.innerHTML = '<option value="">Seleccionar sistema...</option>';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const selected = doc.id === selectedId ? 'selected' : '';
+                    select.innerHTML += `<option value="${doc.id}" ${selected}>${data.name}</option>`;
+                });
+            } catch (error) {
+                console.error('Error cargando opciones de sistemas:', error);
+            }
+        }
+
+        // Interactive Map Functions
+        function updateAdminMapPreview() {
+            const mapImageName = document.getElementById('planetMapImage').value.trim();
+            const img = document.getElementById('adminMapImg');
+            
+            if (mapImageName) {
+                // Si ya tiene la ruta completa no la tocamos, si no, asumimos que está en la carpeta de mapas
+                if (mapImageName.startsWith('http') || mapImageName.startsWith('assets/')) {
+                    img.src = mapImageName;
+                } else {
+                    img.src = '../../assets/img/planets/maps/' + mapImageName;
+                }
+            } else {
+                img.src = 'https://via.placeholder.com/600x300?text=Indica+el+nombre+de+la+imagen+del+mapa';
+            }
+            
+            // Actualizar marcador después de que la imagen cargue (o cambie)
+            img.onload = () => updateAdminMarkerPosition();
+        }
+
+        function handleMapClick(event) {
+            const container = document.getElementById('adminMapPreviewContainer');
+            const rect = container.getBoundingClientRect();
+            
+            const x = ((event.clientX - rect.left) / rect.width) * 100;
+            const y = ((event.clientY - rect.top) / rect.height) * 100;
+            
+            document.getElementById('planetMapX').value = x.toFixed(1);
+            document.getElementById('planetMapY').value = y.toFixed(1);
+            
+            updateAdminMarkerPosition();
+        }
+
+        function updateAdminMarkerPosition() {
+            const x = parseFloat(document.getElementById('planetMapX').value) || 0;
+            const y = parseFloat(document.getElementById('planetMapY').value) || 0;
+            
+            const marker = document.getElementById('adminMapMarker');
+            marker.style.left = x + '%';
+            marker.style.top = y + '%';
+            
+            document.getElementById('adminMapCoordsDisplay').textContent = `X: ${x.toFixed(1)}% | Y: ${y.toFixed(1)}%`;
+        }
+
+        // Sincronizar inputs manuales con el marcador
+        document.getElementById('planetMapX').addEventListener('input', updateAdminMarkerPosition);
+        document.getElementById('planetMapY').addEventListener('input', updateAdminMarkerPosition);
+
+        async function loadPlanets() {
+            try {
+                const systemsSnap = await db.collection('systems').get();
+                const systems = {};
+                systemsSnap.forEach(doc => systems[doc.id] = doc.data().name);
+
+                const snapshot = await db.collection('planets').get();
+                const tbody = document.getElementById('planetsTableBody');
+                tbody.innerHTML = '';
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-tertiary);">No hay planetas registrados</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${data.name}</strong></td>
+                            <td>${systems[data.systemId] || 'Desconocido'}</td>
+                            <td>${data.type || 'normal'}</td>
+                            <td>${data.levelMin || 1} - ${data.levelMax || 5}</td>
+                            <td>${data.mapX || 0}, ${data.mapY || 0}</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editPlanet('${doc.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deletePlanet('${doc.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error cargando planetas:', error);
+            }
+        }
+
+        document.getElementById('planetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('planetId').value;
+            const data = {
+                name: document.getElementById('planetName').value,
+                systemId: document.getElementById('planetSystemId').value,
+                type: document.getElementById('planetType').value,
+                order: parseInt(document.getElementById('planetOrder').value) || 1,
+                levelMin: parseInt(document.getElementById('planetLevelMin').value) || 1,
+                levelMax: parseInt(document.getElementById('planetLevelMax').value) || 5,
+                mapX: parseFloat(document.getElementById('planetMapX').value) || 0,
+                mapY: parseFloat(document.getElementById('planetMapY').value) || 0,
+                mapImage: document.getElementById('planetMapImage').value.trim(),
+                resources: document.getElementById('planetResources').value.split(',').map(s => s.trim()).filter(Boolean),
+                description: document.getElementById('planetDescription').value,
+                image: document.getElementById('planetImage').value,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                if (id) {
+                    await db.collection('planets').doc(id).update(data);
+                    showAlert('planetSuccessAlert', '✓ Planeta actualizado');
+                } else {
+                    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    data.createdBy = auth.currentUser.uid;
+                    await db.collection('planets').add(data);
+                    showAlert('planetSuccessAlert', '✓ Planeta agregado');
+                }
+                hidePlanetForm();
+                loadPlanets();
+                loadDashboardStats();
+            } catch (error) {
+                console.error('Error guardando planeta:', error);
+                showAlert('planetErrorAlert', '✗ Error al guardar planeta');
+            }
+        });
+
+        async function editPlanet(id) {
+            try {
+                const doc = await db.collection('planets').doc(id).get();
+                const data = doc.data();
+                await loadSystemOptions(data.systemId);
+                
+                document.getElementById('planetId').value = id;
+                document.getElementById('planetName').value = data.name;
+                document.getElementById('planetSystemId').value = data.systemId;
+                document.getElementById('planetType').value = data.type || 'normal';
+                document.getElementById('planetOrder').value = data.order || 1;
+                document.getElementById('planetLevelMin').value = data.levelMin || 1;
+                document.getElementById('planetLevelMax').value = data.levelMax || 5;
+                document.getElementById('planetMapX').value = data.mapX || 0;
+                document.getElementById('planetMapY').value = data.mapY || 0;
+                document.getElementById('planetMapImage').value = data.mapImage || '';
+                updateAdminMapPreview();
+                
+                document.getElementById('planetResources').value = (data.resources || []).join(', ');
+                document.getElementById('planetDescription').value = data.description || '';
+                document.getElementById('planetImage').value = data.image || '';
+                
+                document.getElementById('planetFormTitle').textContent = 'Editar Planeta';
+                document.getElementById('planetFormContainer').style.display = 'block';
+            } catch (error) {
+                console.error('Error cargando planeta:', error);
+            }
+        }
+
+        async function deletePlanet(id) {
+            if (confirm('¿Eliminar este planeta?')) {
+                try {
+                    await db.collection('planets').doc(id).delete();
+                    loadPlanets();
+                    loadDashboardStats();
+                } catch (error) {
+                    console.error('Error eliminando planeta:', error);
+                }
+            }
+        }
+
+        // Initialize
+        loadDashboardStats();
+        loadShips();
+    </script>
+</body>
+</html>

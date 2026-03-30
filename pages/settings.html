@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Configuración</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <style>
+        .settings-section { margin-bottom: 32px; }
+        .settings-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(20px);
+        }
+        .settings-card h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .settings-card h2 i { color: var(--accent); }
+        .settings-grid { display: grid; gap: 20px; max-width: 520px; }
+        .settings-field label { display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; }
+        .settings-field input, .settings-field select {
+            width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border-color);
+            background: var(--bg-input); color: var(--text-primary); font-size: 15px;
+        }
+        .settings-field .hint { font-size: 12px; color: var(--text-tertiary); margin-top: 6px; }
+        .settings-avatar-preview {
+            width: 80px; height: 80px; border-radius: 50%; background: var(--accent-gradient);
+            display: flex; align-items: center; justify-content: center; font-size: 32px; color: white;
+            overflow: hidden; margin-top: 12px;
+        }
+        .settings-avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .btn-save {
+            padding: 12px 24px; border-radius: 12px; border: none; background: var(--accent-gradient);
+            color: white; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4); }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: var(--accent);"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="wiki/tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="wiki/ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="wiki/builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="wiki/components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="wiki/enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="wiki/systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="wiki/missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <h1 class="page-title"><i class="fas fa-cog me-2"></i>Configuración</h1>
+        <p class="page-subtitle">Gestiona tu cuenta y preferencias.</p>
+
+        <div id="settingsGuest" class="empty-state" style="padding: 60px 24px; display: none;">
+            <i class="fas fa-lock" style="font-size: 48px; color: var(--accent); margin-bottom: 16px;"></i>
+            <p><strong>Inicia sesión</strong></p>
+            <p>Para cambiar tu configuración necesitas estar registrado.</p>
+            <a href="../login.html" class="btn-header btn-register" style="margin-top: 16px; display: inline-block;">Iniciar sesión</a>
+        </div>
+
+        <div id="settingsContent" style="display: none;">
+            <section class="settings-section">
+                <div class="settings-card">
+                    <h2><i class="fas fa-user-edit"></i> Perfil</h2>
+                    <div class="settings-grid">
+                        <div class="settings-field">
+                            <label for="settingsUsername">Nombre de usuario</label>
+                            <input type="text" id="settingsUsername" placeholder="Tu nombre">
+                        </div>
+                        <div class="settings-field">
+                            <label for="settingsFleet">Flota</label>
+                            <input type="text" id="settingsFleet" placeholder="Tu flota">
+                        </div>
+                        <div class="settings-field">
+                            <label for="settingsServer">Servidor</label>
+                            <select id="settingsServer">
+                                <option value="">— Seleccionar servidor —</option>
+                                <option value="Gaia">Gaia</option>
+                                <option value="Aurora">Aurora</option>
+                                <option value="Solaria">Solaria</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn-save" id="btnSaveAccount"><i class="fas fa-save"></i> Guardar Cambios</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/header-auth.js"></script>
+    <script>
+        (function() {
+            const auth = window.auth;
+            const db = window.db;
+
+            async function loadServers() {
+                const sel = document.getElementById('settingsServer');
+                if (!sel) return;
+                try {
+                    const snap = await db.collection('servers').where('status', '==', 'active').get();
+                    if (!snap.empty) {
+                        // Keep the default option
+                        const defaultOpt = sel.options[0];
+                        sel.innerHTML = '';
+                        sel.appendChild(defaultOpt);
+                        
+                        snap.forEach(doc => {
+                            const d = doc.data();
+                            const opt = document.createElement('option');
+                            opt.value = d.name;
+                            opt.textContent = `${d.name} (${d.region})`;
+                            sel.appendChild(opt);
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error loading dynamic servers:", e);
+                }
+            }
+
+            function loadSettings(user) {
+                loadServers().then(() => {
+                    db.collection('users').doc(user.uid).get().then(doc => {
+                        if (doc.exists) {
+                            const d = doc.data();
+                            document.getElementById('settingsUsername').value = d.username || user.displayName || '';
+                            document.getElementById('settingsFleet').value = d.fleet || '';
+                            document.getElementById('settingsServer').value = d.server || '';
+                        }
+                    });
+                });
+            }
+
+            document.getElementById('btnSaveAccount').addEventListener('click', async () => {
+                if (!auth.currentUser) return;
+                const btn = document.getElementById('btnSaveAccount');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+                
+                try {
+                    await db.collection('users').doc(auth.currentUser.uid).set({
+                        username: document.getElementById('settingsUsername').value.trim(),
+                        fleet: document.getElementById('settingsFleet').value.trim(),
+                        server: document.getElementById('settingsServer').value,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                    alert('Configuración guardada correctamente.');
+                } catch (e) {
+                    alert('Error al guardar: ' + e.message);
+                }
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
+            });
+
+            function init() {
+                auth.onAuthStateChanged(user => {
+                    if (user) {
+                        document.getElementById('settingsGuest').style.display = 'none';
+                        document.getElementById('settingsContent').style.display = 'block';
+                        loadSettings(user);
+                    } else {
+                        document.getElementById('settingsGuest').style.display = 'block';
+                        document.getElementById('settingsContent').style.display = 'none';
+                    }
+                });
+            }
+            init();
+        })();
+    </script>
+</body>
+</html>

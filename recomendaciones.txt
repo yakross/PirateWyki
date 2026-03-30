@@ -1,0 +1,17 @@
+💡 Recomendaciones para seguir mejorando
+Aquí tienes lo que yo priorizaría, ordenado por impacto:
+
+🔥 Alta prioridad
+Arreglar el Foro — Es probable que las reglas de Firestore estén bloqueando las lecturas/escrituras de posts. ¿Quieres que lo revise?
+Páginas de detalle (enemy-detail.html, mission-detail.html) — Al hacer clic en una carta se redirige ahí, pero si esas páginas no existen o están vacías se ve raro
+Sistema de comentarios — Añadir comentarios en detalles de naves/enemigos haría la wiki mucho más interactiva
+🟡 Medio plazo
+Perfil público (profile.html?uid=XYZ) — Permitir ver el perfil y colección de otro jugador mediante URL
+Mapas Interactivos (Leaflet.js) — Ya estaba planeado; usar marcadores del admin panel para mostrar NPCs y spawns en planetas
+Notificaciones de noticias — Podría mostrar un badge en el icono de "Noticias" cuando hay posts nuevos
+Sistema de búsqueda global — Un buscador en el header que busque en todas las colecciones a la vez
+🟢 Mejoras visuales / UX
+Skeleton loaders en lugar del spinner genérico mientras cargan los datos
+Sistema de logros/insignias para el perfil (ej. "Collector" si tienes el 100% de naves)
+Modo "comparar naves" — Seleccionar 2 naves y ver sus estadísticas lado a lado
+¿Empezamos con el foro o prefieres alguna de las otras recomendaciones?

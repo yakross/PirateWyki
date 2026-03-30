@@ -1,0 +1,446 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Planos (Tracker)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <style>
+        .blueprint-tracker-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+        
+        .progress-container {
+            flex: 1;
+            margin-left: 24px;
+        }
+        
+        .progress-bar-wrapper {
+            height: 12px;
+            background: var(--bg-hover);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .blueprint-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+
+        .blueprint-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .blueprint-card.collected {
+            border-left-color: #10b981;
+            opacity: 0.8;
+        }
+
+        .blueprint-card.collected h3 {
+            text-decoration: line-through;
+            color: var(--text-tertiary);
+        }
+
+        .bp-checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+        }
+
+        .bp-checkbox {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .bp-checkbox:checked {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .bp-checkbox:checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+        }
+
+        .bp-info {
+            flex: 1;
+        }
+
+        .bp-info h3 {
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .bp-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .bp-decrypt-info {
+            background: rgba(234, 179, 8, 0.1);
+            color: #d97706;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        [data-theme="dark"] .bp-decrypt-info {
+            color: #fbd38d;
+        }
+
+        .decrypt-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(234, 179, 8, 0.2);
+        }
+
+        .filter-bar {
+            background: var(--bg-card);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon theme-icon" id="themeIcon"></i></div>
+                <div class="auth-buttons" id="authButtons" style="display: none;"><a href="../login.html" class="btn-header btn-login">Iniciar sesiÃ³n</a><a href="../register.html" class="btn-header btn-register">Registrarse</a></div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info"><span class="user-name" id="userName">Usuario</span><span class="user-fleet" id="userFleet">Flota</span><span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span></div>
+                        <i class="fas fa-chevron-down" style="color: var(--accent);"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>ConfiguraciÃ³n</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;">Cerrar sesiÃ³n</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="wiki/ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="wiki/builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="wiki/components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="wiki/blueprints.html" class="nav-link active"><i class="fas fa-scroll"></i> Planos</a></li>
+                <li class="nav-item"><a href="wiki/enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="wiki/systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="wiki/misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <h1 class="page-title"><i class="fas fa-scroll me-3" style="color: var(--accent);"></i>Tracker de Planos</h1>
+        <p class="page-subtitle mb-4">Marca los planos que ya has conseguido para llevar el control de tu progreso.</p>
+
+        <div class="blueprint-tracker-header">
+            <div>
+                <h3 style="margin: 0; color: var(--text-primary);"><i class="fas fa-chart-line me-2"></i>Tu progreso</h3>
+                <p style="margin: 4px 0 0 0; color: var(--text-secondary); font-size: 14px;" id="collectionText">Inicia sesiÃ³n para guardar permanentemente</p>
+            </div>
+            <div class="progress-container">
+                <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; color: var(--text-primary);">
+                    <span id="progressPercentage">0%</span>
+                    <span id="progressCount">0 / 0 Planos</span>
+                </div>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <div class="search-box" style="flex: 1;">
+                <i class="fas fa-search"></i>
+                <input type="text" id="bpSearch" placeholder="Buscar por nombre, enemigo o planeta..." class="form-control" style="background: transparent; border: none; outline: none; box-shadow: none; color: inherit;">
+            </div>
+            <select id="bpFilterRarity" class="form-control" style="width: auto;">
+                <option value="">Todas las rarezas</option>
+                <option value="common">ComÃºn</option>
+                <option value="uncommon">Poco ComÃºn</option>
+                <option value="rare">Raro</option>
+                <option value="epic">Ã‰pico</option>
+                <option value="legendary">Legendario</option>
+            </select>
+            <select id="bpFilterStatus" class="form-control" style="width: auto;">
+                <option value="">Todos (Obtenidos y Faltantes)</option>
+                <option value="missing">Solo Faltantes</option>
+                <option value="collected">Solo Obtenidos</option>
+            </select>
+        </div>
+
+        <div id="blueprintsList">
+            <div class="empty-state">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-3">Cargando planos...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/header-auth.js"></script>
+
+    <script>
+        (function() {
+            let allBlueprints = [];
+            let collectedBlueprints = new Set();
+            const db = window.db;
+            const auth = window.auth;
+
+            // Al cargar la pÃ¡gina
+            document.addEventListener('DOMContentLoaded', async () => {
+                await loadBlueprints();
+                
+                // Configurar filtros
+                document.getElementById('bpSearch').addEventListener('input', renderBlueprints);
+                document.getElementById('bpFilterRarity').addEventListener('change', renderBlueprints);
+                document.getElementById('bpFilterStatus').addEventListener('change', renderBlueprints);
+
+                // Esperar a verificar sesiÃ³n para cargar progreso real de la nube si existe
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        document.getElementById('collectionText').textContent = "Progreso guardado en tu cuenta de PirateWyki";
+                        await loadUserProgress(user.uid);
+                    } else {
+                        // Si no hay usuario, cargamos de localStorage de forma local
+                        const localSave = localStorage.getItem('localBlueprintsProgress');
+                        if (localSave) {
+                            try {
+                                const parsed = JSON.parse(localSave);
+                                collectedBlueprints = new Set(parsed);
+                            } catch(e){}
+                        }
+                        updateProgressUI();
+                        renderBlueprints();
+                    }
+                });
+            });
+
+            async function loadBlueprints() {
+                try {
+                    const snap = await db.collection('blueprints').get();
+                    allBlueprints = [];
+                    snap.forEach(doc => {
+                        allBlueprints.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    // Ordenar por nombre
+                    allBlueprints.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
+                    
+                    renderBlueprints();
+                    updateProgressUI();
+                } catch (error) {
+                    console.error("Error al cargar planos:", error);
+                    document.getElementById('blueprintsList').innerHTML = '<div class="empty-state">OcurriÃ³ un error al cargar los planos.</div>';
+                }
+            }
+
+            async function loadUserProgress(uid) {
+                try {
+                    const doc = await db.collection('user_blueprints').doc(uid).get();
+                    if (doc.exists) {
+                        const data = doc.data();
+                        collectedBlueprints = new Set(data.collected || []);
+                    }
+                    updateProgressUI();
+                    renderBlueprints();
+                } catch (error) {
+                    console.error("Error cargando progreso:", error);
+                }
+            }
+
+            async function toggleBlueprint(bpId) {
+                if (collectedBlueprints.has(bpId)) {
+                    collectedBlueprints.delete(bpId);
+                } else {
+                    collectedBlueprints.add(bpId);
+                }
+                
+                updateProgressUI();
+                
+                // Actualizar la clase visual al instante
+                const card = document.getElementById('bp-card-' + bpId);
+                if (card) {
+                    if (collectedBlueprints.has(bpId)) {
+                        card.classList.add('collected');
+                    } else {
+                        card.classList.remove('collected');
+                    }
+                }
+                
+                // Guardar
+                const arr = Array.from(collectedBlueprints);
+                if (auth.currentUser) {
+                    try {
+                        await db.collection('user_blueprints').doc(auth.currentUser.uid).set({
+                            collected: arr,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }, { merge: true });
+                    } catch (e) { console.error("Error al guardar en la nube", e); }
+                } else {
+                    localStorage.setItem('localBlueprintsProgress', JSON.stringify(arr));
+                }
+            }
+
+            // Exponer la funciÃ³n al scope global
+            window.toggleBlueprint = toggleBlueprint;
+
+            function updateProgressUI() {
+                const total = allBlueprints.length;
+                const collected = collectedBlueprints.size;
+                const pct = total === 0 ? 0 : Math.round((collected / total) * 100);
+
+                document.getElementById('progressPercentage').textContent = pct + '%';
+                document.getElementById('progressCount').textContent = collected + ' / ' + total + ' Planos';
+                document.getElementById('progressBar').style.width = pct + '%';
+                
+                // Cambiar el color de la barra si llega al 100%
+                document.getElementById('progressBar').style.background = pct === 100 ? '#10b981' : 'var(--accent)';
+            }
+
+            function renderBlueprints() {
+                const listEl = document.getElementById('blueprintsList');
+                const search = document.getElementById('bpSearch').value.toLowerCase();
+                const rarity = document.getElementById('bpFilterRarity').value;
+                const status = document.getElementById('bpFilterStatus').value;
+
+                let html = '';
+
+                let filtered = allBlueprints.filter(bp => {
+                    const matchSearch = String(bp.name).toLowerCase().includes(search) || 
+                                        String(bp.droppedBy).toLowerCase().includes(search) ||
+                                        String(bp.planet).toLowerCase().includes(search);
+                    const matchRarity = rarity ? bp.rarity === rarity : true;
+                    
+                    const isCollected = collectedBlueprints.has(bp.id);
+                    let matchStatus = true;
+                    if (status === 'collected' && !isCollected) matchStatus = false;
+                    if (status === 'missing' && isCollected) matchStatus = false;
+
+                    return matchSearch && matchRarity && matchStatus;
+                });
+
+                if (filtered.length === 0) {
+                    listEl.innerHTML = '<div class="empty-state">No se encontraron planos con estos filtros.</div>';
+                    return;
+                }
+
+                filtered.forEach(bp => {
+                    const isCollected = collectedBlueprints.has(bp.id);
+                    const isCollectedClass = isCollected ? 'collected' : '';
+                    const isChecked = isCollected ? 'checked' : '';
+                    
+
+
+                    html += `
+                        <div class="blueprint-card ${isCollectedClass}" id="bp-card-${bp.id}">
+                            <div class="bp-checkbox-container">
+                                <input type="checkbox" class="bp-checkbox" id="check-${bp.id}" ${isChecked} onchange="toggleBlueprint('${bp.id}')">
+                            </div>
+                            <div class="bp-info">
+                                <h3><label for="check-${bp.id}" style="cursor: pointer; margin: 0;">${bp.name || 'Sin Nombre'}</label></h3>
+                                <div class="bp-meta">
+                                    <span><i class="fas fa-gem me-1"></i> <span class="badge badge-${bp.rarity || 'common'}">${bp.rarity || 'ComÃºn'}</span></span>
+                                    <span><i class="fas fa-skull me-1"></i> Drop: ${bp.droppedBy || 'Ninguno'}</span>
+                                    <span><i class="fas fa-globe me-1"></i> ${bp.planet || 'NingÃºn Planeta'}</span>
+                                    <span><i class="fas fa-level-up-alt me-1"></i> Nivel ${bp.level || 1}</span>
+                                </div>
+            
+                            </div>
+                        </div>
+                    `;
+                });
+
+                listEl.innerHTML = html;
+            }
+        })();
+    </script>
+</body>
+</html>
+

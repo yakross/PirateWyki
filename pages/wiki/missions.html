@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Misiones e Historia</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            }
+        }
+    </script>
+    <script src="../../js/components/footer-component.js"></script>
+    <style>
+        /* --- Mode Tabs (Misiones / Historia) --- */
+        .mode-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 24px;
+        }
+        .mode-tab {
+            padding: 10px 22px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mode-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(102,126,234,0.3);
+        }
+        .mode-tab:hover:not(.active) {
+            border-color: rgba(102,126,234,0.5);
+            color: var(--text-primary);
+        }
+
+        /* --- System Filter Pills --- */
+        .system-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+        .system-pill {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .system-pill.active, .system-pill:hover {
+            background: rgba(102,126,234,0.18);
+            color: #a78bfa;
+            border-color: rgba(102,126,234,0.4);
+        }
+
+        /* --- View toggle --- */
+        .view-toggle { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+        .btn-toggle { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .btn-toggle:hover { color: var(--text-primary); border-color: rgba(102,126,234,0.5); }
+        .btn-toggle.active { background: rgba(102,126,234,0.15); color: #a78bfa; border-color: rgba(102,126,234,0.5); }
+
+        .items-table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+        .items-table th { background: rgba(102,126,234,0.1); color: var(--text-secondary); font-size: 13px; font-weight: 600; text-transform: uppercase; padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .items-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 14px; color: var(--text-secondary); }
+        .items-table tr:hover td { background: rgba(255,255,255,0.03); cursor: pointer; }
+        .items-table tr:last-child td { border-bottom: none; }
+
+        /* --- Historia (Story) --- */
+        #storyView { display: none; }
+        .story-chapter {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin-bottom: 20px;
+        }
+        .story-chapter h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #a78bfa;
+            margin-bottom: 10px;
+        }
+        .story-chapter .story-body {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.75;
+            white-space: pre-wrap;
+        }
+        .story-chapter .chapter-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+        }
+        .story-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link active"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <h1 class="page-title"><i class="fas fa-tasks me-2"></i>Misiones e Historia</h1>
+        <p class="page-subtitle">Guías de misiones por sistema y la historia de Pirate Galaxy.</p>
+
+        <!-- Mode tabs -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" id="tabMisiones" onclick="switchMode('missions')">
+                <i class="fas fa-clipboard-list me-2"></i>Misiones
+            </button>
+            <button class="mode-tab" id="tabHistoria" onclick="switchMode('story')">
+                <i class="fas fa-book-open me-2"></i>Historia del Juego
+            </button>
+        </div>
+
+        <!-- ========= MISSIONS VIEW ========= -->
+        <div id="missionsView">
+            <!-- System filter pills (populated dynamically) -->
+            <div class="system-pills" id="systemPills">
+                <button class="system-pill active" data-system="" onclick="filterBySystem('')">
+                    <i class="fas fa-globe me-1"></i>Todos
+                </button>
+            </div>
+
+            <div class="filters-bar">
+                <input id="searchInput" type="text" class="search-input" placeholder="Buscar por nombre o descripción...">
+                <div class="view-toggle">
+                    <button type="button" class="btn-toggle active" id="mBtnGrid" onclick="setMissionView('grid')" title="Vista cuadrícula"><i class="fas fa-th"></i></button>
+                    <button type="button" class="btn-toggle" id="mBtnTable" onclick="setMissionView('table')" title="Vista lista"><i class="fas fa-list"></i></button>
+                </div>
+            </div>
+
+            <div class="items-grid" id="missionsGrid"></div>
+            <table class="items-table" id="missionsTable" style="display:none;">
+                <thead><tr>
+                    <th>Nombre</th>
+                    <th>Sistema</th>
+                    <th>Nivel mín.</th>
+                    <th>Descripción</th>
+                </tr></thead>
+                <tbody id="missionsTableBody"></tbody>
+            </table>
+            <div id="missionsEmpty" class="empty-state" style="display: none;">No hay misiones para los filtros seleccionados.</div>
+        </div>
+
+        <!-- ========= STORY / HISTORIA VIEW ========= -->
+        <div id="storyView">
+            <div id="storyContent">
+                <div class="story-empty"><i class="fas fa-spinner fa-spin fa-2x" style="margin-bottom:12px;"></i><br>Cargando historia...</div>
+            </div>
+        </div>
+    </main>
+
+    <footer-component></footer-component>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/header-auth.js"></script>
+    <script>
+        // ===================== MODE SWITCH =====================
+        let currentMode = 'missions';
+        function switchMode(mode) {
+            currentMode = mode;
+            document.getElementById('missionsView').style.display = mode === 'missions' ? '' : 'none';
+            document.getElementById('storyView').style.display = mode === 'story' ? '' : 'none';
+            document.getElementById('tabMisiones').classList.toggle('active', mode === 'missions');
+            document.getElementById('tabHistoria').classList.toggle('active', mode === 'story');
+            if (mode === 'story' && !storyLoaded) loadStory();
+        }
+
+        // ===================== MISSIONS =====================
+        let missionViewMode = localStorage.getItem('missionViewPref') || 'grid';
+        let allMissions = [];
+        let activeSystem = '';
+
+        function setMissionView(mode) {
+            missionViewMode = mode;
+            localStorage.setItem('missionViewPref', mode);
+            document.getElementById('mBtnGrid').classList.toggle('active', mode === 'grid');
+            document.getElementById('mBtnTable').classList.toggle('active', mode === 'table');
+            document.getElementById('missionsGrid').style.display = mode === 'grid' ? '' : 'none';
+            document.getElementById('missionsTable').style.display = mode === 'table' ? '' : 'none';
+            renderMissions();
+        }
+
+        function filterBySystem(sys) {
+            activeSystem = sys;
+            document.querySelectorAll('.system-pill').forEach(p => p.classList.toggle('active', p.dataset.system === sys));
+            renderMissions();
+        }
+
+        function renderMissions() {
+            const grid = document.getElementById('missionsGrid');
+            const tableBody = document.getElementById('missionsTableBody');
+            const emptyEl = document.getElementById('missionsEmpty');
+            const search = (document.getElementById('searchInput').value || '').toLowerCase();
+
+            let filtered = allMissions;
+            if (activeSystem) filtered = filtered.filter(m => (m.system || '').toLowerCase() === activeSystem.toLowerCase());
+            if (search) filtered = filtered.filter(m => {
+                const n = (m.name || '').toLowerCase();
+                const d = (m.description || '').toLowerCase();
+                const s = (m.system || '').toLowerCase();
+                return n.includes(search) || d.includes(search) || s.includes(search);
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                if (tableBody) tableBody.innerHTML = '';
+                emptyEl.style.display = 'block';
+                return;
+            }
+            emptyEl.style.display = 'none';
+
+            if (missionViewMode === 'grid') {
+                grid.innerHTML = '';
+                filtered.forEach(m => {
+                    const level = m.levelMin != null ? `Nivel ${m.levelMin}+` : '';
+                    const sys = m.system ? `<span><i class="fas fa-globe me-1"></i>${(m.system + '').replace(/</g,'&lt;')}</span>` : '';
+                    const card = document.createElement('article');
+                    card.className = 'item-card';
+                    card.dataset.entityType = 'mission';
+                    card.dataset.entityId = m.id;
+                    card.style.cursor = 'pointer';
+                    card.innerHTML = (m.image ? '<img src="' + (m.image + '').replace(/"/g,'&quot;') + '" alt="" style="width:100%; max-height:100px; object-fit:cover; border-radius:8px; margin-bottom:10px;">' : '') +
+                        '<div class="item-header"><div class="item-name">' + (m.name || 'Sin nombre').replace(/</g,'&lt;') + '</div></div>' +
+                        '<div class="item-meta">' + level + sys + '</div>' +
+                        (m.description ? '<p class="item-description">' + (m.description + '').replace(/</g,'&lt;').substring(0, 100) + (m.description.length > 100 ? '...' : '') + '</p>' : '');
+                    grid.appendChild(card);
+                });
+            } else {
+                grid.innerHTML = '';
+                if (tableBody) {
+                    tableBody.innerHTML = filtered.map(m => {
+                        const level = m.levelMin != null ? `${m.levelMin}+` : '—';
+                        const desc = (m.description || '').replace(/</g,'&lt;').substring(0, 80) + (m.description && m.description.length > 80 ? '...' : '');
+                        return `<tr data-id="${m.id}">
+                            <td><strong>${(m.name || 'Sin nombre').replace(/</g,'&lt;')}</strong></td>
+                            <td>${m.system || '—'}</td>
+                            <td>${level}</td>
+                            <td style="max-width:250px; font-size:12px;">${desc || '—'}</td>
+                        </tr>`;
+                    }).join('');
+                    tableBody.querySelectorAll('tr[data-id]').forEach(row => {
+                        row.addEventListener('click', () => {
+                            location.href = 'mission-detail.html?id=' + encodeURIComponent(row.dataset.id);
+                        });
+                    });
+                }
+            }
+        }
+
+        function handleMissionGridClick(e) {
+            const card = e.target.closest('.item-card[data-entity-type="mission"]');
+            if (card && card.dataset.entityId) location.href = 'mission-detail.html?id=' + encodeURIComponent(card.dataset.entityId);
+        }
+
+        async function loadMissions() {
+            const grid = document.getElementById('missionsGrid');
+            const emptyEl = document.getElementById('missionsEmpty');
+            grid.innerHTML = Array(8).fill(`
+                <div class="skeleton-base skeleton">
+                    <div class="skeleton-title" style="width: 70%;"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text short"></div>
+                </div>
+            `).join('');
+            emptyEl.style.display = 'none';
+            try {
+                const snap = await db.collection('missions').get();
+                allMissions = [];
+                snap.forEach(doc => allMissions.push({ id: doc.id, ...doc.data() }));
+                allMissions.sort((a, b) => (a.order ?? 999) - (b.order ?? 999) || (a.name || '').localeCompare(b.name || ''));
+                // Build system pills
+                const systems = [...new Set(allMissions.map(m => m.system).filter(Boolean))].sort();
+                const pillsContainer = document.getElementById('systemPills');
+                systems.forEach(sys => {
+                    const btn = document.createElement('button');
+                    btn.className = 'system-pill';
+                    btn.dataset.system = sys;
+                    btn.textContent = sys;
+                    btn.onclick = () => filterBySystem(sys);
+                    pillsContainer.appendChild(btn);
+                });
+                renderMissions();
+            } catch (e) {
+                console.error('Error cargando misiones:', e);
+                document.getElementById('missionsGrid').innerHTML = '<div class="empty-state">Error al cargar. Verificar Firebase.</div>';
+            }
+        }
+
+        // ===================== STORY / HISTORIA =====================
+        let storyLoaded = false;
+        async function loadStory() {
+            storyLoaded = true;
+            const container = document.getElementById('storyContent');
+            try {
+                const snap = await db.collection('game_story').get();
+                const chapters = [];
+                snap.forEach(doc => chapters.push({ id: doc.id, ...doc.data() }));
+                chapters.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+
+                if (chapters.length === 0) {
+                    container.innerHTML = `<div class="story-empty">
+                        <i class="fas fa-book fa-3x" style="opacity:0.3; margin-bottom:16px;"></i><br>
+                        <strong>Historia no disponible aún</strong><br>
+                        <span style="font-size:13px;">Los administradores pueden agregar capítulos de la historia desde el Panel Admin.</span>
+                    </div>`;
+                    return;
+                }
+                container.innerHTML = chapters.map(ch => `
+                    <div class="story-chapter">
+                        <div class="chapter-meta">
+                            ${ch.system ? `<span><i class="fas fa-globe me-1"></i>${ch.system}</span>` : ''}
+                            ${ch.order != null ? `<span>Capítulo ${ch.order}</span>` : ''}
+                        </div>
+                        <h3>${(ch.title || 'Sin título').replace(/</g,'&lt;')}</h3>
+                        <div class="story-body">${(ch.content || '').replace(/</g,'&lt;')}</div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                container.innerHTML = `<div class="story-empty">Error al cargar la historia: ${e.message}</div>`;
+            }
+        }
+
+        // ===================== INIT =====================
+        document.getElementById('searchInput').addEventListener('input', renderMissions);
+        const missionsGridEl = document.getElementById('missionsGrid');
+        if (missionsGridEl) missionsGridEl.addEventListener('click', handleMissionGridClick);
+        window.addEventListener('DOMContentLoaded', () => {
+            setMissionView(missionViewMode);
+            loadMissions();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Sistema</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display: none;">
+                    <a href="../../login.html" class="btn-header btn-login">Iniciar sesión</a>
+                    <a href="../../register.html" class="btn-header btn-register">Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                            <span class="user-name" id="userName">Usuario</span>
+                            <span class="user-fleet" id="userFleet">Flota</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link">Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link">Componentes</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link">Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link active">Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link">Misiones</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link">Misc Info</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link">Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link">Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <p class="mb-3"><a href="systems.html" class="nav-link" style="display: inline-flex;"><i class="fas fa-arrow-left me-2"></i>Volver a Sistemas</a></p>
+        <div id="systemContent"></div>
+        <h2 class="page-title mt-4" style="font-size: 20px;"><i class="fas fa-moon me-2"></i>Planetas de este sistema</h2>
+        <div class="items-grid" id="planetsGrid"></div>
+        <div id="planetsEmpty" class="empty-state" style="display: none;">No hay planetas en este sistema.</div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/content-utils.js"></script>
+    <script src="../../js/header-auth.js"></script>
+    <script src="../../js/favorites.js"></script>
+    <script>
+        var params = new URLSearchParams(location.search);
+        var systemId = params.get('systemId');
+        var systemContent = document.getElementById('systemContent');
+        var planetsGrid = document.getElementById('planetsGrid');
+        var planetsEmpty = document.getElementById('planetsEmpty');
+
+        async function load() {
+            if (!systemId) {
+                systemContent.innerHTML = '<div class="empty-state">Falta el ID del sistema. <a href="systems.html">Volver</a></div>';
+                return;
+            }
+            systemContent.innerHTML = '<div class="empty-state">Cargando...</div>';
+            try {
+                var systemDoc = await db.collection('systems').doc(systemId).get();
+                if (!systemDoc.exists) {
+                    systemContent.innerHTML = '<div class="empty-state">Sistema no encontrado.</div>';
+                    return;
+                }
+                var sys = systemDoc.data();
+                var levelRange = sys.levelMin != null || sys.levelMax != null ? 'Nivel ' + (sys.levelMin ?? '?') + ' - ' + (sys.levelMax ?? '?') : '';
+                var sysName = (sys.name || 'Sistema').replace(/"/g, '&quot;');
+                var favStar = (typeof isFavorite === 'function' && auth && auth.currentUser) ? (await isFavorite('system', systemId) ? 'fas' : 'far') : 'far';
+                systemContent.innerHTML = '<div class="profile-card" style="text-align:left; position:relative;">' +
+                    '<button type="button" class="btn-fav" data-type="system" data-id="' + systemId + '" data-name="' + sysName + '" title="Añadir a favoritos" style="position:absolute; top:16px; right:16px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; color:var(--accent); cursor:pointer; padding:8px 12px;"><i class="' + favStar + ' fa-star"></i></button>' +
+                    (sys.mapImage ? '<img src="' + sys.mapImage + '" alt="" style="width:100%; max-height:280px; object-fit:contain; border-radius:12px; margin-bottom:16px;">' : '') +
+                    '<h1 class="page-title">' + (sys.name || 'Sistema') + '</h1>' +
+                    (levelRange ? '<p class="profile-meta">' + levelRange + '</p>' : '') +
+                    (sys.description ? '<div class="item-description" style="margin-top:12px;">' + (typeof formatContentWithImages === 'function' ? formatContentWithImages(sys.description) : (sys.description || '').replace(/</g, '&lt;').replace(/\n/g, '<br>')) + '</div>' : '') +
+                    '</div>';
+                var systemFavBtn = systemContent.querySelector('.btn-fav');
+                if (systemFavBtn) systemFavBtn.addEventListener('click', async function() {
+                    if (typeof toggleFavorite !== 'function') return;
+                    var r = await toggleFavorite('system', systemId, sys.name || 'Sistema');
+                    var icon = this.querySelector('i');
+                    if (r && r.ok && icon) icon.className = r.isNowFavorite ? 'fas fa-star' : 'far fa-star';
+                });
+                var planetsSnap = await db.collection('planets').where('systemId', '==', systemId).get();
+                var planets = [];
+                planetsSnap.forEach(function(doc) { planets.push({ id: doc.id, systemId: doc.data().systemId, name: doc.data().name, order: doc.data().order, image: doc.data().image || doc.data().planetImage, description: doc.data().description, levelMin: doc.data().levelMin, levelMax: doc.data().levelMax, resources: doc.data().resources }); });
+                if (planets.length === 0) {
+                    var byName = await db.collection('planets').get();
+                    byName.forEach(function(doc) {
+                        var d = doc.data();
+                        if ((d.systemId || '').toLowerCase() === (sys.name || '').toLowerCase())
+                            planets.push({ id: doc.id, systemId: d.systemId, name: d.name, order: d.order, image: d.image || d.planetImage, description: d.description, levelMin: d.levelMin, levelMax: d.levelMax, resources: d.resources });
+                    });
+                }
+                planets.sort(function(a, b) { return (a.order ?? 999) - (b.order ?? 999); });
+
+                if (planets.length === 0) {
+                    planetsGrid.innerHTML = '';
+                    planetsEmpty.style.display = 'block';
+                    return;
+                }
+                planetsEmpty.style.display = 'none';
+                planetsGrid.innerHTML = planets.map(function(p) {
+                    var img = p.image || '';
+                    var levelRange = p.levelMin != null || p.levelMax != null ? 'Nivel ' + (p.levelMin ?? '?') + '-' + (p.levelMax ?? '?') : '';
+                    var res = Array.isArray(p.resources) && p.resources.length ? p.resources.join(', ') : '';
+                    var desc = (p.description || '').substring(0, 120);
+                    if ((p.description || '').length > 120) desc += '…';
+                    var pName = (p.name || 'Planeta').replace(/"/g, '&quot;');
+                    return '<article class="item-card" style="cursor:pointer; position:relative;" onclick="event.target.closest(\'.btn-fav\') ? null : location.href=\'planet-detail.html?id=' + encodeURIComponent(p.id) + '\'">' +
+                        '<button type="button" class="btn-fav" data-type="planet" data-id="' + p.id + '" data-name="' + pName + '" title="Añadir a favoritos" style="position:absolute; top:8px; right:8px; z-index:2; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; color:var(--accent); cursor:pointer; padding:6px 10px;" onclick="event.stopPropagation();"><i class="far fa-star"></i></button>' +
+                        (img ? '<img src="' + img + '" alt="" style="width:100%; max-height:120px; object-fit:cover; border-radius:8px; margin-bottom:10px;">' : '') +
+                        '<div class="item-header"><div class="item-name">' + (p.name || 'Planeta') + '</div></div>' +
+                        '<div class="item-meta">' + levelRange + (res ? ' · ' + res : '') + '</div>' +
+                        (desc ? '<p class="item-description">' + desc + '</p>' : '') +
+                        '</article>';
+                }).join('');
+                planetsGrid.querySelectorAll('.btn-fav').forEach(function(btn) {
+                    btn.addEventListener('click', async function(e) {
+                        e.stopPropagation();
+                        if (typeof toggleFavorite !== 'function') return;
+                        var r = await toggleFavorite(btn.dataset.type, btn.dataset.id, btn.dataset.name);
+                        var icon = btn.querySelector('i');
+                        if (r && r.ok && icon) icon.className = r.isNowFavorite ? 'fas fa-star' : 'far fa-star';
+                    });
+                });
+            } catch (e) {
+                console.error(e);
+                systemContent.innerHTML = '<div class="empty-state">Error al cargar el sistema.</div>';
+            }
+        }
+        window.addEventListener('DOMContentLoaded', load);
+    </script>
+</body>
+</html>

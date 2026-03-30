@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Nave</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon theme-icon" id="themeIcon"></i></div>
+                <div class="auth-buttons" id="authButtons" style="display: none;"><a href="../../login.html" class="btn-header btn-login">Iniciar sesión</a><a href="../../register.html" class="btn-header btn-register">Registrarse</a></div>
+                <div class="dropdown" id="userProfile" style="display: none;">
+                    <div class="user-profile" data-bs-toggle="dropdown">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info"><span class="user-name" id="userName">Usuario</span><span class="user-fleet" id="userFleet">Flota</span><span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span></div>
+                        <i class="fas fa-chevron-down" style="color: var(--accent);"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="ships.html" class="nav-link active"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <p class="mb-3"><a href="ships.html" class="nav-link" style="display: inline-flex;"><i class="fas fa-arrow-left me-2"></i>Volver a Naves</a></p>
+        <div id="shipContent"></div>
+        <div id="ship-comments-section" class="main-container" style="padding-top: 0;"></div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../../js/firebase-config.js"></script>
+    <script src="../../js/content-utils.js"></script>
+    <script src="../../js/header-auth.js"></script>
+    <script src="../../js/favorites.js"></script>
+    <script src="../../js/comments.js"></script>
+    <script>
+        (function() {
+            const db = window.db;
+            const params = new URLSearchParams(location.search);
+            const shipId = params.get('id');
+            const container = document.getElementById('shipContent');
+            if (!shipId || !db) {
+                container.innerHTML = '<div class="empty-state">Nave no especificada. <a href="ships.html">Volver</a></div>';
+                return;
+            }
+            async function load() {
+                container.innerHTML = '<div class="empty-state">Cargando...</div>';
+                try {
+                    const doc = await db.collection('ships').doc(shipId).get();
+                    if (!doc.exists) {
+                        container.innerHTML = '<div class="empty-state">Nave no encontrada. <a href="ships.html">Volver</a></div>';
+                        return;
+                    }
+                    const s = doc.data();
+                    const auth = window.auth;
+                    let favStar = 'far';
+                    if (typeof window.isFavorite === 'function' && auth && auth.currentUser)
+                        favStar = await window.isFavorite('ship', shipId) ? 'fas' : 'far';
+                    const req = s.requirements || {};
+                    const stats = s.stats || {};
+                    const reqParts = [];
+                    if (req.level != null) reqParts.push('Nivel ' + req.level);
+                    if (req.credits != null) reqParts.push(req.credits.toLocaleString() + ' crionita');
+                    if (s.creditsRaven != null && s.creditsRaven > 0) reqParts.push(s.creditsRaven.toLocaleString() + ' Raven');
+                    const armors = Array.isArray(s.armors) ? s.armors : [];
+                    const armorsHtml = armors.length ? '<p class="profile-meta"><strong>Blindajes:</strong> ' + armors.map(a => (a.type || '') + (a.cost != null ? ' ' + a.cost + ' cr' : '') + (a.level != null ? ', niv. ' + a.level : '')).filter(Boolean).join('; ') + '</p>' : '';
+                    const droneCosts = Array.isArray(s.droneSlotCosts) ? s.droneSlotCosts : [];
+                    const cortexCosts = Array.isArray(s.cortexSlotCosts) ? s.cortexSlotCosts : [];
+                    const bonuses = Array.isArray(s.rareBonuses) && s.rareBonuses.length ? s.rareBonuses : (s.rareBonus && s.rareBonus.type ? [s.rareBonus] : []);
+                    const rareBonus = bonuses.map(function(b) { var t = b.type === 'health' ? 'Vida' : b.type === 'damage' ? 'Daño' : b.type === 'speed' ? 'Velocidad' : b.type; return '<span class="badge me-1" style="background:rgba(234,179,8,0.3); color:#facc15;">+' + (b.value || 0) + '% ' + t + '</span>'; }).join('');
+                    const decryptComps = Array.isArray(s.decryptComponents) ? s.decryptComponents : [];
+                    const decryptHtml = (s.decryptShip ? '<span class="badge badge-decrypt me-1">Nave base: ' + s.decryptShip + '</span>' : '') + decryptComps.map(c => '<span class="badge badge-decrypt me-1">Comp: ' + c + '</span>').join('');
+                    
+                    // Logic for component slots
+                    let slotsTypesHtml = '';
+                    if (s.componentSlots && Array.isArray(s.componentSlots) && s.componentSlots.length > 0) {
+                        // Fetch suggested components names and component types for icons
+                        const suggestedCompIds = s.componentSlots.map(slot => slot.componentId).filter(id => id && id.length > 10);
+                        let compNamesMap = {};
+                        let typeIconsMap = {};
+                        
+                        try {
+                            const [compDocs, typesSnap] = await Promise.all([
+                                Promise.all(suggestedCompIds.map(id => db.collection('components').doc(id).get())),
+                                db.collection('component_types').get()
+                            ]);
+                            
+                            compDocs.forEach(doc => { if (doc.exists) compNamesMap[doc.id] = doc.data().name; });
+                            typesSnap.forEach(doc => {
+                                const data = doc.data();
+                                typeIconsMap[data.name || doc.id] = {
+                                    blue: data.imageBlue,
+                                    gold: data.imageGold,
+                                    arcane: data.imageArcane
+                                };
+                            });
+                        } catch(e) { console.warn("Error fetching data for slots:", e); }
+
+                        slotsTypesHtml = s.componentSlots.map(slot => {
+                            const subText = compNamesMap[slot.componentId] ? ` <span style="opacity:0.6; font-size:0.85em;">(${compNamesMap[slot.componentId]})</span>` : '';
+                            const icons = typeIconsMap[slot.type] || {};
+                            let iconsHtml = '';
+                            if (icons.blue) iconsHtml += `<img src="../../${icons.blue}" style="width:18px;height:18px;object-fit:contain;" title="Azul">`;
+                            if (icons.gold) iconsHtml += `<img src="../../${icons.gold}" style="width:18px;height:18px;object-fit:contain;" title="Dorado">`;
+                            if (icons.arcane) iconsHtml += `<img src="../../${icons.arcane}" style="width:18px;height:18px;object-fit:contain;" title="Arcano">`;
+
+                            return '<div class="badge" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); color:var(--text-secondary); margin:3px; font-weight:normal; padding:6px 10px; display:inline-flex; align-items:center; gap:8px;">' + 
+                                (iconsHtml ? `<div style="display:flex; gap:3px;">${iconsHtml}</div>` : '') +
+                                '<span>' + (slot.type || 'Cualquiera') + subText + '</span>' + 
+                                '</div>';
+                        }).join('');
+                    } else if (s.componentSlotTypes && s.componentSlotTypes.length) {
+                        // Fallback for old data format
+                        slotsTypesHtml = s.componentSlotTypes.map(t => '<span class="badge" style="background:rgba(255,255,255,0.1); color:var(--text-secondary); margin:3px; font-weight:normal;">' + t + '</span>').join('');
+                    }
+
+                    container.innerHTML = '<div class="profile-card" style="text-align: left; position: relative;">' +
+                        '<button type="button" class="btn-fav" data-type="ship" data-id="' + shipId + '" data-name="' + (s.name || '').replace(/"/g, '&quot;') + '" title="Añadir a favoritos" style="position:absolute;top:16px;right:16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;color:var(--accent);cursor:pointer;padding:8px 12px;"><i class="' + favStar + ' fa-star"></i></button>' +
+                        (s.image ? '<img src="' + s.image.replace(/"/g, '&quot;') + '" alt="" style="width:100%;max-height:280px;object-fit:contain;border-radius:12px;margin-bottom:16px;" loading="lazy">' : '') +
+                        '<h1 class="page-title">' + (s.name || 'Nave').replace(/</g, '&lt;') + '</h1>' +
+                        (s.role ? '<h3 style="color: var(--accent); margin-top: -10px; margin-bottom: 16px; font-weight: 500;">' + s.role.replace(/</g, '&lt;') + '</h3>' : '') +
+                        '<p class="profile-meta">' + (s.type ? '<span class="badge badge-type me-2">' + s.type + '</span>' : '') + (s.faction ? '<span class="badge badge-faction me-2">' + s.faction + '</span>' : '') + rareBonus + '</p>' +
+                        (reqParts.length ? '<p class="profile-meta"><strong>Requisitos:</strong> ' + reqParts.join(' · ') + '</p>' : '') +
+                        (decryptHtml ? '<p class="profile-meta"><strong>Para Descifrar:</strong> ' + decryptHtml + '</p>' : '') +
+                        (stats.armor != null || stats.speed != null || stats.damage != null ? '<p class="profile-meta"><strong>Stats:</strong> ' + [stats.armor != null ? 'Blindaje ' + stats.armor : '', stats.speed != null ? 'Velocidad ' + stats.speed : '', stats.damage != null ? 'Daño ' + stats.damage : ''].filter(Boolean).join(' · ') + '</p>' : '') +
+                        (s.componentSlotsMax != null ? '<p class="profile-meta" style="display:flex; flex-wrap:wrap; align-items:center;"><strong>Ranuras de componentes (' + s.componentSlotsMax + '):</strong><br><div style="display:flex; flex-wrap:wrap; width:100%; margin-top:8px;">' + slotsTypesHtml + '</div></p>' : '') +
+                        (droneCosts.length ? '<p class="profile-meta"><strong>Coste ranuras drones:</strong> ' + droneCosts.slice(1).map((c, i) => 'Ranura ' + (i+2) + ': ' + (c || 0)).join(', ') + '</p>' : '') +
+                        (cortexCosts.length ? '<p class="profile-meta"><strong>Coste ranuras cortex:</strong> ' + (cortexCosts[1] != null ? 'Ranura 2: ' + cortexCosts[1] : '') + '</p>' : '') +
+                        armorsHtml +
+                        (s.location ? '<p class="profile-meta"><i class="fas fa-map-marker-alt me-1"></i> ' + s.location.replace(/</g, '&lt;') + '</p>' : '') +
+                        (s.description ? '<div class="item-description" style="margin-top:16px;">' + (typeof formatContentWithImages === 'function' ? formatContentWithImages(s.description) : s.description.replace(/</g, '&lt;').replace(/\n/g, '<br>')) + '</div>' : '') +
+                        '<div class="radar-container" style="margin-top: 24px; position: relative; height: 350px; width: 100%; display: flex; justify-content: center;"><canvas id="shipRadarChart"></canvas></div>' +
+                        '</div>';
+                    container.querySelector('.btn-fav').addEventListener('click', async function() {
+                        if (typeof window.toggleFavorite !== 'function') return;
+                        const r = await window.toggleFavorite('ship', shipId, s.name || '');
+                        const icon = this.querySelector('i');
+                        if (r && r.ok && icon) icon.className = r.isNowFavorite ? 'fas fa-star' : 'far fa-star';
+                    });
+                    
+                    // Render Radar Chart
+                    const rs = s.radarStats || {};
+                    const ctx = document.getElementById('shipRadarChart');
+                    if (ctx) {
+                        const labelsMap = {1: 'E', 2: 'D', 3: 'C', 4: 'B', 5: 'A', 6: 'S'};
+                        const theme = document.documentElement.getAttribute('data-theme');
+                        const isDark = theme === 'dark';
+                        const textColor = isDark ? '#9ca3af' : '#4b5563';
+                        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+                        new Chart(ctx, {
+                            type: 'radar',
+                            data: {
+                                labels: ['Burst', 'Tanqueo', 'AoE DPS', 'Control', 'Soporte', 'Movilidad', 'Mono DPS'],
+                                datasets: [{
+                                    label: 'Estadísticas de la Nave',
+                                    data: [
+                                        rs.burst || 4,
+                                        rs.tankiness || 4,
+                                        rs.aoeDps || 3,
+                                        rs.control || 3,
+                                        rs.support || 3,
+                                        rs.mobility || 3,
+                                        rs.monoDps || 3
+                                    ],
+                                    backgroundColor: 'rgba(56, 189, 248, 0.2)',
+                                    borderColor: 'rgba(56, 189, 248, 1)',
+                                    pointBackgroundColor: 'rgba(56, 189, 248, 1)',
+                                    pointBorderColor: '#fff',
+                                    pointHoverBackgroundColor: '#fff',
+                                    pointHoverBorderColor: 'rgba(56, 189, 248, 1)',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                return context.chart.data.labels[context.dataIndex] + ': ' + labelsMap[context.raw];
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    r: {
+                                        min: 0,
+                                        max: 6,
+                                        ticks: {
+                                            stepSize: 1,
+                                            display: false // Hide numerical ticks
+                                        },
+                                        pointLabels: {
+                                            color: textColor,
+                                            font: {
+                                                size: 13,
+                                                family: "'Inter', sans-serif"
+                                            }
+                                        },
+                                        grid: {
+                                            color: gridColor
+                                        },
+                                        angleLines: {
+                                            color: gridColor
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.error(e);
+                    container.innerHTML = '<div class="empty-state">Error al cargar. <a href="ships.html">Volver</a></div>';
+                }
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load);
+            else load();
+        })();
+    </script>
+    <script>
+        // Init comentarios para esta nave
+        (function() {
+            const params = new URLSearchParams(location.search);
+            const shipId = params.get('id');
+            if (shipId && window.GWComments) {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        window.GWComments.init({ collection: 'ships', docId: shipId, containerId: 'ship-comments-section' });
+                    });
+                } else {
+                    window.GWComments.init({ collection: 'ships', docId: shipId, containerId: 'ship-comments-section' });
+                }
+            }
+        })();
+    </script>
+</body>
+</html>
