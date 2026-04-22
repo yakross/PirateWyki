@@ -7,76 +7,226 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
+    <style>
+        /* ── Fondo animado de partículas ─────────────────────── */
+        .auth-page { position: relative; min-height: 100vh; overflow-x: hidden; overflow-y: auto; }
+        .nebula-bg {
+            position: fixed; inset: 0; z-index: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(102,126,234,0.12) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 20%, rgba(118,75,162,0.10) 0%, transparent 55%),
+                        radial-gradient(ellipse at 60% 80%, rgba(59,130,246,0.08) 0%, transparent 50%),
+                        #0a0b14;
+            animation: nebulaPulse 12s ease-in-out infinite alternate;
+        }
+        @keyframes nebulaPulse {
+            0%   { filter: hue-rotate(0deg) brightness(1); }
+            100% { filter: hue-rotate(15deg) brightness(1.08); }
+        }
+
+        /* ── Estrellitas ──────────────────────────────────────── */
+        .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--dur, 3s) ease-in-out infinite alternate; }
+        @keyframes twinkle { 0% { opacity: 0.1; transform: scale(1); } 100% { opacity: 0.9; transform: scale(1.4); } }
+
+        /* ── Layout ───────────────────────────────────────────── */
+        .back-link {
+            position: fixed; top: 20px; left: 20px; z-index: 100;
+            color: var(--text-secondary); text-decoration: none; font-size: 14px;
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.06); border: 1px solid var(--border-color);
+            padding: 8px 14px; border-radius: 30px; backdrop-filter: blur(10px);
+            transition: all 0.2s;
+        }
+        .back-link:hover { color: var(--accent); border-color: var(--accent); transform: translateX(-2px); }
+
+        .register-container {
+            position: relative; z-index: 10;
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 60px 20px 40px;
+        }
+
+        .register-card {
+            width: 100%; max-width: 460px;
+            background: rgba(16,17,30,0.85);
+            border: 1px solid rgba(102,126,234,0.25);
+            border-radius: 24px;
+            padding: 40px 38px 36px;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 32px 80px rgba(0,0,0,0.5), 0 0 60px rgba(102,126,234,0.08);
+            animation: cardIn 0.5s cubic-bezier(.22,1,.36,1) both;
+        }
+        @keyframes cardIn { from { opacity:0; transform: translateY(24px) scale(0.97); } to { opacity:1; transform:none; } }
+
+        /* ── Logo ─────────────────────────────────────────────── */
+        .logo-container { text-align: center; margin-bottom: 28px; }
+        .logo-icon {
+            width: 64px; height: 64px; border-radius: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px; color: white; margin: 0 auto 14px;
+            box-shadow: 0 8px 24px rgba(102,126,234,0.35);
+            animation: floatIcon 4s ease-in-out infinite;
+        }
+        @keyframes floatIcon { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .logo-text { font-size: 22px; font-weight: 700; color: var(--text-primary); margin: 0 0 4px; }
+        .logo-subtitle { font-size: 11px; letter-spacing: 3px; color: var(--accent); opacity: 0.7; text-transform: uppercase; margin: 0; }
+
+        /* ── Alertas ──────────────────────────────────────────── */
+        .alert { border-radius: 12px; padding: 12px 16px; font-size: 14px; margin-bottom: 16px; display: none; }
+        .alert-error   { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+        .alert-success { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
+        .alert-info    { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; font-size:13px; }
+
+        /* ── Google btn ───────────────────────────────────────── */
+        .btn-google {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; padding: 12px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px; color: var(--text-primary);
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; margin-bottom: 4px;
+        }
+        .btn-google:hover { background: rgba(66,133,244,0.1); border-color: rgba(66,133,244,0.4); transform: translateY(-1px); }
+        .btn-google:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+        .google-svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        /* ── Divider ──────────────────────────────────────────── */
+        .divider-or {
+            display: flex; align-items: center; gap: 12px;
+            margin: 18px 0; color: var(--text-tertiary); font-size: 12px;
+        }
+        .divider-or::before, .divider-or::after { content:''; flex:1; height:1px; background: rgba(255,255,255,0.08); }
+
+        /* ── Form ─────────────────────────────────────────────── */
+        .form-group { margin-bottom: 14px; }
+        .form-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; display: block; }
+        .input-group-custom { position: relative; }
+        .input-icon {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--text-tertiary); font-size: 14px; pointer-events: none; z-index: 1;
+        }
+        .form-control {
+            width: 100%; padding: 11px 14px 11px 40px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; color: var(--text-primary); font-size: 14px;
+            transition: all 0.2s; outline: none;
+        }
+        .form-control:focus { border-color: var(--accent); background: rgba(102,126,234,0.06); box-shadow: 0 0 0 3px rgba(102,126,234,0.12); }
+        .form-control::placeholder { color: var(--text-tertiary); }
+
+        /* ── Fuerza contraseña ────────────────────────────────── */
+        .password-strength {
+            height: 3px; border-radius: 4px; margin-top: 6px;
+            background: rgba(255,255,255,0.08); overflow: hidden;
+        }
+        .password-strength-bar {
+            height: 100%; border-radius: 4px;
+            transition: width 0.4s ease, background 0.4s ease;
+            width: 0%;
+        }
+        .strength-label { font-size: 11px; color: var(--text-tertiary); margin-top: 3px; }
+
+        /* ── Submit btn ───────────────────────────────────────── */
+        .btn-register-submit {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; padding: 13px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none; border-radius: 12px; color: white;
+            font-size: 15px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s; margin-top: 8px;
+            box-shadow: 0 4px 20px rgba(102,126,234,0.3);
+        }
+        .btn-register-submit:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(102,126,234,0.4); }
+        .btn-register-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .auth-footer { text-align: center; margin-top: 18px; font-size: 13px; color: var(--text-tertiary); }
+        .auth-footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .auth-footer a:hover { text-decoration: underline; }
+    </style>
 </head>
 <body class="auth-page">
+    <div class="nebula-bg"></div>
     <div class="stars" id="stars"></div>
-
-    <a href="index.html" class="back-link">
-        <i class="fas fa-arrow-left"></i>
-        Volver al inicio
-    </a>
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i data-i18n="auth.back_home"> Volver al inicio</a>
 
     <div class="register-container">
         <div class="register-card">
             <div class="logo-container">
-                <div class="logo-icon">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <h1 class="logo-text">Crear cuenta</h1>
-                <p class="logo-subtitle">ÚNETE A GALAXWIKI</p>
+                <div class="logo-icon"><i class="fas fa-user-astronaut"></i></div>
+                <h1 class="logo-text" data-i18n="register.title">Crear cuenta</h1>
+                <p class="logo-subtitle">Únete a GalaxWiki</p>
             </div>
 
-            <div class="alert alert-error" id="errorAlert"></div>
+            <div class="alert alert-error"  id="errorAlert"></div>
             <div class="alert alert-success" id="successAlert"></div>
 
-            <form id="registerForm">
+            <!-- Info: Google en localhost -->
+            <div class="alert alert-info" id="domainInfo" style="display:none;">
+                <i class="fas fa-info-circle me-1"></i>
+                <span data-i18n="register.google_warning">El acceso con Google requiere un dominio autorizado. Si ves un error, usa el registro por correo.</span>
+            </div>
+
+            <!-- Google -->
+            <button type="button" class="btn-google" id="btnGoogle" onclick="registerWithGoogle()">
+                <svg class="google-svg" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Continuar con Google
+            </button>
+
+            <div class="divider-or" data-i18n="auth.or_register">o regístrate con correo</div>
+
+            <!-- Formulario email -->
+            <form id="registerForm" onsubmit="registerWithEmail(event)" autocomplete="off">
                 <div class="form-group">
-                    <label class="form-label">Usuario</label>
+                    <label class="form-label">Nombre de usuario</label>
                     <div class="input-group-custom">
                         <i class="fas fa-user input-icon"></i>
-                        <input type="text" class="form-control" id="username" placeholder="Nombre de usuario" required minlength="3" autocomplete="username">
+                        <input type="text" class="form-control" id="username"
+                               placeholder="Tu nombre en la galaxia" data-i18n-placeholder="register.username" required minlength="3" autocomplete="username">
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Correo electrónico</label>
                     <div class="input-group-custom">
                         <i class="fas fa-envelope input-icon"></i>
-                        <input type="email" class="form-control" id="email" placeholder="tu@email.com" required autocomplete="email">
+                        <input type="email" class="form-control" id="email"
+                               placeholder="tu@email.com" required autocomplete="email">
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label class="form-label">Nombre de flota <span style="color: var(--text-tertiary); font-weight: normal;">(opcional)</span></label>
+                    <label class="form-label">Flota <span style="color:var(--text-tertiary);font-weight:400;">(opcional)</span></label>
                     <div class="input-group-custom">
                         <i class="fas fa-flag input-icon"></i>
-                        <input type="text" class="form-control" id="fleet" placeholder="Ej: Flota Alpha">
+                        <input type="text" class="form-control" id="fleet"
+                               placeholder="Ej: Flota Alpha" autocomplete="off">
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Contraseña</label>
                     <div class="input-group-custom">
                         <i class="fas fa-lock input-icon"></i>
-                        <input type="password" class="form-control" id="password" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
+                        <input type="password" class="form-control" id="password"
+                               placeholder="Mínimo 6 caracteres" data-i18n-placeholder="auth.password" required minlength="6"
+                               autocomplete="new-password" oninput="updateStrength(this.value)">
                     </div>
+                    <div class="password-strength"><div class="password-strength-bar" id="strengthBar"></div></div>
+                    <div class="strength-label" id="strengthLabel"></div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Confirmar contraseña</label>
                     <div class="input-group-custom">
                         <i class="fas fa-lock input-icon"></i>
-                        <input type="password" class="form-control" id="confirmPassword" placeholder="Repite tu contraseña" required autocomplete="new-password">
+                        <input type="password" class="form-control" id="confirmPassword"
+                               placeholder="Repite tu contraseña" data-i18n-placeholder="register.confirm_password" required autocomplete="new-password">
                     </div>
                 </div>
-
-                <button type="submit" class="btn-register" id="registerBtn">
-                    <i class="fas fa-rocket me-2"></i>Crear cuenta
+                <button type="submit" class="btn-register-submit" id="registerBtn">
+                    <i class="fas fa-rocket"></i> Crear cuenta
                 </button>
-
-                <p class="auth-note">
-                    La primera cuenta tendrá permisos de <strong>administrador</strong>. El resto serán usuarios normales.
-                </p>
                 <div class="auth-footer">
                     ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
                 </div>
@@ -88,100 +238,172 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
     <script src="js/firebase-config.js"></script>
-
     <script>
-        const auth = window.auth;
-        const db = window.db;
+    'use strict';
+    const auth = window.auth;
+    const db   = window.db;
 
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 100; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.width = Math.random() * 3 + 'px';
-            star.style.height = star.style.width;
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDelay = Math.random() * 3 + 's';
-            starsContainer.appendChild(star);
+    // ── Estrellas ──────────────────────────────────────────────
+    (function() {
+        const el = document.getElementById('stars');
+        for (let i = 0; i < 120; i++) {
+            const s = document.createElement('div');
+            s.className = 'star';
+            const size = Math.random() * 2.5 + 0.5;
+            s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${(Math.random()*3+2).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s;opacity:${(Math.random()*0.5+0.1).toFixed(2)}`;
+            el.appendChild(s);
         }
-
-        function showError(message) {
-            const el = document.getElementById('errorAlert');
-            el.textContent = message;
-            el.style.display = 'block';
-            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        // Detectar si estamos en localhost — mostrar aviso de Google
+        if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+            document.getElementById('domainInfo').style.display = 'block';
         }
+    })();
 
-        function showSuccess(message) {
-            document.getElementById('successAlert').textContent = message;
-            document.getElementById('successAlert').style.display = 'block';
+    // ── Fuerza de contraseña ───────────────────────────────────
+    function updateStrength(val) {
+        const bar = document.getElementById('strengthBar');
+        const lbl = document.getElementById('strengthLabel');
+        if (!val) { bar.style.width = '0%'; lbl.textContent = ''; return; }
+        let score = 0;
+        if (val.length >= 6)  score++;
+        if (val.length >= 10) score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[0-9]/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+        const levels = [
+            { pct:'20%', color:'#ef4444', text:'Muy débil' },
+            { pct:'40%', color:'#f97316', text:'Débil' },
+            { pct:'60%', color:'#eab308', text:'Regular' },
+            { pct:'80%', color:'#22c55e', text:'Buena' },
+            { pct:'100%',color:'#a78bfa', text:'¡Excelente!' },
+        ];
+        const l = levels[Math.min(score - 1, 4)] || levels[0];
+        bar.style.width = l.pct; bar.style.background = l.color;
+        lbl.textContent = l.text; lbl.style.color = l.color;
+    }
+
+    // ── Alertas ────────────────────────────────────────────────
+    function showError(msg) {
+        const el = document.getElementById('errorAlert');
+        el.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>' + msg;
+        el.style.display = 'block';
+        setTimeout(() => { el.style.display = 'none'; }, 7000);
+    }
+    function showSuccess(msg) {
+        const el = document.getElementById('successAlert');
+        el.innerHTML = '<i class="fas fa-check-circle me-2"></i>' + msg;
+        el.style.display = 'block';
+    }
+
+    // ── Crear documento de usuario en Firestore ────────────────
+    // FIX: Ya no se intenta leer toda la colección users (daba "Missing permissions").
+    // El primer admin se asigna manualmente desde Firebase Console.
+    async function createUserDoc(user, extra) {
+        extra = extra || {};
+        const ref  = db.collection('users').doc(user.uid);
+        const snap = await ref.get();
+        if (snap.exists) return false; // Ya existe (ej: login con Google previo)
+
+        await ref.set({
+            uid:          user.uid,
+            email:        user.email || '',
+            username:     extra.username || user.displayName || (user.email ? user.email.split('@')[0] : 'Piloto'),
+            fleet:        extra.fleet || '',
+            avatar:       user.photoURL || '',
+            role:         'user',   // Asigna admin manualmente desde Firebase Console si es necesario
+            postCount:    0,
+            xp:           0,
+            profileFrame: 'none',
+            createdAt:    firebase.firestore.FieldValue.serverTimestamp(),
+        });
+        return true;
+    }
+
+    // ── Registro con Google ────────────────────────────────────
+    async function registerWithGoogle() {
+        const btn = document.getElementById('btnGoogle');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando...';
+        try {
+            _registering = true; // Bloquear redirect automático hasta terminar
+            const provider = new firebase.auth.GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            const result = await auth.signInWithPopup(provider);
+            await createUserDoc(result.user, {});
+            _registering = false;
+            showSuccess('¡Bienvenido! Redirigiendo...');
+            setTimeout(() => { window.location.href = 'index.html'; }, 700);
+        } catch(e) {
+            _registering = false;
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="google-svg" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Continuar con Google';
+            if (e.code === 'auth/unauthorized-domain') {
+                showError('Este dominio no está autorizado para Google. Usa registro por correo o añade el dominio en Firebase Console → Authentication → Authorized domains.');
+            } else if (e.code !== 'auth/popup-closed-by-user') {
+                showError('Error con Google: ' + e.message);
+            }
         }
+    }
 
-        function setLoading(isLoading) {
-            const btn = document.getElementById('registerBtn');
-            btn.disabled = isLoading;
-            btn.innerHTML = isLoading ? '<span class="loading-spinner"></span> Creando cuenta...' : '<i class="fas fa-rocket me-2"></i>Crear cuenta';
-        }
+    // ── Registro con email/contraseña ──────────────────────────
+    async function registerWithEmail(e) {
+        e.preventDefault();
+        const username        = document.getElementById('username').value.trim();
+        const email           = document.getElementById('email').value.trim();
+        const fleet           = document.getElementById('fleet').value.trim();
+        const password        = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
 
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const fleet = document.getElementById('fleet').value.trim() || 'Sin Flota';
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+        if (username.length < 3) { showError('El nombre de usuario debe tener al menos 3 caracteres.'); return; }
+        if (password !== confirmPassword) { showError('Las contraseñas no coinciden.'); return; }
 
-            if (password !== confirmPassword) {
-                showError('Las contraseñas no coinciden');
+        const btn = document.getElementById('registerBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
+
+        try {
+            // Verificar username único (solo consulta el propio campo, no lista la colección)
+            const usernameCheck = await db.collection('users').where('username', '==', username).get();
+            if (!usernameCheck.empty) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-rocket"></i> Crear cuenta';
+                showError('Este nombre de usuario ya está en uso. Elige otro.');
                 return;
             }
-            if (password.length < 6) {
-                showError('La contraseña debe tener al menos 6 caracteres');
-                return;
-            }
 
-            setLoading(true);
-            try {
-                const usernameQuery = await db.collection('users').where('username', '==', username).get();
-                if (!usernameQuery.empty) {
-                    setLoading(false);
-                    showError('Este nombre de usuario ya está en uso');
-                    return;
-                }
+            _registering = true; // Bloquear redirect automático hasta terminar
+            const cred = await auth.createUserWithEmailAndPassword(email, password);
+            await createUserDoc(cred.user, { username, fleet });
+            _registering = false;
 
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                const usersSnapshot = await db.collection('users').get();
-                const isFirstUser = usersSnapshot.empty;
+            showSuccess('¡Cuenta creada! Redirigiendo...');
+            setTimeout(() => { window.location.href = 'index.html'; }, 900);
 
-                await db.collection('users').doc(user.uid).set({
-                    username,
-                    email,
-                    fleet,
-                    role: isFirstUser ? 'admin' : 'user',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    avatar: null
-                });
+        } catch(err) {
+            _registering = false;
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-rocket"></i> Crear cuenta';
+            const msgs = {
+                'auth/email-already-in-use': 'Este correo ya está registrado. ¿Quieres <a href="login.html" data-i18n="auth.sign_in_here">iniciar sesión</a>?',
+                'auth/invalid-email':        'El correo electrónico no es válido.',
+                'auth/weak-password':        'La contraseña es muy débil (mínimo 6 caracteres).',
+                'auth/network-request-failed': 'Error de conexión. Comprueba tu internet.',
+            };
+            const htmlMsg = msgs[err.code] || err.message;
+            document.getElementById('errorAlert').innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>' + htmlMsg;
+            document.getElementById('errorAlert').style.display = 'block';
+            setTimeout(() => { document.getElementById('errorAlert').style.display = 'none'; }, 8000);
+        }
+    }
 
-                showSuccess(isFirstUser ? '¡Cuenta de administrador creada! Redirigiendo...' : '¡Cuenta creada! Redirigiendo...');
-                setTimeout(() => { window.location.href = 'index.html'; }, 1000);
-            } catch (error) {
-                setLoading(false);
-                const messages = {
-                    'auth/email-already-in-use': 'Este correo ya está registrado',
-                    'auth/invalid-email': 'Correo electrónico inválido',
-                    'auth/weak-password': 'La contraseña es muy débil',
-                    'auth/operation-not-allowed': 'Registro deshabilitado temporalmente'
-                };
-                showError(messages[error.code] || error.message);
-            }
-        });
-
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                window.location.href = 'index.html';
-            }
-        });
+    // ── Redirigir si ya está autenticado ───────────────────────
+    // IMPORTANTE: se usa un flag para evitar que onAuthStateChanged
+    // redirija ANTES de que createUserDoc termine de escribir en Firestore.
+    let _registering = false;
+    auth.onAuthStateChanged(user => {
+        if (user && !_registering) window.location.href = 'index.html';
+    });
     </script>
+    <script src="../../js/i18n.js"></script>
 </body>
 </html>

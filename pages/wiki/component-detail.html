@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,20 +9,26 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../../css/styles.css" rel="stylesheet">
 </head>
+
 <body>
     <header class="header">
         <div class="header-content">
             <div class="logo-section">
-                <a href="../../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                <a href="../../index.html"
+                    style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
                     <div class="logo-img"><i class="fas fa-rocket"></i></div>
-                    <div class="logo-text"><span class="logo-title">GalaxWiki</span><span class="logo-subtitle">PIRATE GALAXY</span></div>
+                    <div class="logo-text"><span class="logo-title">GalaxWiki</span><span class="logo-subtitle">PIRATE
+                            GALAXY</span></div>
                 </a>
             </div>
             <div class="user-section">
-                <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon theme-icon" id="themeIcon"></i></div>
+                <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
                 <div class="auth-buttons" id="authButtons" style="display: none;">
-                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
-                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                    <a href="../../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar
+                        sesión</a>
+                    <a href="../../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i>
+                        Registrarse</a>
                 </div>
                 <div class="dropdown" id="userProfile" style="display: none;">
                     <div class="user-profile" data-bs-toggle="dropdown">
@@ -33,39 +40,59 @@
                         <i class="fas fa-chevron-down" style="color: #667eea;"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
-                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
-                        <li><a class="dropdown-item" href="../favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
-                        <li><a class="dropdown-item" href="../settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                        <li><a class="dropdown-item" href="../profile.html"><i class="fas fa-user me-2"></i>Mi
+                                Perfil</a></li>
+                        <li><a class="dropdown-item" href="tracker.html"><i class="fas fa-check-double me-2"></i>Mi
+                                Colección</a></li>
+                        <li><a class="dropdown-item" href="../favorites.html"><i
+                                    class="fas fa-star me-2"></i>Favoritos</a></li>
+                        <li><a class="dropdown-item" href="../settings.html"><i
+                                    class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item"
+                                href="../admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a>
+                        </li>
+                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i
+                                    class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </header>
-    
+
     <nav class="navigation">
         <div class="nav-content">
             <ul class="nav-links">
-                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
-                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
-                <li class="nav-item"><a href="components.html" class="nav-link active"><i class="fas fa-cog"></i> Componentes</a></li>
-                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a>
+                </li>
+                <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i>
+                        Naves</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link active"><i class="fas fa-cog"></i>
+                        Componentes</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a>
+                </li>
                 <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
-                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
-                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
-                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
-                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
-                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
-                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+                <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a>
+                </li>
+                <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a>
+                </li>
+                <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc
+                        Info</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i>
+                        Calculadora</a></li>
+                <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a>
+                </li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i>
+                        Noticias</a></li>
             </ul>
         </div>
     </nav>
 
     <main class="main-container">
-        <p class="mb-3"><a href="components.html" class="nav-link" style="display: inline-flex;"><i class="fas fa-arrow-left me-2"></i>Volver a Componentes</a></p>
+        <p class="mb-3"><a href="components.html" class="nav-link" style="display: inline-flex;"><i
+                    class="fas fa-arrow-left me-2"></i>Volver a Componentes</a></p>
         <div id="componentContent"></div>
     </main>
 
@@ -81,4 +108,5 @@
     <script src="../../js/favorites.js"></script>
     <script src="../../js/component-detail.js"></script>
 </body>
+
 </html>

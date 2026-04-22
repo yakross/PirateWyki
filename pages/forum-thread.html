@@ -3,83 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GalaxWiki - Foro - Hilo</title>
+    <title>GalaxWiki - Foro</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../css/styles.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { corePlugins: { preflight: false } }
-    </script>
-    <script src="../js/components/footer-component.js"></script>
+    <!-- Editor de texto rico Quill.js (CDN gratuito, sin Storage) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" rel="stylesheet">
     <style>
+        /* ── Layout principal hilo ── */
+        .thread-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        @media(min-width: 900px) {
+            .thread-layout { grid-template-columns: 1fr; }
+        }
+
+        /* ── Post card con sidebar de autor (estilo PG Forum) ── */
         .post-card {
+            display: grid;
+            grid-template-columns: 160px 1fr;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 20px;
             margin-bottom: 14px;
+            overflow: hidden;
             box-shadow: 0 2px 8px var(--shadow-color);
             transition: border-color 0.2s;
         }
-        .post-card:first-child { border-color: rgba(102,126,234,0.3); }
-        .post-author-bar {
-            display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
-            padding-bottom: 12px; border-bottom: 1px solid var(--border-color);
+        .post-card.first-post { border-color: rgba(102,126,234,0.35); }
+        @media(max-width: 700px) {
+            .post-card { grid-template-columns: 1fr; }
+        }
+
+        /* Sidebar del autor */
+        .post-author-sidebar {
+            background: rgba(102,126,234,0.05);
+            border-right: 1px solid var(--border-color);
+            padding: 18px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 6px;
+            min-width: 0;
+        }
+        @media(max-width: 700px) {
+            .post-author-sidebar {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                flex-direction: row;
+                text-align: left;
+                padding: 12px 16px;
+                gap: 12px;
+            }
+        }
+
+        .post-avatar-wrap {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            flex-shrink: 0;
         }
         .post-avatar {
-            width: 46px; height: 46px; border-radius: 50%;
+            width: 72px; height: 72px;
+            border-radius: 50%;
             background: linear-gradient(135deg, rgba(102,126,234,0.3), rgba(118,75,162,0.3));
-            border: 2px solid rgba(102,126,234,0.3);
+            border: 2px solid rgba(102,126,234,0.4);
+            overflow: hidden;
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden; flex-shrink: 0; color: #a78bfa;
+            color: #a78bfa; font-size: 26px;
         }
         .post-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .post-author-info { flex: 1; min-width: 0; }
-        .post-author-name { font-weight: 700; color: var(--text-primary); font-size: 15px; }
-        .post-author-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+
+        /* Marco de perfil (por encima del avatar) */
+        .post-avatar-frame {
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            background-clip: padding-box;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .post-avatar-frame img {
+            position: absolute;
+            inset: -4px;
+            width: calc(100% + 8px);
+            height: calc(100% + 8px);
+            border-radius: 50%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .post-author-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+        .post-author-name a { color: inherit; text-decoration: none; }
+        .post-author-name a:hover { color: var(--accent); }
+
+        .post-author-rank {
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .post-author-stats {
+            width: 100%;
+            margin-top: 6px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+        }
+        .post-author-stat {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            padding: 2px 0;
+            gap: 4px;
+        }
+        .post-author-stat span:last-child {
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-align: right;
+        }
+        .post-badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .post-user-badge {
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        .badge-admin-color { background: rgba(239,68,68,0.15); color: #f87171; }
+        .badge-member { background: rgba(102,126,234,0.12); color: #a78bfa; }
+        .badge-op { background: rgba(34,197,94,0.12); color: #4ade80; }
+
+        /* Cuerpo del post */
+        .post-body {
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .post-meta-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
         .post-date { font-size: 12px; color: var(--text-tertiary); }
         .post-content {
-            color: var(--text-secondary); font-size: 14px; line-height: 1.7;
-            white-space: pre-wrap; word-break: break-word;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.75;
+            word-break: break-word;
+            flex: 1;
         }
         .post-content img { max-width: 100%; height: auto; border-radius: 10px; margin: 8px 0; display: block; }
-        .post-actions { display: flex; justify-content: flex-end; margin-top: 12px; gap: 8px; }
-        .btn-delete-post {
-            background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.3);
-            border-radius: 8px; padding: 5px 12px; font-size: 12px; cursor: pointer;
-            transition: all 0.2s;
+        .post-content a { color: var(--accent); }
+        .post-content blockquote {
+            border-left: 3px solid var(--accent);
+            margin: 10px 0;
+            padding: 8px 14px;
+            background: rgba(102,126,234,0.07);
+            border-radius: 0 8px 8px 0;
+            color: var(--text-tertiary);
+            font-style: italic;
         }
-        .btn-delete-post:hover { background: rgba(239,68,68,0.2); }
+        .post-content ul, .post-content ol { padding-left: 20px; }
+        .post-content strong { color: var(--text-primary); }
 
+        /* Reacciones del post */
+        .post-reactions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+        .reaction-btn {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--text-secondary);
+            display: flex; align-items: center; gap: 4px;
+        }
+        .reaction-btn:hover { background: rgba(102,126,234,0.1); border-color: rgba(102,126,234,0.3); }
+        .reaction-btn.active { background: rgba(102,126,234,0.15); border-color: rgba(102,126,234,0.5); color: #a78bfa; }
+        .reaction-add-btn {
+            background: none;
+            border: 1px dashed var(--border-color);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            position: relative;
+        }
+        .reaction-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .emoji-picker-popup {
+            position: absolute;
+            bottom: 36px;
+            left: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 8px;
+            display: flex; flex-wrap: wrap; gap: 4px;
+            width: 220px;
+            z-index: 100;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        .emoji-picker-popup button {
+            background: none; border: none;
+            font-size: 18px; cursor: pointer;
+            width: 32px; height: 32px;
+            border-radius: 6px;
+            transition: background 0.1s;
+        }
+        .emoji-picker-popup button:hover { background: rgba(102,126,234,0.15); }
+
+        .post-actions-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .btn-post-action {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-tertiary);
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .btn-post-action:hover { background: rgba(102,126,234,0.08); color: var(--accent); border-color: rgba(102,126,234,0.3); }
+        .btn-post-action.danger:hover { background: rgba(239,68,68,0.08); color: #f87171; border-color: rgba(239,68,68,0.3); }
+
+        /* ── Header del hilo ── */
         .thread-header-card {
             background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.08) 100%);
             border: 1px solid rgba(102,126,234,0.25);
             border-radius: 18px; padding: 24px; margin-bottom: 24px;
         }
         .thread-header-title {
-            font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 14px; line-height: 1.3;
+            font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 10px; line-height: 1.3;
         }
-        .reply-form {
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 22px; margin-top: 24px;
-        }
-        .reply-form textarea {
-            width: 100%; background: var(--bg-input); border: 1px solid var(--border-color);
-            border-radius: 10px; padding: 12px; color: var(--text-primary);
-            font-size: 14px; resize: vertical; min-height: 100px;
-        }
-        .reply-form textarea:focus { outline: none; border-color: rgba(102,126,234,0.5); }
-        .btn-reply {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none;
-            padding: 11px 22px; border-radius: 12px;
-            font-weight: 600; font-size: 14px; cursor: pointer;
-            transition: all 0.2s ease; margin-top: 12px;
-        }
-        .btn-reply:hover { opacity: 0.9; transform: translateY(-1px); }
-        .btn-reply:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .thread-header-meta { font-size: 13px; color: var(--text-tertiary); display: flex; flex-wrap: wrap; gap: 14px; }
+        .thread-header-meta span { display: flex; align-items: center; gap: 5px; }
+
+        /* ── Replies header ── */
         .replies-header {
             font-size: 13px; font-weight: 700;
             color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1.2px;
@@ -87,24 +282,139 @@
             padding-bottom: 8px; border-bottom: 1px solid var(--border-color);
             display: flex; align-items: center; justify-content: space-between;
         }
+
+        /* ── Breadcrumb ── */
         .category-breadcrumb {
             display: flex; align-items: center; gap: 8px;
             margin-bottom: 20px; font-size: 13px; color: var(--text-secondary);
         }
         .category-breadcrumb a { color: var(--accent); text-decoration: none; }
         .category-breadcrumb a:hover { text-decoration: underline; }
+
+        /* ── Hilo cerrado ── */
         .locked-notice {
             background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
             border-radius: 12px; padding: 14px 18px; margin-top: 20px;
             color: #f87171; font-size: 14px; display: flex; align-items: center; gap: 10px;
         }
+
+        /* ── Editor Quill personalizado ── */
+        .reply-form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 22px;
+            margin-top: 24px;
+        }
+        .reply-form-title {
+            font-size: 16px; font-weight: 700; color: var(--text-primary);
+            margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+        }
+        /* Override Quill toolbar para el tema oscuro */
+        .ql-toolbar.ql-snow {
+            background: var(--bg-input) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 10px 10px 0 0 !important;
+            padding: 6px 8px !important;
+        }
+        .ql-toolbar.ql-snow .ql-stroke { stroke: var(--text-secondary) !important; }
+        .ql-toolbar.ql-snow .ql-fill { fill: var(--text-secondary) !important; }
+        .ql-toolbar.ql-snow button:hover .ql-stroke,
+        .ql-toolbar.ql-snow .ql-picker-label:hover .ql-stroke { stroke: var(--accent) !important; }
+        .ql-toolbar.ql-snow button:hover .ql-fill { fill: var(--accent) !important; }
+        .ql-toolbar.ql-snow .ql-picker-label { color: var(--text-secondary) !important; }
+        .ql-container.ql-snow {
+            border: 1px solid var(--border-color) !important;
+            border-top: none !important;
+            border-radius: 0 0 10px 10px !important;
+            background: var(--bg-input) !important;
+            min-height: 130px;
+        }
+        .ql-editor {
+            color: var(--text-primary) !important;
+            font-size: 14px !important;
+            line-height: 1.7 !important;
+            min-height: 130px;
+        }
+        .ql-editor.ql-blank::before { color: var(--text-tertiary) !important; font-style: normal !important; }
+        .ql-snow .ql-picker-options { background: var(--bg-card) !important; border-color: var(--border-color) !important; }
+        .ql-snow .ql-picker-item { color: var(--text-secondary) !important; }
+        /* Quill color picker fix */
+        .ql-snow .ql-color-picker .ql-picker-label svg,
+        .ql-snow .ql-icon-picker .ql-picker-label svg { width: 18px; height: 18px; }
+
+        /* Botón de imagen local */
+        .btn-img-attach {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(102,126,234,0.1);
+            border: 1px solid rgba(102,126,234,0.3);
+            color: #a78bfa;
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+        .btn-img-attach:hover { background: rgba(102,126,234,0.2); }
+        #attachedImagesPreview {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+        }
+        .attached-img-thumb {
+            position: relative;
+            width: 80px; height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .attached-img-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .attached-img-remove {
+            position: absolute; top: 2px; right: 2px;
+            background: rgba(0,0,0,0.6);
+            border: none; color: #fff; font-size: 11px;
+            width: 18px; height: 18px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+
+        .btn-reply {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none;
+            padding: 11px 22px; border-radius: 12px;
+            font-weight: 600; font-size: 14px; cursor: pointer;
+            transition: all 0.2s ease; margin-top: 14px;
+        }
+        .btn-reply:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-reply:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* Quote block al responder */
+        .quote-preview {
+            background: rgba(102,126,234,0.07);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: var(--text-tertiary);
+            display: none;
+            position: relative;
+        }
+        .quote-preview.visible { display: block; }
+        .quote-preview-close {
+            position: absolute; top: 6px; right: 8px;
+            background: none; border: none; color: var(--text-tertiary);
+            cursor: pointer; font-size: 14px;
+        }
+
+        /* Skeleton */
+        .skeleton-post { height: 140px; border-radius: 16px; margin-bottom: 14px; }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="header-content">
             <div class="logo-section">
-                <a href="../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                <a href="../index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;">
                     <div class="logo-img"><i class="fas fa-rocket"></i></div>
                     <div class="logo-text">
                         <span class="logo-title">GalaxWiki</span>
@@ -113,22 +423,20 @@
                 </a>
             </div>
             <div class="user-section">
-                <div class="theme-toggle" onclick="toggleTheme()">
-                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
-                </div>
-                <div class="auth-buttons" id="authButtons" style="display: none;">
+                <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon theme-icon" id="themeIcon"></i></div>
+                <div class="auth-buttons" id="authButtons" style="display:none;">
                     <a href="../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
                     <a href="../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
                 </div>
-                <div class="dropdown" id="userProfile" style="display: none;">
+                <div class="dropdown" id="userProfile" style="display:none;">
                     <div class="user-profile" data-bs-toggle="dropdown">
                         <div class="user-avatar"><i class="fas fa-user"></i></div>
                         <div class="user-info">
                             <span class="user-name" id="userName">Usuario</span>
                             <span class="user-fleet" id="userFleet">Flota</span>
-                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display:none;">Admin</span>
                         </div>
-                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                        <i class="fas fa-chevron-down" style="color:#667eea;"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
@@ -136,8 +444,8 @@
                         <li><a class="dropdown-item" href="favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
                         <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                        <li id="adminMenuItem" style="display:none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout();return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
                     </ul>
                 </div>
             </div>
@@ -162,29 +470,25 @@
     </nav>
 
     <main class="main-container">
-        <!-- Breadcrumb -->
         <div class="category-breadcrumb" id="breadcrumb">
             <a href="forum.html"><i class="fas fa-comments me-1"></i>Foro</a>
-            <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+            <i class="fas fa-chevron-right" style="font-size:10px;"></i>
             <a href="#" id="categoryLink">Categoría</a>
-            <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
-            <span style="color: var(--text-primary);" id="breadcrumbTitle">Hilo</span>
+            <i class="fas fa-chevron-right" style="font-size:10px;"></i>
+            <span style="color:var(--text-primary);" id="breadcrumbTitle">Hilo</span>
         </div>
 
-        <!-- Thread header -->
         <div id="threadHeader"></div>
-
-        <!-- Replies section -->
         <div id="repliesSection"></div>
 
-        <!-- Load more -->
-        <div id="loadMorePostsDiv" style="text-align: center; margin-top: 12px; display: none;">
-            <button type="button" id="loadMorePostsBtn" style="background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 10px 24px; border-radius: 10px; cursor: pointer; font-size: 13px;" onclick="loadMorePosts()">
+        <div id="loadMorePostsDiv" style="text-align:center;margin-top:12px;display:none;">
+            <button type="button" id="loadMorePostsBtn"
+                style="background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-secondary);padding:10px 24px;border-radius:10px;cursor:pointer;font-size:13px;"
+                onclick="loadMorePosts()">
                 <i class="fas fa-chevron-down me-2"></i>Cargar más respuestas
             </button>
         </div>
 
-        <!-- Reply form -->
         <div id="replyFormContainer"></div>
     </main>
 
@@ -194,287 +498,618 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
     <script src="../js/firebase-config.js"></script>
     <script src="../js/header-auth.js"></script>
-    <script>
-        (function() {
-            const db = window.db;
-            const params = new URLSearchParams(location.search);
-            const threadId = params.get('threadId');
+    <script src="../js/gamification.js"></script>
+    <!-- Quill editor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
 
-            if (!threadId) {
-                document.getElementById('threadHeader').innerHTML = '<div class="empty-state">Hilo no especificado. <a href="forum.html">Volver al foro</a></div>';
+    <script>
+    (function() {
+        'use strict';
+
+        const db     = window.db;
+        const auth   = window.auth;
+        const params = new URLSearchParams(location.search);
+        const threadId = params.get('threadId');
+
+        if (!threadId) {
+            document.getElementById('threadHeader').innerHTML = '<div class="empty-state">Hilo no especificado. <a href="forum.html">Volver al foro</a></div>';
+            return;
+        }
+
+        let threadData      = null;
+        let isAdmin         = false;
+        let currentUser     = null;
+        let currentUserData = null;    // datos de Firestore del usuario actual
+        const POSTS_PAGE_SIZE = 25;
+        let lastPostDoc     = null;
+        let reachedPostsEnd = false;
+        let quillEditor     = null;    // instancia Quill
+        let attachedImages  = [];      // {dataUrl, name} imágenes adjuntas locales
+        let quoteText       = null;    // texto citado activo
+
+        // Emojis de reacción disponibles
+        const REACTION_EMOJIS = ['👍','❤️','😄','🎉','🔥','😲','😢','😂','🤔','👎','🎮','⚔️'];
+
+        // ─── Utilidades ───────────────────────────────────────────
+        function esc(s) {
+            return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function timeAgo(date) {
+            if (!date) return '';
+            const d   = date.toDate ? date.toDate() : new Date(date);
+            const now = Date.now();
+            const diff = Math.floor((now - d.getTime()) / 1000);
+            if (diff < 60)    return 'hace ' + diff + 's';
+            if (diff < 3600)  return 'hace ' + Math.floor(diff/60) + ' min';
+            if (diff < 86400) return 'hace ' + Math.floor(diff/3600) + ' h';
+            return d.toLocaleDateString('es', {day:'2-digit',month:'short',year:'numeric'});
+        }
+
+        function formatDate(date) {
+            if (!date) return '—';
+            const d = date.toDate ? date.toDate() : new Date(date);
+            return d.toLocaleDateString('es', {day:'2-digit', month:'long', year:'numeric'});
+        }
+
+        // Convierte delta de Quill a HTML seguro
+        function deltaToHtml(delta) {
+            if (!delta || !delta.ops) return '';
+            // Quill ya genera HTML en el editor; usamos innerHTML del ql-editor
+            return delta;
+        }
+
+        // ─── Datos del usuario por uid (cache simple) ──────────────
+        const _userCache = {};
+        async function getUserData(uid) {
+            if (_userCache[uid]) return _userCache[uid];
+            try {
+                const snap = await db.collection('users').doc(uid).get();
+                const data = snap.exists ? snap.data() : {};
+                _userCache[uid] = data;
+                return data;
+            } catch(e) { return {}; }
+        }
+
+        // ─── Rank desde gamification ───────────────────────────────
+        function getRankName(xp) {
+            if (typeof gwGetRank === 'function') return gwGetRank(xp).rank.name;
+            return 'Miembro';
+        }
+
+        // ─── Renderizar sidebar del autor ─────────────────────────
+        function renderAuthorSidebar(p, isFirst) {
+            const avatar  = esc(p.authorAvatar || '');
+            const name    = esc(p.authorName || 'Anónimo');
+            const xp      = p.authorXp || 0;
+            const rank    = esc(p.authorRank || getRankName(xp));
+            const joined  = p.authorJoined  ? formatDate(p.authorJoined)  : '—';
+            const msgCount = p.authorMsgCount != null ? p.authorMsgCount : '—';
+            const server  = esc(p.authorServer || '');
+            const fleet   = esc(p.authorFleet  || '');
+            const level   = p.authorLevel != null ? p.authorLevel : null;
+            const frame   = esc(p.authorFrame || ''); // URL del marco de perfil
+
+            const avatarHtml = avatar
+                ? `<img src="${avatar}" alt="" loading="lazy">`
+                : `<i class="fas fa-user"></i>`;
+
+            const frameHtml = frame
+                ? `<div class="post-avatar-frame"><img src="${frame}" alt=""></div>`
+                : '';
+
+            const badgesHtml = `
+                <div class="post-badge-row">
+                    ${isFirst ? '<span class="post-user-badge badge-op">OP</span>' : ''}
+                    ${p.authorRole === 'admin' ? '<span class="post-user-badge badge-admin-color">Admin</span>' : ''}
+                    <span class="post-user-badge badge-member">${rank}</span>
+                </div>`;
+
+            return `
+            <div class="post-author-sidebar">
+                <div class="post-avatar-wrap">
+                    <div class="post-avatar">${avatarHtml}</div>
+                    ${frameHtml}
+                </div>
+                <div class="post-author-name">
+                    <a href="profile.html?uid=${esc(p.authorId)}">${name}</a>
+                </div>
+                <div class="post-author-rank">${rank}</div>
+                ${badgesHtml}
+                <div class="post-author-stats">
+                    <div class="post-author-stat"><span>Unido:</span><span>${joined}</span></div>
+                    <div class="post-author-stat"><span>Mensajes:</span><span>${msgCount}</span></div>
+                    ${level != null ? `<div class="post-author-stat"><span>Nivel:</span><span>${level}</span></div>` : ''}
+                    ${server ? `<div class="post-author-stat"><span>Servidor:</span><span>${esc(server)}</span></div>` : ''}
+                    ${fleet  ? `<div class="post-author-stat"><span>Flota:</span><span>${esc(fleet)}</span></div>` : ''}
+                </div>
+            </div>`;
+        }
+
+        // ─── Renderizar reacciones de un post ─────────────────────
+        function renderReactions(reactions, postId) {
+            const entries = Object.entries(reactions || {}).filter(([,v]) => v > 0);
+            let html = '<div class="post-reactions" id="reactions-' + esc(postId) + '">';
+            entries.forEach(([emoji, count]) => {
+                html += `<button class="reaction-btn" data-post="${esc(postId)}" data-emoji="${esc(emoji)}" onclick="toggleReaction('${esc(postId)}','${esc(emoji)}')">${emoji} <span>${count}</span></button>`;
+            });
+            html += `<div style="position:relative;display:inline-block;">
+                <button class="reaction-add-btn" onclick="toggleEmojiPicker(this,'${esc(postId)}')"><i class="fas fa-smile-plus"></i></button>
+            </div></div>`;
+            return html;
+        }
+
+        // ─── Renderizar un post completo ──────────────────────────
+        function renderPost(p, isFirst) {
+            const date    = p.createdAt ? timeAgo(p.createdAt) : '';
+            const fullDate = p.createdAt ? formatDate(p.createdAt) : '';
+            const canDelete = isAdmin || (currentUser && currentUser.uid === p.authorId && !isFirst);
+            const content  = p.contentHtml || esc(p.content || '').replace(/\n/g,'<br>');
+
+            // Imágenes adjuntas (guardadas en base64 o como rutas del proyecto)
+            let imagesHtml = '';
+            if (p.attachedImages && p.attachedImages.length > 0) {
+                imagesHtml = p.attachedImages.map(src =>
+                    `<img src="${esc(src)}" alt="" style="max-width:100%;height:auto;border-radius:10px;margin:8px 0;display:block;" loading="lazy">`
+                ).join('');
+            }
+
+            return `
+            <div class="post-card ${isFirst ? 'first-post' : ''}" id="post-${esc(p.id)}">
+                ${renderAuthorSidebar(p, isFirst)}
+                <div class="post-body">
+                    <div class="post-meta-top">
+                        <span class="post-date" title="${fullDate}"><i class="fas fa-clock me-1"></i>${date}</span>
+                        <div style="display:flex;gap:6px;align-items:center;">
+                            ${isFirst ? '<span class="post-user-badge badge-op" style="font-size:11px;">Mensaje original</span>' : ''}
+                            <button class="btn-post-action" onclick="quotePost('${esc(p.id)}','${esc(p.authorName||'Anónimo')}')">
+                                <i class="fas fa-quote-right"></i> Citar
+                            </button>
+                            ${canDelete ? `<button class="btn-post-action danger" onclick="deletePost('${esc(p.id)}')">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>` : ''}
+                        </div>
+                    </div>
+                    <div class="post-content ql-editor" style="padding:0;">
+                        ${content}
+                        ${imagesHtml}
+                    </div>
+                    ${renderReactions(p.reactions, p.id)}
+                </div>
+            </div>`;
+        }
+
+        // ─── Toggle reacción ──────────────────────────────────────
+        async function toggleReaction(postId, emoji) {
+            if (!currentUser) return;
+            const postRef    = db.collection('forum_threads').doc(threadId).collection('posts').doc(postId);
+            const reactRef   = postRef.collection('post_reactions').doc(currentUser.uid);
+            try {
+                const userReact  = await reactRef.get();
+                const prevEmoji  = userReact.exists ? userReact.data().emoji : null;
+                const postSnap   = await postRef.get();
+                const reactions  = Object.assign({}, postSnap.data().reactions || {});
+
+                if (prevEmoji === emoji) {
+                    reactions[emoji] = Math.max(0, (reactions[emoji]||0) - 1);
+                    await reactRef.delete();
+                } else {
+                    if (prevEmoji) reactions[prevEmoji] = Math.max(0, (reactions[prevEmoji]||0) - 1);
+                    reactions[emoji] = (reactions[emoji]||0) + 1;
+                    await reactRef.set({ emoji });
+                }
+                await postRef.update({ reactions });
+                // Re-render reactions
+                const container = document.getElementById('reactions-' + postId);
+                if (container) container.outerHTML = renderReactions(reactions, postId);
+            } catch(e) { console.error('Reaction error:', e); }
+        }
+        window.toggleReaction = toggleReaction;
+
+        // ─── Emoji picker ─────────────────────────────────────────
+        function toggleEmojiPicker(btn, postId) {
+            document.querySelectorAll('.emoji-picker-popup').forEach(p => p.remove());
+            const picker = document.createElement('div');
+            picker.className = 'emoji-picker-popup';
+            REACTION_EMOJIS.forEach(emoji => {
+                const b = document.createElement('button');
+                b.textContent = emoji;
+                b.onclick = () => { picker.remove(); toggleReaction(postId, emoji); };
+                picker.appendChild(b);
+            });
+            btn.parentElement.appendChild(picker);
+            setTimeout(() => document.addEventListener('click', function h(e) {
+                if (!picker.contains(e.target) && e.target !== btn) { picker.remove(); document.removeEventListener('click', h); }
+            }), 10);
+        }
+        window.toggleEmojiPicker = toggleEmojiPicker;
+
+        // ─── Citar post ───────────────────────────────────────────
+        function quotePost(postId, authorName) {
+            const postEl = document.getElementById('post-' + postId);
+            if (!postEl) return;
+            const contentEl = postEl.querySelector('.post-content');
+            const text = contentEl ? (contentEl.innerText || '').trim().substring(0, 300) : '';
+            quoteText = { author: authorName, text };
+
+            const preview = document.getElementById('quotePreview');
+            if (preview) {
+                preview.querySelector('.quote-preview-author').textContent = authorName + ' escribió:';
+                preview.querySelector('.quote-preview-text').textContent = text.substring(0, 200) + (text.length > 200 ? '…' : '');
+                preview.classList.add('visible');
+            }
+            document.getElementById('replyFormContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+        window.quotePost = quotePost;
+
+        // ─── Eliminar post ────────────────────────────────────────
+        async function deletePost(postId) {
+            if (!confirm('¿Eliminar este mensaje?')) return;
+            try {
+                await db.collection('forum_threads').doc(threadId).collection('posts').doc(postId).delete();
+                // Usar increment(-1) en lugar de leer y escribir manualmente (evita race condition)
+                await db.collection('forum_threads').doc(threadId).update({
+                    postCount: firebase.firestore.FieldValue.increment(-1)
+                });
+                const el = document.getElementById('post-' + postId);
+                if (el) el.remove();
+                // Actualizar el contador visible en la UI
+                const counterEl = document.querySelector('[data-postcount]');
+                if (counterEl) {
+                    const curr = Math.max(0, parseInt(counterEl.textContent || '0') - 1);
+                    counterEl.textContent = curr;
+                }
+            } catch(e) { alert('Error al eliminar: ' + e.message); }
+        }
+        window.deletePost = deletePost;
+
+        // ─── Cargar hilo ──────────────────────────────────────────
+        async function loadThread() {
+            try {
+                const snap = await db.collection('forum_threads').doc(threadId).get();
+                if (!snap.exists) {
+                    document.getElementById('threadHeader').innerHTML = '<div class="empty-state">Hilo no encontrado. <a href="forum.html">Volver</a></div>';
+                    return false;
+                }
+                threadData = { id: snap.id, ...snap.data() };
+
+                // Breadcrumb
+                if (threadData.categoryId) {
+                    const catSnap = await db.collection('forum_categories').doc(threadData.categoryId).get();
+                    const catName = catSnap.exists ? (catSnap.data().name || 'Categoría') : 'Categoría';
+                    document.getElementById('categoryLink').textContent = catName;
+                    document.getElementById('categoryLink').href = `forum-thread-list.html?categoryId=${threadData.categoryId}`;
+                }
+                document.getElementById('breadcrumbTitle').textContent = threadData.title || 'Hilo';
+                document.title = `GalaxWiki - ${threadData.title || 'Hilo'}`;
+
+                // Header
+                const pinned = threadData.pinned ? '<span class="badge" style="background:rgba(251,191,36,0.15);color:#fbbf24;font-size:11px;"><i class="fas fa-thumbtack me-1"></i>Fijado</span>' : '';
+                const locked = threadData.locked ? '<span class="badge" style="background:rgba(239,68,68,0.12);color:#f87171;font-size:11px;"><i class="fas fa-lock me-1"></i>Cerrado</span>' : '';
+                const views  = threadData.views  || 0;
+                const posts  = threadData.postCount || 0;
+
+                document.getElementById('threadHeader').innerHTML = `
+                <div class="thread-header-card">
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">${pinned}${locked}</div>
+                    <h1 class="thread-header-title">${esc(threadData.title || 'Sin título')}</h1>
+                    <div class="thread-header-meta">
+                        <span><i class="fas fa-user"></i> ${esc(threadData.authorName || '—')}</span>
+                        <span><i class="fas fa-reply"></i> ${posts} respuesta${posts !== 1 ? 's' : ''}</span>
+                        <span><i class="fas fa-eye"></i> ${views} vista${views !== 1 ? 's' : ''}</span>
+                    </div>
+                </div>`;
+
+                // Incrementar vistas
+                db.collection('forum_threads').doc(threadId).update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                }).catch(() => {});
+
+                return true;
+            } catch(e) {
+                console.error(e);
+                document.getElementById('threadHeader').innerHTML = '<div class="empty-state">Error cargando el hilo.</div>';
+                return false;
+            }
+        }
+
+        // ─── Cargar posts ─────────────────────────────────────────
+        async function loadPosts(initial = true) {
+            if (reachedPostsEnd && !initial) return;
+            const section     = document.getElementById('repliesSection');
+            const loadMoreDiv = document.getElementById('loadMorePostsDiv');
+
+            if (initial) {
+                section.innerHTML = ['','',''].map(() =>
+                    '<div class="skeleton-base skeleton skeleton-post"></div>'
+                ).join('');
+                lastPostDoc = null;
+                reachedPostsEnd = false;
+            }
+
+            try {
+                let q = db.collection('forum_threads').doc(threadId).collection('posts')
+                    .orderBy('createdAt', 'asc').limit(POSTS_PAGE_SIZE);
+                if (lastPostDoc) q = q.startAfter(lastPostDoc);
+
+                const snap = await q.get();
+                const posts = [];
+                snap.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
+                if (snap.docs.length > 0) lastPostDoc = snap.docs[snap.docs.length - 1];
+                if (snap.docs.length < POSTS_PAGE_SIZE) reachedPostsEnd = true;
+
+                if (initial) section.innerHTML = '';
+
+                if (posts.length === 0 && initial) {
+                    section.innerHTML = '<div class="empty-state">No hay mensajes aún.</div>';
+                    loadMoreDiv.style.display = 'none';
+                    return;
+                }
+
+                const firstPostId = posts.length > 0 ? posts[0].id : null;
+                const html = posts.map((p, i) => renderPost(p, i === 0 && initial && !lastPostDoc)).join('');
+
+                if (initial) {
+                    section.innerHTML = `<div class="replies-header">
+                        <span><i class="fas fa-comments me-2"></i>Mensajes</span>
+                        <span>${threadData.postCount || posts.length}</span>
+                    </div>` + html;
+                } else {
+                    section.insertAdjacentHTML('beforeend', html);
+                }
+
+                loadMoreDiv.style.display = reachedPostsEnd ? 'none' : 'block';
+            } catch(e) {
+                console.error(e);
+                section.innerHTML = '<div class="empty-state">Error cargando mensajes: ' + e.message + '</div>';
+            }
+        }
+        window.loadMorePosts = () => loadPosts(false);
+
+        // ─── Construir formulario de respuesta con Quill ──────────
+        function buildReplyForm(isLocked) {
+            const container = document.getElementById('replyFormContainer');
+
+            if (isLocked) {
+                container.innerHTML = '<div class="locked-notice"><i class="fas fa-lock"></i><span>Este hilo está cerrado. No se pueden agregar nuevas respuestas.</span></div>';
                 return;
             }
 
-            let threadData = null;
-            let isAdmin = false;
-            const POSTS_PAGE_SIZE = 25;
-            let lastPostDoc = null;
-            let reachedPostsEnd = false;
-
-            function escapeHtml(s) {
-                return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-            }
-
-            function formatContent(text) {
-                let s = escapeHtml(text);
-                s = s.replace(/\n/g, '<br>');
-                s = s.replace(/(https?:\/\/[^\s<>"']+\.(?:png|jpg|jpeg|gif|webp)(?:\?[^\s<>"']*)?)/gi,
-                    '<img src="$1" alt="" style="max-width:100%; height:auto; border-radius:10px; margin:10px 0;" loading="lazy">');
-                return s;
-            }
-
-            function renderPost(p, isFirst = false) {
-                const avatar = escapeHtml(p.authorAvatar || '');
-                const name = escapeHtml(p.authorName || '—');
-                const fleet = escapeHtml(p.authorFleet || '');
-                const level = p.authorLevel != null ? p.authorLevel : null;
-                const date = p.createdAt && p.createdAt.toDate ? p.createdAt.toDate().toLocaleString('es') : '';
-                const canDelete = isAdmin || (window.auth && window.auth.currentUser && window.auth.currentUser.uid === p.authorId && !isFirst);
-
-                return `<div class="post-card" id="post-${escapeHtml(p.id)}">
-                    <div class="post-author-bar">
-                        <div class="post-avatar">
-                            ${avatar ? `<img src="${avatar}" alt="" loading="lazy">` : '<i class="fas fa-user"></i>'}
-                        </div>
-                        <div class="post-author-info">
-                            <div class="post-author-name">${name}</div>
-                            <div class="post-author-meta">
-                                ${fleet ? `<span class="badge badge-type" style="font-size:10px;">${fleet}</span>` : ''}
-                                ${level != null ? `<span class="badge" style="background:rgba(102,126,234,0.15); color:#a78bfa; font-size:10px;">Nivel ${level}</span>` : ''}
-                                ${isFirst ? '<span class="badge badge-admin" style="font-size:10px;">OP</span>' : ''}
-                                <span class="post-date"><i class="fas fa-clock me-1"></i>${date}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="post-content">${formatContent(p.content || '')}</div>
-                    ${canDelete ? `<div class="post-actions"><button type="button" class="btn-delete-post" onclick="deletePost('${escapeHtml(p.id)}')"><i class="fas fa-trash me-1"></i>Eliminar</button></div>` : ''}
+            if (!currentUser) {
+                container.innerHTML = `<div class="reply-form-card" style="text-align:center;">
+                    <p style="color:var(--text-secondary);margin-bottom:12px;"><i class="fas fa-lock me-2"></i>Inicia sesión para responder.</p>
+                    <a href="../login.html" class="btn-reply" style="text-decoration:none;"><i class="fas fa-sign-in-alt me-1"></i>Iniciar sesión</a>
                 </div>`;
+                return;
             }
 
-            window.deletePost = async (postId) => {
-                if (!confirm('¿Eliminar este mensaje?')) return;
-                try {
-                    await db.collection('forum_threads').doc(threadId).collection('posts').doc(postId).delete();
-                    const el = document.getElementById(`post-${postId}`);
-                    if (el) el.remove();
-                    // Update post count
-                    const threadSnap = await db.collection('forum_threads').doc(threadId).get();
-                    if (threadSnap.exists) {
-                        const curr = (threadSnap.data().postCount || 1) - 1;
-                        await db.collection('forum_threads').doc(threadId).update({ postCount: Math.max(0, curr) });
-                    }
-                } catch (e) {
-                    alert('Error al eliminar: ' + (e.message || e));
+            container.innerHTML = `
+            <div class="reply-form-card">
+                <div class="reply-form-title"><i class="fas fa-reply"></i> Responder</div>
+
+                <!-- Quote preview -->
+                <div class="quote-preview" id="quotePreview">
+                    <strong class="quote-preview-author"></strong>
+                    <p class="quote-preview-text" style="margin:4px 0 0;font-size:12px;"></p>
+                    <button class="quote-preview-close" onclick="clearQuote()"><i class="fas fa-times"></i></button>
+                </div>
+
+                <!-- Editor Quill -->
+                <div id="quillEditor"></div>
+
+                <!-- Adjuntar imágenes del proyecto (sin Storage) -->
+                <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <label class="btn-img-attach" title="Adjuntar imagen desde tu computador">
+                        <i class="fas fa-image"></i> Adjuntar imagen
+                        <input type="file" id="imgFileInput" accept="image/png,image/jpeg,image/gif,image/webp" multiple style="display:none;" onchange="handleImageAttach(event)">
+                    </label>
+                    <span style="font-size:12px;color:var(--text-tertiary);">PNG, JPG, GIF — máx 2 MB por imagen</span>
+                </div>
+                <div id="attachedImagesPreview"></div>
+
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <button type="button" class="btn-reply" id="btnSubmitReply" onclick="submitReply()">
+                        <i class="fas fa-paper-plane me-1"></i>Publicar respuesta
+                    </button>
+                    <p id="replyError" style="color:#f87171;font-size:13px;margin:0;display:none;"></p>
+                </div>
+            </div>`;
+
+            // Inicializar Quill
+            quillEditor = new Quill('#quillEditor', {
+                theme: 'snow',
+                placeholder: 'Escribe tu respuesta aquí...',
+                modules: {
+                    toolbar: [
+                        [{ header: [2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ color: [] }],
+                        ['link', 'blockquote', 'code-block'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        ['clean']
+                    ]
                 }
-            };
+            });
 
-            async function loadThread() {
-                const header = document.getElementById('threadHeader');
-                header.innerHTML = '<div class="skeleton-base skeleton" style="height:120px; border-radius:18px;"></div>';
+            attachedImages = [];
+        }
 
-                try {
-                    const threadDoc = await db.collection('forum_threads').doc(threadId).get();
-                    if (!threadDoc.exists) {
-                        header.innerHTML = '<div class="empty-state">Hilo no encontrado. <a href="forum.html">Volver al foro</a></div>';
-                        return false;
-                    }
-                    threadData = threadDoc.data();
-                    document.title = `GalaxWiki - ${threadData.title || 'Hilo del foro'}`;
-
-                    // Update breadcrumb
-                    const catLink = document.getElementById('categoryLink');
-                    if (catLink && threadData.categoryId) {
-                        catLink.href = `forum-thread-list.html?categoryId=${encodeURIComponent(threadData.categoryId)}`;
-                        try {
-                            const catDoc = await db.collection('forum_categories').doc(threadData.categoryId).get();
-                            if (catDoc.exists) catLink.textContent = catDoc.data().name || 'Categoría';
-                        } catch (_) {}
-                    }
-                    const bTitle = document.getElementById('breadcrumbTitle');
-                    if (bTitle) bTitle.textContent = (threadData.title || 'Hilo').substring(0, 60);
-
-                    const date = threadData.createdAt && threadData.createdAt.toDate ? threadData.createdAt.toDate().toLocaleDateString('es') : '';
-                    const locked = threadData.locked;
-                    const pinned = threadData.pinned;
-
-                    header.innerHTML = `<div class="thread-header-card">
-                        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap;">
-                            ${pinned ? '<span class="badge" style="background:rgba(251,191,36,0.15); color:#fbbf24; font-size:11px;"><i class="fas fa-thumbtack me-1"></i>Fijado</span>' : ''}
-                            ${locked ? '<span class="badge" style="background:rgba(239,68,68,0.15); color:#f87171; font-size:11px;"><i class="fas fa-lock me-1"></i>Cerrado</span>' : ''}
-                        </div>
-                        <h1 class="thread-header-title">${escapeHtml(threadData.title || 'Sin título')}</h1>
-                        <div style="font-size:13px; color:var(--text-secondary); display:flex; gap:16px; flex-wrap:wrap;">
-                            <span><i class="fas fa-calendar me-1"></i>${date}</span>
-                            <span><i class="fas fa-reply me-1"></i>${(threadData.postCount || 0)} respuesta${(threadData.postCount || 0) !== 1 ? 's' : ''}</span>
-                        </div>
-                    </div>`;
-
-                    return true;
-                } catch (e) {
-                    console.error(e);
-                    header.innerHTML = `<div class="empty-state">Error al cargar el hilo: ${escapeHtml(e.message || '')}</div>`;
-                    return false;
-                }
-            }
-
-            async function loadPosts(initial = true) {
-                if (reachedPostsEnd && !initial) return;
-                const section = document.getElementById('repliesSection');
-                const loadMoreDiv = document.getElementById('loadMorePostsDiv');
-
-                if (initial) {
-                    section.innerHTML = '<div class="skeleton-base skeleton" style="height:100px; border-radius:16px; margin-bottom:14px;"></div>'.repeat(3);
-                    lastPostDoc = null;
-                    reachedPostsEnd = false;
-                }
-
-                try {
-                    let q = db.collection('forum_threads').doc(threadId).collection('posts')
-                        .orderBy('createdAt', 'asc').limit(POSTS_PAGE_SIZE);
-                    if (lastPostDoc) q = q.startAfter(lastPostDoc);
-
-                    const snap = await q.get();
-                    const posts = [];
-                    snap.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
-                    if (snap.docs.length > 0) lastPostDoc = snap.docs[snap.docs.length - 1];
-                    if (snap.docs.length < POSTS_PAGE_SIZE) reachedPostsEnd = true;
-
-                    const postsCount = snap.size;
-
-                    if (initial) {
-                        section.innerHTML = '';
-                        if (postsCount > 0) {
-                            section.innerHTML = `<div class="replies-header"><span><i class="fas fa-comments me-2"></i>Mensajes</span><span>${posts.length} mensaje${posts.length !== 1 ? 's' : ''}</span></div>`;
-                        }
-                        posts.forEach((p, i) => {
-                            section.insertAdjacentHTML('beforeend', renderPost(p, i === 0));
-                        });
-                    } else {
-                        posts.forEach(p => {
-                            section.insertAdjacentHTML('beforeend', renderPost(p, false));
-                        });
-                    }
-
-                    loadMoreDiv.style.display = reachedPostsEnd ? 'none' : 'block';
-
-                } catch (e) {
-                    console.error(e);
-                    section.innerHTML = `<div class="empty-state">Error al cargar los mensajes: ${escapeHtml(e.message || '')}</div>`;
-                }
-            }
-
-            window.loadMorePosts = () => loadPosts(false);
-
-            function buildReplyForm(isLocked) {
-                const container = document.getElementById('replyFormContainer');
-                if (isLocked) {
-                    container.innerHTML = '<div class="locked-notice"><i class="fas fa-lock"></i><span>Este hilo está cerrado. No se pueden agregar nuevas respuestas.</span></div>';
-                    return;
-                }
-                const user = window.auth && window.auth.currentUser;
-                if (!user) {
-                    container.innerHTML = `<div class="reply-form" style="text-align:center;">
-                        <p style="color:var(--text-secondary); margin-bottom:12px;"><i class="fas fa-lock me-2"></i>Inicia sesión para responder en este hilo.</p>
-                        <a href="../login.html" class="btn-reply" style="text-decoration:none;"><i class="fas fa-sign-in-alt me-1"></i>Iniciar sesión</a>
-                    </div>`;
-                    return;
-                }
-
-                container.innerHTML = `<div class="reply-form">
-                    <h3 style="font-size:16px; font-weight:700; margin-bottom:14px;"><i class="fas fa-reply me-2"></i>Responder</h3>
-                    <textarea id="replyContent" placeholder="Escribe tu respuesta... Puedes pegar URLs de imágenes (.png, .jpg, .gif) y se mostrarán automáticamente."></textarea>
-                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                        <button type="button" class="btn-reply" id="btnSubmitReply"><i class="fas fa-paper-plane me-1"></i>Enviar respuesta</button>
-                        <p id="replyError" style="color:#f87171; font-size:13px; margin:0; display:none;"></p>
-                    </div>
-                </div>`;
-
-                document.getElementById('btnSubmitReply').onclick = async () => {
-                    const auth = window.auth;
-                    if (!auth || !auth.currentUser) return;
-                    const content = (document.getElementById('replyContent').value || '').trim();
-                    const errEl = document.getElementById('replyError');
-                    if (!content) { errEl.textContent = 'Escribe tu respuesta antes de enviar.'; errEl.style.display = 'block'; return; }
-                    errEl.style.display = 'none';
-                    const btn = document.getElementById('btnSubmitReply');
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Enviando...';
-
-                    try {
-                        const u = auth.currentUser;
-                        let authorName = (u.displayName || u.email || 'Anónimo').substring(0, 80);
-                        let authorAvatar = '', authorFleet = '', authorLevel = null;
-                        try {
-                            const userDoc = await db.collection('users').doc(u.uid).get();
-                            if (userDoc.exists) {
-                                const ud = userDoc.data();
-                                if (ud.username) authorName = (ud.username + '').substring(0, 80);
-                                authorAvatar = ud.avatar || '';
-                                authorFleet = ud.fleet || '';
-                                authorLevel = ud.level != null ? ud.level : null;
-                            }
-                        } catch (_) {}
-
-                        const postRef = await db.collection('forum_threads').doc(threadId).collection('posts').add({
-                            authorId: u.uid, authorName, authorAvatar, authorFleet, authorLevel,
-                            content,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        const threadSnap = await db.collection('forum_threads').doc(threadId).get();
-                        const curr = (threadSnap.data().postCount || 0) + 1;
-                        await db.collection('forum_threads').doc(threadId).update({
-                            postCount: curr,
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-
-                        document.getElementById('replyContent').value = '';
-                        // Append the new post visually
-                        const newPost = { id: postRef.id, authorId: u.uid, authorName, authorAvatar, authorFleet, authorLevel, content, createdAt: { toDate: () => new Date() } };
-                        const section = document.getElementById('repliesSection');
-                        section.insertAdjacentHTML('beforeend', renderPost(newPost, false));
-                        section.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-                    } catch (e) {
-                        errEl.textContent = e.message || 'Error al enviar la respuesta.';
-                        errEl.style.display = 'block';
-                    } finally {
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Enviar respuesta';
-                    }
+        // ─── Adjuntar imagen local (sin Storage) ──────────────────
+        function handleImageAttach(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => {
+                if (file.size > 2 * 1024 * 1024) { alert(`"${file.name}" supera 2 MB.`); return; }
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const dataUrl = e.target.result;
+                    attachedImages.push(dataUrl);
+                    renderAttachedPreviews();
                 };
-            }
+                reader.readAsDataURL(file);
+            });
+            event.target.value = '';
+        }
+        window.handleImageAttach = handleImageAttach;
 
-            async function init() {
-                if (!db) {
-                    document.getElementById('threadHeader').innerHTML = '<div class="empty-state">Firebase no inicializado.</div>';
-                    return;
+        function renderAttachedPreviews() {
+            const container = document.getElementById('attachedImagesPreview');
+            if (!container) return;
+            container.innerHTML = attachedImages.map((src, i) => `
+                <div class="attached-img-thumb">
+                    <img src="${src}" alt="">
+                    <button class="attached-img-remove" onclick="removeAttachedImg(${i})"><i class="fas fa-times"></i></button>
+                </div>`).join('');
+        }
+        window.removeAttachedImg = function(i) {
+            attachedImages.splice(i, 1);
+            renderAttachedPreviews();
+        };
+
+        // ─── Limpiar cita ─────────────────────────────────────────
+        function clearQuote() {
+            quoteText = null;
+            const p = document.getElementById('quotePreview');
+            if (p) p.classList.remove('visible');
+        }
+        window.clearQuote = clearQuote;
+
+        // ─── Enviar respuesta ─────────────────────────────────────
+        async function submitReply() {
+            if (!currentUser || !quillEditor) return;
+
+            const contentHtml = quillEditor.root.innerHTML.trim();
+            const contentText = quillEditor.getText().trim();
+            const errEl = document.getElementById('replyError');
+
+            if (!contentText) {
+                errEl.textContent = 'Escribe algo antes de publicar.';
+                errEl.style.display = 'block';
+                return;
+            }
+            errEl.style.display = 'none';
+
+            const btn = document.getElementById('btnSubmitReply');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Publicando...';
+
+            try {
+                // Datos del autor desde Firestore
+                const ud = currentUserData || {};
+                const authorName     = ud.username || currentUser.displayName || currentUser.email || 'Anónimo';
+                const authorAvatar   = ud.avatar   || '';
+                const authorFleet    = ud.fleet    || '';
+                const authorLevel    = ud.level    != null ? ud.level : null;
+                const authorServer   = ud.server   || '';
+                const authorRole     = ud.role     || 'user';
+                const authorXp       = ud.xp       || 0;
+                const authorRank     = getRankName(authorXp);
+                const authorJoined   = ud.createdAt || null;
+                const authorFrame    = ud.profileFrame || '';
+
+                // Contar mensajes del usuario (aproximado, incremental)
+                const authorMsgCount = (ud.postCount || 0) + 1;
+
+                // Construir contenido final (con cita si aplica)
+                let finalHtml = contentHtml;
+                if (quoteText) {
+                    finalHtml = `<blockquote><strong>${esc(quoteText.author)} escribió:</strong><br>${esc(quoteText.text)}</blockquote>` + finalHtml;
                 }
 
-                // Check if current user is admin
-                if (window.auth) {
-                    window.auth.onAuthStateChanged(async user => {
-                        if (user) {
-                            try {
-                                const userDoc = await db.collection('users').doc(user.uid).get();
-                                if (userDoc.exists && userDoc.data().role === 'admin') isAdmin = true;
-                            } catch (_) {}
-                        }
-                        buildReplyForm(threadData && threadData.locked);
-                    });
-                }
+                const postData = {
+                    authorId: currentUser.uid,
+                    authorName,
+                    authorAvatar,
+                    authorFleet,
+                    authorLevel,
+                    authorServer,
+                    authorRole,
+                    authorXp,
+                    authorRank,
+                    authorJoined,
+                    authorFrame,
+                    authorMsgCount,
+                    contentHtml: finalHtml,
+                    content: contentText,
+                    attachedImages,          // array de base64 (sin Storage)
+                    reactions: {},
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
 
-                const ok = await loadThread();
-                if (!ok) return;
-                await loadPosts(true);
-                buildReplyForm(threadData && threadData.locked);
+                const postRef = await db.collection('forum_threads').doc(threadId).collection('posts').add(postData);
+
+                // Actualizar contador del hilo + updatedAt
+                await db.collection('forum_threads').doc(threadId).update({
+                    postCount: firebase.firestore.FieldValue.increment(1),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Actualizar postCount del usuario
+                db.collection('users').doc(currentUser.uid).update({
+                    postCount: firebase.firestore.FieldValue.increment(1)
+                }).catch(()=>{});
+
+                // XP por comentar
+                if (typeof gwAwardXp === 'function') gwAwardXp('comment').catch(()=>{});
+
+                // Limpiar editor
+                quillEditor.setContents([]);
+                attachedImages = [];
+                renderAttachedPreviews();
+                clearQuote();
+
+                // Agregar post al DOM
+                const newPost = {
+                    id: postRef.id,
+                    ...postData,
+                    createdAt: { toDate: () => new Date() }
+                };
+                const section = document.getElementById('repliesSection');
+                section.insertAdjacentHTML('beforeend', renderPost(newPost, false));
+                section.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            } catch(e) {
+                errEl.textContent = e.message || 'Error al publicar.';
+                errEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Publicar respuesta';
+            }
+        }
+        window.submitReply = submitReply;
+
+        // ─── Init ─────────────────────────────────────────────────
+        async function init() {
+            if (!db) {
+                document.getElementById('threadHeader').innerHTML = '<div class="empty-state">Firebase no inicializado.</div>';
+                return;
             }
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init);
-            } else {
-                init();
+            // Auth listener
+            if (auth) {
+                auth.onAuthStateChanged(async user => {
+                    currentUser = user;
+                    if (user) {
+                        try {
+                            const snap = await db.collection('users').doc(user.uid).get();
+                            currentUserData = snap.exists ? snap.data() : {};
+                            isAdmin = currentUserData.role === 'admin';
+                        } catch(_) { currentUserData = {}; }
+                    }
+                    // Reconstruir formulario si el hilo ya está cargado
+                    if (threadData) buildReplyForm(threadData.locked);
+                });
             }
-        })();
+
+            const ok = await loadThread();
+            if (!ok) return;
+            await loadPosts(true);
+            buildReplyForm(threadData && threadData.locked);
+        }
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+        else init();
+
+    })();
     </script>
 </body>
 </html>

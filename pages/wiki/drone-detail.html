@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
@@ -95,7 +95,7 @@
             if (d.creditsRaven != null && d.creditsRaven > 0) meta.push('CrÃ©ditos Raven: ' + d.creditsRaven);
             if (d.howToGet) meta.push(esc(d.howToGet));
             container.innerHTML = '<div class="profile-card" style="text-align: left; position: relative;">' +
-                '<button type="button" class="btn-fav" data-type="drone" data-id="' + escA(id) + '" data-name="' + escA(d.name || '') + '" title="AÃ±adir a favoritos" style="position:absolute;top:16px;right:16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;color:var(--accent);cursor:pointer;padding:8px 12px;"><i class="' + favStar + ' fa-star"></i></button>' +
+                '<button type="button" class="btn-fav" data-type="drone" data-id="' + escA(id) + '" data-name="' + escA(d.name || '') + '" title="Añadir a favoritos" style="position:absolute;top:16px;right:16px;"><i class="' + favStar + ' fa-star"></i></button>' +
                 (d.image ? '<img src="' + escA(d.image) + '" alt="" style="width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-bottom:16px;">' : '') +
                 '<h1 class="page-title">' + esc(d.name || 'Drone') + '</h1>' +
                 '<p class="profile-meta">' + meta.join(' Â· ') + '</p>' +

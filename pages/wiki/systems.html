@@ -7,14 +7,254 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../../css/styles.css" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            corePlugins: {
-                preflight: false,
-            }
+    <style>
+        /* ===== SYSTEMS PAGE - LOCAL STYLES ===== */
+
+        /* Section tabs */
+        .section-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
         }
-    </script>
+        .section-tab {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .section-tab:hover { color: var(--accent); border-color: var(--accent); }
+        .section-tab.active {
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.15));
+            color: var(--accent);
+            border-color: rgba(102,126,234,0.4);
+        }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* System cards */
+        .system-map {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        /* Conquest cards */
+        .conquest-group-block {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .conquest-planet-card {
+            background: var(--bg-input, rgba(255,255,255,0.03));
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            transition: transform 0.2s, border-color 0.2s;
+            cursor: default;
+        }
+        .conquest-planet-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(239,68,68,0.3);
+        }
+
+        /* Server time cards */
+        .server-time-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .server-time-card:hover { transform: translateY(-3px); }
+        .server-time-display {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 2px;
+            margin: 8px 0;
+        }
+        .server-time-tz {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Conquest stats */
+        .conquest-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .conquest-stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .conquest-stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .conquest-stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Conquest controls */
+        .conquest-controls {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .conquest-controls label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* Sirius panel */
+        .sirius-header {
+            background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(236,72,153,0.08));
+            border: 1px solid rgba(168,85,247,0.3);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* Responsive grids */
+        .servers-time-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .conquest-planets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 15px;
+        }
+
+        /* Systems accordion */
+        .system-accordion {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+        .system-accordion:hover { box-shadow: 0 4px 24px rgba(102,126,234,0.1); }
+        .system-accordion-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 22px;
+            cursor: pointer;
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .system-accordion-header:hover { background: rgba(102,126,234,0.05); }
+        .system-accordion-header.open { background: rgba(102,126,234,0.07); border-bottom: 1px solid var(--border-color); }
+        .system-accordion-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.15));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .system-accordion-info { flex: 1; }
+        .system-accordion-name { font-size: 17px; font-weight: 800; color: var(--text-primary); }
+        .system-accordion-meta { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+        .system-accordion-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        .system-accordion-chevron {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+        .system-accordion-header.open .system-accordion-chevron { transform: rotate(90deg); }
+        .system-accordion-body {
+            display: none;
+            padding: 16px 22px 20px;
+        }
+        .system-accordion-body.open { display: block; animation: fadeIn 0.25s ease; }
+        .planets-in-system-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+        }
+        .planet-mini-card {
+            background: var(--bg-input, rgba(255,255,255,0.03));
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .planet-mini-card:hover { transform: translateY(-3px); border-color: rgba(102,126,234,0.4); background: rgba(102,126,234,0.06); }
+        .planet-mini-name { font-weight: 700; color: var(--text-primary); font-size: 15px; margin-bottom: 4px; }
+        .planet-mini-meta { font-size: 12px; color: var(--text-tertiary); }
+        .planet-conquest-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #f87171;
+            border-radius: 6px;
+            padding: 2px 7px;
+            font-size: 10px;
+            font-weight: 800;
+        }
+        .system-map-thumb {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        /* Search + filters bar */
+        .filters-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
     <script src="../../js/components/footer-component.js"></script>
 </head>
 <body>
@@ -84,15 +324,14 @@
         <p class="page-subtitle">Sistemas estelares y planetas de Pirate Galaxy. Nivel, recursos, mapas y descripción.</p>
 
         <div class="section-tabs">
-            <button class="section-tab active" data-tab="systems"><i class="fas fa-globe me-1"></i> Sistemas</button>
-            <button class="section-tab" data-tab="planets"><i class="fas fa-moon me-1"></i> Planetas</button>
+            <button class="section-tab active" data-tab="systems"><i class="fas fa-globe me-1"></i> Sistemas &amp; Planetas</button>
             <button class="section-tab" data-tab="servers"><i class="fas fa-clock me-1"></i> Hora servidores</button>
             <button class="section-tab" data-tab="conquest"><i class="fas fa-flag me-1"></i> Conquista</button>
             <button class="section-tab" data-tab="sirius" style="background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(236,72,153,0.1)); border: 1px solid rgba(168,85,247,0.3); color: #c084fc;"><i class="fas fa-star me-1"></i> Singularidad Sirius</button>
         </div>
 
-        <div class="filters-bar" id="systemsFiltersBar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <input id="searchInput" type="text" class="search-input" placeholder="Buscar por nombre o descripción..." style="flex: 1; min-width: 200px;">
+        <div class="filters-bar" id="systemsFiltersBar">
+            <input id="searchInput" type="text" class="search-input" placeholder="Buscar sistemas o planetas..." style="flex: 1; min-width: 200px;">
             <div class="view-toggle">
                 <button type="button" class="btn-toggle active" data-view="grid" title="Vista Cuadrícula"><i class="fas fa-th"></i></button>
                 <button type="button" class="btn-toggle" data-view="list" title="Vista Lista"><i class="fas fa-list"></i></button>
@@ -100,18 +339,18 @@
         </div>
 
         <div id="systemsPanel" class="tab-panel active">
-            <div class="items-grid" id="systemsGrid"></div>
+            <!-- Systems accordion: each system shows its planets inline -->
+            <div id="systemsAccordion"></div>
             <div id="systemsEmpty" class="empty-state" style="display: none;">No hay sistemas registrados todavía.</div>
         </div>
 
-        <div id="planetsPanel" class="tab-panel">
-            <div class="items-grid" id="planetsGrid"></div>
-            <div id="planetsEmpty" class="empty-state" style="display: none;">No hay planetas registrados todavía.</div>
-        </div>
+        <!-- Hidden grids kept for backward-compat JS that references them -->
+        <div id="planetsPanel" class="tab-panel" style="display:none!important;"></div>
+        <div style="display:none;"><div class="items-grid" id="systemsGrid"></div><div class="items-grid" id="planetsGrid"></div><div id="planetsEmpty"></div></div>
 
         <div id="serversPanel" class="tab-panel">
             <p class="page-subtitle" style="margin-bottom: 16px;">Hora actual por servidor (según zona horaria configurada en el panel admin).</p>
-            <div id="serversTimeList" class="items-grid" style="display: block;"></div>
+            <div id="serversTimeList" class="servers-time-grid"></div>
             <div id="serversEmpty" class="empty-state" style="display: none;">No hay servidores configurados. Añádelos en Panel Admin → Contenido (genérico) → Servidores.</div>
         </div>
 
@@ -138,46 +377,44 @@
         </div>
 
         <div id="conquestPanel" class="tab-panel">
-            <div class="conquest-controls" style="margin-bottom: 20px;">
-                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                    <label for="conquestServerFilter" style="font-weight: 600; color: var(--text-primary); margin: 0;">
-                        <i class="fas fa-server me-2"></i>Servidor:
-                    </label>
-                    <select id="conquestServerFilter" class="form-control" style="width: auto; min-width: 150px;">
-                        <option value="">Todos los servidores</option>
-                    </select>
-                    <label for="conquestSortFilter" style="font-weight: 600; color: var(--text-primary); margin: 0;">
-                        <i class="fas fa-sort me-2"></i>Ordenar por:
-                    </label>
-                    <select id="conquestSortFilter" class="form-control" style="width: auto; min-width: 150px;">
-                        <option value="date">Próximo más cercano</option>
-                        <option value="server">Servidor</option>
-                        <option value="planet">Planeta</option>
-                    </select>
-                    <input type="text" id="conquestSearch" class="form-control" placeholder="Buscar planeta..." style="width: auto; min-width: 200px;">
+            <div class="conquest-controls">
+                <label for="conquestServerFilter">
+                    <i class="fas fa-server me-2"></i>Servidor:
+                </label>
+                <select id="conquestServerFilter" class="form-control" style="width: auto; min-width: 150px;">
+                    <option value="">Todos los servidores</option>
+                </select>
+                <label for="conquestSortFilter">
+                    <i class="fas fa-sort me-2"></i>Ordenar:
+                </label>
+                <select id="conquestSortFilter" class="form-control" style="width: auto; min-width: 160px;">
+                    <option value="date">Próximo más cercano</option>
+                    <option value="server">Servidor</option>
+                    <option value="planet">Planeta</option>
+                </select>
+                <input type="text" id="conquestSearch" class="form-control" placeholder="🔍 Buscar planeta..." style="width: auto; min-width: 200px; flex:1;">
+            </div>
+            
+            <div class="conquest-stats">
+                <div class="conquest-stat-card">
+                    <div class="conquest-stat-value" style="color: #667eea;" id="conquestTotalCount">0</div>
+                    <div class="conquest-stat-label">Total Conquistas</div>
+                </div>
+                <div class="conquest-stat-card">
+                    <div class="conquest-stat-value" style="color: #10B981;" id="conquestTodayCount">0</div>
+                    <div class="conquest-stat-label">Hoy</div>
+                </div>
+                <div class="conquest-stat-card">
+                    <div class="conquest-stat-value" style="color: #F59E0B;" id="conquestWeekCount">0</div>
+                    <div class="conquest-stat-label">Esta Semana</div>
+                </div>
+                <div class="conquest-stat-card">
+                    <div class="conquest-stat-value" style="color: #8B5CF6;" id="conquestServerCount">0</div>
+                    <div class="conquest-stat-label">Servidores</div>
                 </div>
             </div>
             
-            <div class="conquest-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: center;">
-                    <div style="font-size: 24px; font-weight: bold; color: #667eea;" id="conquestTotalCount">0</div>
-                    <div style="font-size: 12px; color: var(--text-secondary);">Total Conquistas</div>
-                </div>
-                <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: center;">
-                    <div style="font-size: 24px; font-weight: bold; color: #10B981;" id="conquestTodayCount">0</div>
-                    <div style="font-size: 12px; color: var(--text-secondary);">Hoy</div>
-                </div>
-                <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: center;">
-                    <div style="font-size: 24px; font-weight: bold; color: #F59E0B;" id="conquestWeekCount">0</div>
-                    <div style="font-size: 12px; color: var(--text-secondary);">Esta Semana</div>
-                </div>
-                <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: center;">
-                    <div style="font-size: 24px; font-weight: bold; color: #8B5CF6;" id="conquestServerCount">0</div>
-                    <div style="font-size: 12px; color: var(--text-secondary);">Servidores</div>
-                </div>
-            </div>
-            
-            <div id="conquestList" class="conquest-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
+            <div id="conquestList"></div>
             <div id="conquestEmpty" class="empty-state" style="display: none;">No hay horarios de conquista. Configúralos en Panel Admin → Contenido (genérico) → Conquista por servidor.</div>
         </div>
     </main>
@@ -209,85 +446,117 @@
             });
         }
 
-        function renderSystems() {
-            const grid = document.getElementById('systemsGrid');
-            const emptyState = document.getElementById('systemsEmpty');
-            const filtered = filterItems(allSystems, document.getElementById('searchInput').value);
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '';
-                emptyState.style.display = 'block';
-                return;
-            }
-            emptyState.style.display = 'none';
-            grid.innerHTML = '';
-
-            filtered.forEach(item => {
-                const created = item.createdAt && item.createdAt.toDate ? item.createdAt.toDate().toLocaleDateString() : '';
-                const levelRange = item.levelMin != null || item.levelMax != null ? `Nivel ${item.levelMin ?? '?'} - ${item.levelMax ?? '?'}` : '';
-                const planetCount = allPlanets.filter(p => (p.systemId || '') === item.id || (p.systemId || '').toLowerCase() === (item.name || '').toLowerCase()).length;
-                const card = document.createElement('article');
-                card.className = 'item-card';
-                card.style.position = 'relative';
-                const sysNameEsc = (item.name || 'Sin nombre').replace(/"/g, '&quot;');
-                card.innerHTML = `
-                    <button type="button" class="btn-fav" data-type="system" data-id="${item.id}" data-name="${sysNameEsc}" title="Añadir a favoritos" style="position:absolute; top:8px; right:8px; z-index:2; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; color:var(--accent); cursor:pointer; padding:6px 10px;"><i class="far fa-star"></i></button>
-                    ${item.mapImage ? `<img class="system-map" src="${item.mapImage}" alt="${item.name || 'Mapa'}">` : ''}
-                    <div class="item-header"><div class="item-name">${item.name || 'Sin nombre'}</div></div>
-                    <div class="item-meta">${levelRange ? `<span><i class="fas fa-signal me-1"></i>${levelRange}</span>` : ''}</div>
-                    ${item.description ? `<p class="item-description">${item.description}</p>` : ''}
-                    <div class="item-footer" style="display:flex; justify-content:space-between; align-items:center;">
-                        <span>${created ? `Actualizado: ${created}` : ''}</span>
-                        <a href="system-detail.html?systemId=${encodeURIComponent(item.id)}" class="btn-header btn-register" style="padding:6px 12px; font-size:13px;"><i class="fas fa-moon me-1"></i>Ver planetas (${planetCount})</a>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function renderPlanets() {
-            const grid = document.getElementById('planetsGrid');
-            const emptyState = document.getElementById('planetsEmpty');
-            const filtered = filterItems(allPlanets, document.getElementById('searchInput').value);
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '';
-                emptyState.style.display = 'block';
-                return;
-            }
-            emptyState.style.display = 'none';
-            grid.innerHTML = '';
-
-            filtered.forEach(item => {
-                const created = item.createdAt && item.createdAt.toDate ? item.createdAt.toDate().toLocaleDateString() : '';
-                const levelRange = item.levelMin != null || item.levelMax != null ? `Nivel ${item.levelMin ?? '?'} - ${item.levelMax ?? '?'}` : '';
-                const resources = Array.isArray(item.resources) && item.resources.length ? item.resources.join(', ') : '';
-                const img = item.planetImage || item.image || '';
-                const card = document.createElement('article');
-                card.className = 'item-card';
-                card.style.cursor = 'pointer';
-                card.onclick = () => location.href = 'planet-detail.html?id=' + encodeURIComponent(item.id);
-                const planetNameEsc = (item.name || 'Sin nombre').replace(/"/g, '&quot;');
-                const systemName = systemMap[item.systemId] || item.systemId || 'Desconocido';
-                card.innerHTML = `
-                    <button type="button" class="btn-fav" data-type="planet" data-id="${item.id}" data-name="${planetNameEsc}" title="Añadir a favoritos" style="position:absolute; top:8px; right:8px; z-index:2; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; color:var(--accent); cursor:pointer; padding:6px 10px;"><i class="far fa-star"></i></button>
-                    ${img ? `<img class="planet-image" src="${img}" alt="${item.name || 'Planeta'}">` : ''}
-                    <div class="item-header"><div class="item-name">${item.name || 'Sin nombre'}</div></div>
-                    <div class="item-meta">
-                        ${item.systemId ? `<span><i class="fas fa-globe me-1"></i>${systemName}</span>` : ''}
-                        ${levelRange ? `<span>${levelRange}</span>` : ''}
-                    </div>
-                    ${resources ? `<div class="item-meta"><span><i class="fas fa-gem me-1"></i>${resources}</span></div>` : ''}
-                    ${item.description ? `<p class="item-description">${item.description}</p>` : ''}
-                    <div class="item-footer">${created ? `Actualizado: ${created}` : ''} <i class="fas fa-external-link-alt" style="margin-left:8px; font-size:12px;"></i></div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
         function renderAll() {
-            renderSystems();
-            renderPlanets();
+            renderSystemsAccordion();
+        }
+
+        function renderSystems() { renderSystemsAccordion(); }
+        function renderPlanets() { /* merged into renderSystemsAccordion */ }
+
+        function renderSystemsAccordion() {
+            const accordion = document.getElementById('systemsAccordion');
+            const emptyEl = document.getElementById('systemsEmpty');
+            if (!accordion) return;
+
+            const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
+
+            // Build conquest planet ID set
+            const conquestPlanetIds = new Set(allConquest.map(c => c.planetId).filter(Boolean));
+
+            // Filter systems
+            let filteredSystems = allSystems;
+            if (search) {
+                // Filter systems that match OR have matching planets
+                filteredSystems = allSystems.filter(sys => {
+                    const sysMatch = (sys.name || '').toLowerCase().includes(search) || (sys.description || '').toLowerCase().includes(search);
+                    const hasPlanet = allPlanets.some(p => (p.systemId === sys.id || (p.systemId || '').toLowerCase() === (sys.name || '').toLowerCase()) && ((p.name || '').toLowerCase().includes(search) || (p.description || '').toLowerCase().includes(search)));
+                    return sysMatch || hasPlanet;
+                });
+            }
+
+            if (filteredSystems.length === 0) {
+                accordion.innerHTML = '';
+                emptyEl.style.display = 'block';
+                return;
+            }
+            emptyEl.style.display = 'none';
+            accordion.innerHTML = '';
+
+            filteredSystems.forEach(sys => {
+                const planets = allPlanets.filter(p => p.systemId === sys.id || (p.systemId || '').toLowerCase() === (sys.name || '').toLowerCase());
+                const filteredPlanets = search ? planets.filter(p => (p.name || '').toLowerCase().includes(search) || (p.description || '').toLowerCase().includes(search) || (sys.name || '').toLowerCase().includes(search)) : planets;
+
+                const conquestPlanets = filteredPlanets.filter(p => conquestPlanetIds.has(p.id));
+                const levelRange = sys.levelMin != null || sys.levelMax != null ? `Nv. ${sys.levelMin ?? '?'}–${sys.levelMax ?? '?'}` : '';
+
+                const block = document.createElement('div');
+                block.className = 'system-accordion';
+
+                const header = document.createElement('div');
+                header.className = 'system-accordion-header';
+                header.innerHTML = `
+                    <div class="system-accordion-icon"><i class="fas fa-solar-system" style="font-size:18px;"></i></div>
+                    <div class="system-accordion-info">
+                        <div class="system-accordion-name">${sys.name || 'Sin nombre'}</div>
+                        <div class="system-accordion-meta">${[levelRange, sys.description ? sys.description.substring(0,80)+'…' : ''].filter(Boolean).join(' · ')}</div>
+                    </div>
+                    <div class="system-accordion-badges">
+                        <span style="background:rgba(102,126,234,0.1);color:var(--accent);border:1px solid rgba(102,126,234,0.2);border-radius:8px;padding:3px 10px;font-size:12px;font-weight:700;">
+                            <i class="fas fa-moon me-1"></i>${filteredPlanets.length} planeta${filteredPlanets.length !== 1 ? 's' : ''}
+                        </span>
+                        ${conquestPlanets.length > 0 ? `<span style="background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:3px 10px;font-size:12px;font-weight:700;"><i class="fas fa-flag me-1"></i>${conquestPlanets.length} conquista</span>` : ''}
+                    </div>
+                    <i class="fas fa-chevron-right system-accordion-chevron"></i>
+                `;
+
+                const body = document.createElement('div');
+                body.className = 'system-accordion-body';
+
+                if (sys.mapImage) {
+                    body.innerHTML += `<img class="system-map-thumb" src="${sys.mapImage}" alt="${sys.name}">`;
+                }
+
+                if (filteredPlanets.length === 0) {
+                    body.innerHTML += '<p style="color:var(--text-tertiary);font-size:14px;">No hay planetas registrados en este sistema.</p>';
+                } else {
+                    const grid = document.createElement('div');
+                    grid.className = 'planets-in-system-grid';
+                    filteredPlanets.forEach(p => {
+                        const isConquest = conquestPlanetIds.has(p.id);
+                        const lvl = p.levelMin != null || p.levelMax != null ? `Nv. ${p.levelMin ?? '?'}–${p.levelMax ?? '?'}` : '';
+                        const resources = Array.isArray(p.resources) && p.resources.length ? p.resources.join(', ') : '';
+                        const nameEsc = (p.name || 'Sin nombre').replace(/</g,'&lt;');
+                        const card = document.createElement('div');
+                        card.className = 'planet-mini-card';
+                        card.onclick = () => location.href = 'planet-detail.html?id=' + encodeURIComponent(p.id);
+                        card.innerHTML = `
+                            ${isConquest ? '<span class="planet-conquest-badge"><i class="fas fa-flag me-1"></i>Conquista</span>' : ''}
+                            ${p.planetImage || p.image ? `<img src="${p.planetImage || p.image}" alt="${nameEsc}" style="width:100%;height:70px;object-fit:cover;border-radius:8px;margin-bottom:8px;">` : ''}
+                            <div class="planet-mini-name">${nameEsc}</div>
+                            <div class="planet-mini-meta">${[lvl, resources].filter(Boolean).join(' · ')}</div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                    body.appendChild(grid);
+                }
+
+                // Toggle accordion
+                header.addEventListener('click', () => {
+                    const isOpen = header.classList.contains('open');
+                    header.classList.toggle('open', !isOpen);
+                    body.classList.toggle('open', !isOpen);
+                });
+
+                // Auto-open if search matches
+                if (search) {
+                    header.classList.add('open');
+                    body.classList.add('open');
+                }
+
+                block.appendChild(header);
+                block.appendChild(body);
+                accordion.appendChild(block);
+            });
         }
 
         function renderServersTime() {
@@ -299,8 +568,28 @@
                 return;
             }
             empty.style.display = 'none';
-            list.innerHTML = '';
-            allServers.forEach(s => {
+
+            // Build cards on first render; on subsequent ticks only update the time spans
+            if (list.children.length !== allServers.length) {
+                list.innerHTML = '';
+                allServers.forEach((s, idx) => {
+                    const card = document.createElement('div');
+                    card.className = 'server-time-card';
+                    card.dataset.serverIdx = idx;
+                    card.innerHTML =
+                        '<div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:var(--accent); margin-bottom:4px;"><i class="fas fa-server me-1"></i>' + (s.name || 'Servidor') + '</div>' +
+                        '<div class="server-time-display srv-time-val">--:--:--</div>' +
+                        '<div class="server-time-tz">' + (s.timezone || 'UTC') + '</div>' +
+                        (s.region ? '<div style="font-size:12px; color:var(--text-tertiary); margin-top:4px;"><i class="fas fa-globe me-1"></i>' + s.region + '</div>' : '');
+                    list.appendChild(card);
+                });
+            }
+
+            // Update only the time text nodes — no DOM rebuild, no flicker
+            const cards = list.querySelectorAll('.server-time-card');
+            allServers.forEach((s, idx) => {
+                const span = cards[idx] && cards[idx].querySelector('.srv-time-val');
+                if (!span) return;
                 let timeStr = '—';
                 try {
                     const tz = (s.timezone || 'UTC').trim();
@@ -308,11 +597,7 @@
                 } catch (e) {
                     timeStr = new Date().toUTCString().split(' ')[4] || '—';
                 }
-                const card = document.createElement('div');
-                card.className = 'item-card';
-                card.style.minWidth = '200px';
-                card.innerHTML = '<div class="item-header"><div class="item-name">' + (s.name || 'Servidor') + '</div></div><div class="item-meta"><span><i class="fas fa-clock me-1"></i>' + timeStr + '</span></div><div class="item-meta" style="font-size:12px; color: var(--text-tertiary);">' + (s.timezone || 'UTC') + '</div>';
-                list.appendChild(card);
+                span.textContent = timeStr;
             });
         }
 
@@ -439,17 +724,17 @@
                 
                 const groupBlock = document.createElement('div');
                 groupBlock.className = 'conquest-group-block';
-                groupBlock.style.cssText = 'background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px;';
                 
                 const groupTitle = document.createElement('h3');
-                groupTitle.style.cssText = 'margin: 0 0 15px 0; color: var(--text-primary); font-size: 18px; display: flex; align-items: center; gap: 10px;';
+                groupTitle.style.cssText = 'margin: 0 0 16px 0; color: var(--text-primary); font-size: 17px; display: flex; align-items: center; gap: 10px; font-weight:800;';
                 
                 const icon = sortFilter === 'date' ? 'fas fa-calendar-alt' : 'fas fa-server';
-                groupTitle.innerHTML = `<i class="${icon}"></i> ${groupName} <span style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">${groups[groupName].length}</span>`;
+                const badgeColor = groupName === 'Hoy / Muy pronto' ? '#10B981' : groupName === 'Próximos 3 días' ? '#F59E0B' : 'var(--accent)';
+                groupTitle.innerHTML = `<i class="${icon}" style="color:var(--accent);"></i> ${groupName} <span style="background: ${badgeColor}; color: white; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight:700;">${groups[groupName].length}</span>`;
                 groupBlock.appendChild(groupTitle);
                 
                 const planetsGrid = document.createElement('div');
-                planetsGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;';
+                planetsGrid.className = 'conquest-planets-grid';
                 
                 groups[groupName].forEach(conquest => {
                     const nextDate = conquest.nextConquestDate;
@@ -458,31 +743,36 @@
                     
                     const planetCard = document.createElement('div');
                     planetCard.className = 'conquest-planet-card';
-                    planetCard.style.cssText = 'background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; position: relative; display: flex; flex-direction: column; justify-content: space-between; min-height: 140px; transition: transform 0.2s;';
-                    planetCard.onmouseover = () => planetCard.style.transform = 'translateY(-2px)';
-                    planetCard.onmouseout = () => planetCard.style.transform = 'translateY(0)';
-
+                    
                     const statusColor = isToday ? '#10B981' : isThisWeek ? '#F59E0B' : '#6B7280';
                     const statusText = isToday ? 'HOY' : isThisWeek ? 'ESTA SEMANA' : 'PRÓXIMO';
                     const dayName = conquest.dayIndex !== undefined ? days[conquest.dayIndex] : '—';
+                    
+                    // Calculate user local time
+                    const server = allServers.find(s => s.id === conquest.serverId || s.name === conquest.serverId);
+                    const tz = server ? (server.timezone || 'UTC') : 'UTC';
+                    let localStr = '';
+                    if (nextDate) {
+                        localStr = nextDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                    }
 
                     planetCard.innerHTML = `
-                        <div>
-                            <div style="position: absolute; top: 10px; right: 10px; background: ${statusColor}; color: white; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: bold;">${statusText}</div>
-                            <h4 style="margin: 0 0 5px 0; color: var(--text-primary); font-size: 16px;">${conquest.planetName || 'Sin nombre'}</h4>
-                            <div style="font-size: 12px; color: var(--accent); font-weight: 600; margin-bottom: 10px;">${conquest.serverId}</div>
-                        </div>
-                        
-                        <div>
-                            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">
-                                <i class="fas fa-clock me-1" style="width:16px;"></i> ${dayName} a las ${conquest.time || '--:--'}
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                            <div>
+                                <h4 style="margin: 0 0 4px 0; color: var(--text-primary); font-size: 16px; font-weight:700;">${conquest.planetName || 'Sin nombre'}</h4>
+                                <div style="font-size: 12px; color: var(--accent); font-weight: 600;">${conquest.serverId || ''}</div>
                             </div>
-                            ${nextDate ? `
-                                <div style="font-size: 11px; color: var(--text-tertiary);">
-                                    <i class="fas fa-calendar-day me-1" style="width:16px;"></i> ${nextDate.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} ${nextDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                                </div>
-                            ` : ''}
+                            <span style="background: ${statusColor}; color: white; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; white-space:nowrap;">${statusText}</span>
                         </div>
+                        <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">
+                            <i class="fas fa-clock me-1" style="width:14px;"></i> ${dayName} a las <strong>${conquest.time || '--:--'}</strong>
+                            <span style="font-size:10px; color:var(--text-tertiary);">(${tz})</span>
+                        </div>
+                        ${nextDate ? `
+                            <div style="font-size: 11px; color: var(--text-tertiary);">
+                                <i class="fas fa-user-clock me-1" style="width:14px;"></i> Tu hora: ~${localStr} · ${nextDate.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+                            </div>
+                        ` : ''}
                     `;
                     
                     planetsGrid.appendChild(planetCard);
@@ -520,8 +810,10 @@
                 document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
                 tab.classList.add('active');
                 const panelId = tab.dataset.tab + 'Panel';
-                document.getElementById(panelId).classList.add('active');
-                document.getElementById('systemsFiltersBar').style.display = (tab.dataset.tab === 'systems' || tab.dataset.tab === 'planets') ? 'flex' : 'none';
+                const panel = document.getElementById(panelId);
+                if (panel) panel.classList.add('active');
+                const isSystemsTab = tab.dataset.tab === 'systems';
+                document.getElementById('systemsFiltersBar').style.display = isSystemsTab ? 'flex' : 'none';
                 if (tab.dataset.tab === 'servers') {
                     renderServersTime();
                     if (window.serversTimeInterval) clearInterval(window.serversTimeInterval);

@@ -7,6 +7,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../../css/styles.css" rel="stylesheet">
+    <!-- Editor de texto rico Quill.js -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" rel="stylesheet">
     <style>
         /* Premium Layout for Planet Detail */
         .planet-header-card { 
@@ -398,6 +400,7 @@
             pointer-events: none;
         }
         .map-marker:hover .marker-tooltip { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .marker-tooltip.pinned { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); pointer-events: auto; z-index: 200; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent), 0 10px 30px rgba(0,0,0,0.5); }
         
         /* Marker Count Badge */
         .marker-count {
@@ -513,6 +516,153 @@
             color: var(--text-tertiary);
             z-index: 5;
         }
+        /* ── Planet Switcher ─────────────────────────────────────── */
+        .planet-switcher-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .planet-switcher-label {
+            font-size: 11px;
+            font-weight: 900;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .planet-switcher-system {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-tertiary);
+            background: rgba(102,126,234,0.08);
+            border: 1px solid rgba(102,126,234,0.15);
+            border-radius: 8px;
+            padding: 4px 10px;
+            white-space: nowrap;
+        }
+        .planet-pills {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+        .planet-pill {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .planet-pill:hover { border-color: var(--accent); color: var(--accent); background: rgba(102,126,234,0.08); }
+        .planet-pill.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 2px 12px rgba(102,126,234,0.4); }
+        .planet-pill.no-map { opacity: 0.45; }
+
+        /* ── Drops Panel integrado bajo el mapa ──────────────────── */
+        .map-drops-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        .map-drops-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 22px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(to right, rgba(102,126,234,0.06), transparent);
+            cursor: pointer;
+            user-select: none;
+        }
+        .map-drops-header:hover { background: rgba(102,126,234,0.08); }
+        .map-drops-title {
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .map-drops-count {
+            background: rgba(102,126,234,0.15);
+            color: var(--accent);
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 11px;
+            font-weight: 900;
+        }
+        .map-drops-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .map-drops-body.open { max-height: 500px; overflow-y: auto; }
+        .map-drops-body::-webkit-scrollbar { width: 4px; }
+        .map-drops-body::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.2); border-radius: 10px; }
+        .drop-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 22px;
+            border-bottom: 1px solid rgba(128,128,128,0.06);
+            transition: background 0.15s;
+        }
+        .drop-row:hover { background: rgba(102,126,234,0.04); }
+        .drop-row:last-child { border-bottom: none; }
+        .drop-name { font-size: 13px; font-weight: 700; flex: 1; color: var(--text-primary); }
+        .drop-source { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+        .drop-category { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2); white-space: nowrap; }
+        .drop-rarity { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+        .drop-rarity.common  { background: rgba(156,163,175,0.15); color: #d1d5db; }
+        .drop-rarity.rare    { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
+        .drop-rarity.epic    { background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.2); }
+        .drop-btn-map { font-size: 11px; font-weight: 700; color: var(--accent); background: rgba(102,126,234,0.1); border: 1px solid rgba(102,126,234,0.2); border-radius: 8px; padding: 4px 10px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .drop-btn-map:hover { background: var(--accent); color: white; }
+
+        /* ── Minimap ─────────────────────────────────────────────── */
+        #minimap {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            width: 110px;
+            height: 110px;
+            border-radius: 10px;
+            border: 1px solid rgba(102,126,234,0.4);
+            background: rgba(0,0,0,0.7);
+            overflow: hidden;
+            z-index: 50;
+            pointer-events: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            display: none;
+            transition: opacity 0.3s;
+        }
+        #minimapImg { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
+        #minimapViewport {
+            position: absolute;
+            border: 1.5px solid var(--accent);
+            background: rgba(102,126,234,0.15);
+            border-radius: 3px;
+            pointer-events: none;
+            top: 0; left: 0;
+        }
+
     </style>
 </head>
 <body>
@@ -558,13 +708,15 @@
             <ul class="nav-links">
                 <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
                 <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
                 <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
                 <li class="nav-item"><a href="enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
-                <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
                 <li class="nav-item"><a href="systems.html" class="nav-link active"><i class="fas fa-globe"></i> Sistemas</a></li>
                 <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
                 <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
                 <li class="nav-item"><a href="../forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="../news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
             </ul>
         </div>
     </nav>
@@ -604,6 +756,16 @@
 
         <!-- TAB: MAP -->
         <div id="tab-map" class="tab-pane">
+
+            <!-- Planet Switcher -->
+            <div class="planet-switcher-bar" id="planetSwitcherBar">
+                <span class="planet-switcher-label"><i class="fas fa-globe-americas"></i> Planetas</span>
+                <div class="planet-pills" id="planetPills">
+                    <span style="font-size:12px;color:var(--text-tertiary);padding:5px;">Cargando planetas...</span>
+                </div>
+            </div>
+
+            <!-- Map Controls -->
             <div class="map-controls-panel">
                 <div class="d-flex flex-column align-items-center gap-2">
                     <span class="control-group-title"><i class="fas fa-expand-alt me-1"></i> Formato</span>
@@ -613,7 +775,6 @@
                         <button class="btn-square" onclick="setMapScale('large')" id="btn-size-large">L</button>
                     </div>
                 </div>
-                
                 <div class="d-flex flex-column align-items-center gap-2">
                     <span class="control-group-title"><i class="fas fa-location-arrow me-1"></i> Navegación</span>
                     <div class="d-flex gap-3">
@@ -622,24 +783,35 @@
                         <button class="btn-nav-modern" onclick="adjustZoom(0.4)" title="Aumentar"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
+                <div class="d-flex flex-column align-items-center gap-2">
+                    <span class="control-group-title"><i class="fas fa-filter me-1"></i> Marcadores</span>
+                    <div class="d-flex gap-2">
+                        <button class="btn-nav-modern" onclick="toggleAllGroups(true)" title="Mostrar todo" style="font-size:11px;font-weight:900;width:auto;padding:0 12px;color:#22c55e;"><i class="fas fa-eye me-1"></i>TODO</button>
+                        <button class="btn-nav-modern" onclick="toggleAllGroups(false)" title="Ocultar todo" style="font-size:11px;font-weight:900;width:auto;padding:0 12px;color:#ef4444;"><i class="fas fa-eye-slash me-1"></i>NADA</button>
+                    </div>
+                </div>
             </div>
 
+            <!-- Map + Sidebar -->
             <div class="map-row-layout">
                 <div id="mapMainCanvas" class="map-canvas-container">
                     <div id="coordTracker">X: 00.0 &nbsp; Y: 00.0</div>
                     <div id="coordProbe" class="coord-probe-indicator"></div>
-                    
                     <div id="planetMapWrap">
                         <img id="planetMapImage" src="" alt="Tactical Map">
                     </div>
-                    
+                    <!-- Minimap -->
+                    <div id="minimap">
+                        <img id="minimapImg" src="" alt="">
+                        <div id="minimapViewport"></div>
+                    </div>
                     <div id="mapLoader" class="map-status-overlay">
                         <div class="spinner-grow text-primary" role="status"></div>
                         <span class="mt-2" style="font-weight: 800; opacity: 0.6;">CALIBRANDO SENSORES...</span>
                     </div>
                     <div id="mapError" class="map-status-overlay" style="display: none;">
                         <i class="fas fa-satellite-dish fa-3x mb-3" style="opacity: 0.2;"></i>
-                        <span>ERROR DE ENLACE SATELITAL</span>
+                        <span>SIN MAPA DISPONIBLE</span>
                     </div>
                 </div>
 
@@ -649,7 +821,7 @@
                             <span class="filter-sidebar-title"><i class="fas fa-radar"></i> Radar Táctico</span>
                         </div>
                         <div class="filter-bulk-actions">
-                            <button class="btn-bulk btn-bulk-all" onclick="toggleAllGroups(true)">Activar Todo</button>
+                            <button class="btn-bulk btn-bulk-all" onclick="toggleAllGroups(true)">Todo</button>
                             <button class="btn-bulk btn-bulk-none" onclick="toggleAllGroups(false)">Nada</button>
                         </div>
                     </div>
@@ -658,6 +830,11 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Drops hidden anchor (needed for focusOnMarker) -->
+            <div id="dropsCount" style="display:none;">0</div>
+            <div id="mapDropsList" style="display:none;"></div>
+            <div id="mapDropsEmpty" style="display:none;"></div>
         </div>
 
         <!-- TAB: DROPS -->
@@ -687,7 +864,7 @@
             </div>
         </div>
 
-        <div id="planet-comments-section" class="mt-5 pt-5 border-top border-secondary"></div>
+        <div id="planet-comments-section"></div>
     </main>
 
     <!-- Firebase & Custom JS -->
@@ -698,6 +875,7 @@
     <script src="../../js/firebase-config.js"></script>
     <script src="../../js/header-auth.js"></script>
     <script src="../../js/content-utils.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
     <script src="../../js/comments.js"></script>
 
     <script>
@@ -753,6 +931,7 @@
         function updateTransform() {
             const w = document.getElementById('planetMapWrap');
             if (w) w.style.transform = `translate(${AppState.map.pan.x}px, ${AppState.map.pan.y}px) scale(${AppState.map.zoom})`;
+            updateMinimap();
         }
 
         function setMapScale(size) {
@@ -783,14 +962,26 @@
         function initMapEvents() {
             const c = document.getElementById('mapMainCanvas'), t = document.getElementById('coordTracker'), p = document.getElementById('coordProbe');
             if (!c) return;
-            c.addEventListener('mousedown', (e) => {
-                if (e.target.closest('.map-marker')) return;
-                e.preventDefault();
-                AppState.map.isPanning = true;
-                AppState.map.startPan = { x: e.clientX - AppState.map.pan.x, y: e.clientY - AppState.map.pan.y };
-                c.style.cursor = 'grabbing';
+
+            // ── Tooltip anclado con click ──────────────────────────────────
+            let pinnedTooltip = null;
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.map-marker') && pinnedTooltip) {
+                    pinnedTooltip.classList.remove('pinned');
+                    pinnedTooltip = null;
+                }
             });
             c.addEventListener('click', (e) => {
+                const markerEl = e.target.closest('.map-marker');
+                if (markerEl) {
+                    e.stopPropagation();
+                    const tip = markerEl.querySelector('.marker-tooltip');
+                    if (!tip) return;
+                    if (pinnedTooltip && pinnedTooltip !== tip) { pinnedTooltip.classList.remove('pinned'); }
+                    tip.classList.toggle('pinned');
+                    pinnedTooltip = tip.classList.contains('pinned') ? tip : null;
+                    return;
+                }
                 if (AppState.map.isPanning && Math.abs(e.clientX - (AppState.map.startPan.x + AppState.map.pan.x)) > 5) return;
                 const r = c.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, i = document.getElementById('planetMapImage');
                 if (!i?.complete) return;
@@ -799,6 +990,15 @@
                     p.style.display = 'block'; p.style.left = `${x}px`; p.style.top = `${y}px`;
                     p.innerHTML = `<div class="coord-probe-label">${rx.toFixed(1).padStart(4,'0')}, ${ry.toFixed(1).padStart(4,'0')}</div>`;
                 }
+            });
+
+            // ── Mouse drag / pan ──────────────────────────────────────────
+            c.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.map-marker')) return;
+                e.preventDefault();
+                AppState.map.isPanning = true;
+                AppState.map.startPan = { x: e.clientX - AppState.map.pan.x, y: e.clientY - AppState.map.pan.y };
+                c.style.cursor = 'grabbing';
             });
             window.addEventListener('mousemove', (e) => {
                 if (AppState.map.isPanning) { AppState.map.pan.x = e.clientX - AppState.map.startPan.x; AppState.map.pan.y = e.clientY - AppState.map.startPan.y; updateTransform(); p.style.display = 'none'; }
@@ -812,18 +1012,55 @@
                 } else t.style.opacity = '0';
             });
             window.addEventListener('mouseup', () => { AppState.map.isPanning = false; c.style.cursor = 'grab'; });
+
+            // ── Touch: pan con 1 dedo, pinch-to-zoom con 2 ───────────────
+            let touch1 = null, touch2 = null, pinchStartDist = null, pinchStartZoom = null;
+            c.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    touch1 = e.touches[0];
+                    AppState.map.isPanning = true;
+                    AppState.map.startPan = { x: touch1.clientX - AppState.map.pan.x, y: touch1.clientY - AppState.map.pan.y };
+                } else if (e.touches.length === 2) {
+                    touch1 = e.touches[0]; touch2 = e.touches[1];
+                    pinchStartDist = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+                    pinchStartZoom = AppState.map.zoom;
+                    AppState.map.isPanning = false;
+                }
+                e.preventDefault();
+            }, { passive: false });
+            c.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1 && AppState.map.isPanning) {
+                    const t1 = e.touches[0];
+                    AppState.map.pan.x = t1.clientX - AppState.map.startPan.x;
+                    AppState.map.pan.y = t1.clientY - AppState.map.startPan.y;
+                    updateTransform();
+                } else if (e.touches.length === 2) {
+                    const t1 = e.touches[0], t2 = e.touches[1];
+                    const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+                    const newZoom = Math.max(0.6, Math.min(pinchStartZoom * (dist / pinchStartDist), 5));
+                    const midX = (t1.clientX + t2.clientX) / 2, midY = (t1.clientY + t2.clientY) / 2;
+                    const r = c.getBoundingClientRect();
+                    const mx = midX - r.left - AppState.map.pan.x, my = midY - r.top - AppState.map.pan.y;
+                    AppState.map.pan.x -= mx * (newZoom / AppState.map.zoom - 1);
+                    AppState.map.pan.y -= my * (newZoom / AppState.map.zoom - 1);
+                    AppState.map.zoom = newZoom;
+                    updateTransform();
+                }
+                e.preventDefault();
+            }, { passive: false });
+            c.addEventListener('touchend', () => { AppState.map.isPanning = false; touch1 = touch2 = null; pinchStartDist = null; });
         }
 
         function renderMarkers() {
             const w = document.getElementById('planetMapWrap');
             if (!w) return;
             w.querySelectorAll('.map-marker').forEach(m => m.remove());
+
             // Group markers by coordinates
             const groups = {};
             AppState.markers.forEach(m => {
                 if (!AppState.filters.activeGroups.has(m.type) || (m.entityName && !AppState.filters.entities.has(m.entityName))) return;
                 if (m.x == null || m.y == null) return;
-                
                 const key = `${m.x.toFixed(2)},${m.y.toFixed(2)}`;
                 if (!groups[key]) groups[key] = [];
                 groups[key].push(m);
@@ -832,57 +1069,83 @@
             const typePriority = ['boss', 'rare_mantis', 'mantis', 'enemy_spawn', 'patrol', 'collectible', 'landing', 'energy', 'poi'];
 
             Object.entries(groups).forEach(([coords, markers]) => {
-                // Find primary marker for icon/color
+                // Find primary marker by priority
                 let primary = markers[0];
                 let maxPriority = typePriority.indexOf(primary.type);
                 if (maxPriority === -1) maxPriority = 999;
-
                 markers.forEach(m => {
                     let p = typePriority.indexOf(m.type);
-                    if (p !== -1 && p < maxPriority) {
-                        maxPriority = p;
-                        primary = m;
-                    }
+                    if (p !== -1 && p < maxPriority) { maxPriority = p; primary = m; }
                 });
 
                 const ui = MARKER_UI[primary.type] || MARKER_UI.poi;
-                const marker = document.createElement('div');
-                marker.className = 'map-marker'; 
-                marker.style.left = `${primary.x}%`; 
-                marker.style.top = `${primary.y}%`; 
-                marker.style.color = ui.color;
-                marker.style.background = `${ui.color}22`;
-                marker.style.border = `1.5px solid ${ui.color}`;
-                marker.style.borderRadius = "50%";
-                marker.style.boxShadow = `0 0 8px ${ui.color}, inset 0 0 4px ${ui.color}`;
-                
                 let totalCount = 0;
-                markers.forEach(m => {
-                    totalCount += (parseInt(m.count) || 1);
-                });
+                markers.forEach(m => { totalCount += (parseInt(m.count) || 1); });
 
-                // Count badge if more than 1
-                const countHtml = totalCount > 1 ? `<div class="marker-count">${totalCount}</div>` : '';
+                // ── Icono: PNG si existe, circulo de color si no ──────────────
+                // Resolvemos la URL del icono del marcador primario
+                const rawImg = primary.entityImage || primary.iconUrl || null;
+                const imgSrc = rawImg
+                    ? (rawImg.startsWith('http') ? rawImg : `../../${rawImg}`)
+                    : null;
 
-                // Tooltip construction
+                // Contenido interior del punto (img o icono FA)
+                const innerIcon = imgSrc
+                    ? `<img src="${imgSrc}"
+                            alt=""
+                            style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;"
+                            onerror="this.style.display='none';this.nextSibling.style.display='flex';">
+                       <i class="fas ${ui.icon}"
+                          style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:13px;text-shadow:0 0 3px #000;"></i>`
+                    : `<i class="fas ${ui.icon}" style="font-size:13px;text-shadow:0 0 3px #000;"></i>`;
+
+                const countHtml = totalCount > 1
+                    ? `<div class="marker-count">${totalCount}</div>` : '';
+
+                // ── Tooltip ───────────────────────────────────────────────────
                 let tooltipInner = '';
                 markers.forEach((m, idx) => {
                     const mUi = MARKER_UI[m.type] || MARKER_UI.poi;
                     const itemQty = parseInt(m.count) || 1;
-                    const itemPrefix = itemQty > 1 ? `<span style="opacity:0.8; margin-right:4px;">(${itemQty}x)</span>` : '';
+                    const itemPrefix = itemQty > 1 ? `<span style="opacity:0.8;margin-right:4px;">(${itemQty}x)</span>` : '';
+                    const mImg = m.entityImage || m.iconUrl || null;
+                    const mImgSrc = mImg ? (mImg.startsWith('http') ? mImg : `../../${mImg}`) : null;
+                    const tipIcon = mImgSrc
+                        ? `<img src="${mImgSrc}" alt="" style="width:24px;height:24px;border-radius:50%;object-fit:cover;border:1.5px solid ${mUi.color}44;flex-shrink:0;"
+                               onerror="this.replaceWith(Object.assign(document.createElement('i'),{className:'fas ${mUi.icon}',style:'color:${mUi.color};font-size:13px;flex-shrink:0;'}));">`
+                        : `<i class="fas ${mUi.icon}" style="color:${mUi.color};font-size:13px;flex-shrink:0;text-shadow:0 0 2px #000;"></i>`;
+
                     tooltipInner += `
-                        <div style="font-weight:900; ${idx < markers.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:10px; padding-bottom:10px;' : ''} display:flex; align-items:center; gap:10px;">
-                            <i class="fas ${mUi.icon}" style="color:${mUi.color}; text-shadow: 0 0 2px #000;"></i>
+                        <div style="display:flex;align-items:center;gap:10px;font-weight:900;
+                            ${idx < markers.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.05);margin-bottom:10px;padding-bottom:10px;' : ''}">
+                            ${tipIcon}
                             <span>${itemPrefix}${m.label || mUi.label}</span>
                         </div>
-                        ${m.entityName ? `<div class="mb-2" style="font-size:13px;"><span class="text-tertiary">Objetivo:</span> <strong style="color:var(--accent)">${m.entityName}</strong></div>` : ''}
+                        ${m.entityName ? `<div class="mb-2" style="font-size:13px;">
+                            <span class="text-tertiary">Objetivo:</span>
+                            <strong style="color:var(--accent)">${m.entityName}</strong>
+                        </div>` : ''}
                         ${m.description ? `<div class="mt-1 text-tertiary mb-2" style="font-size:11px;line-height:1.5;">${m.description}</div>` : ''}
                     `;
                 });
 
+                // ── Crear el elemento del marcador ────────────────────────────
+                const marker = document.createElement('div');
+                marker.className = 'map-marker';
+                marker.style.cssText = `
+                    left:${primary.x}%;
+                    top:${primary.y}%;
+                    color:${ui.color};
+                    background:${ui.color}22;
+                    border:1.5px solid ${ui.color};
+                    border-radius:50%;
+                    box-shadow:0 0 8px ${ui.color}, inset 0 0 4px ${ui.color};
+                    overflow:hidden;
+                    display:flex;align-items:center;justify-content:center;
+                `;
                 marker.innerHTML = `
                     ${countHtml}
-                    <i class="fas ${ui.icon}" style="text-shadow: 0 0 3px #000;"></i>
+                    ${innerIcon}
                     <div class="marker-tooltip">
                         ${tooltipInner}
                         <div class="mt-2 text-center" style="font-size:10px;color:var(--accent);opacity:0.8;">[${primary.x}, ${primary.y}]</div>
@@ -890,7 +1153,10 @@
                 `;
                 w.appendChild(marker);
             });
-            document.querySelectorAll('#routesOverlay polyline').forEach(p => p.style.display = AppState.filters.routes.has(p.dataset.routeName) ? 'block' : 'none');
+
+            document.querySelectorAll('#routesOverlay polyline').forEach(p => {
+                p.style.display = AppState.filters.routes.has(p.dataset.routeName) ? 'block' : 'none';
+            });
         }
 
         function renderSidebarFilters() {
@@ -985,9 +1251,13 @@
                 if (p.systemId) { const sys = await db.collection('systems').doc(p.systemId).get(); document.getElementById('planetSystem').textContent = sys.exists?sys.data().name:'Desconocido'; }
                 const img = document.getElementById('planetMapImage');
                 if (p.mapImage) {
-                    img.onload = () => { document.getElementById('mapLoader').style.display='none'; img.classList.add('loaded'); if(document.getElementById('tab-map').classList.contains('active')) { setMapScale('medium'); AppState.map.isInitialized=true; } };
+                    img.onload = () => { document.getElementById('mapLoader').style.display='none'; img.classList.add('loaded'); const mm = document.getElementById('minimapImg'); if(mm) mm.src = img.src; if(document.getElementById('tab-map').classList.contains('active')) { setMapScale('medium'); AppState.map.isInitialized=true; } updateMinimap(); };
                     img.onerror = () => { document.getElementById('mapLoader').style.display='none'; document.getElementById('mapError').style.display='flex'; };
                     img.src = p.mapImage.startsWith('http')?p.mapImage:('../../assets/img/planets/maps/'+p.mapImage.replace(/^.*[/\\]/,''));
+                } else {
+                    // Sin imagen de mapa: ocultar loader y mostrar error suave para no bloquear el tab
+                    document.getElementById('mapLoader').style.display='none';
+                    document.getElementById('mapError').style.display='flex';
                 }
                 const [mc, bc, dc, rc] = await Promise.all([db.collection('map_markers').where('planetId','==',AppState.planetId).get(), db.collection('bestiary').where('planetId','==',AppState.planetId).get(), db.collection('planet_drops').where('planetId','==',AppState.planetId).get(), db.collection('farming_routes').where('planetId','==',AppState.planetId).get()]);
                 AppState.markers = mc.docs.map(d=>({id:d.id,...d.data()}));
@@ -1002,15 +1272,15 @@
                 });
                 
                 const enemyIds = [...allEIds].filter(id => !!id);
-                const enemyMap = {};
+                const enemyMap = {}; // id → { name, image }
                 if (enemyIds.length > 0) {
                     const eSnaps = await Promise.all(enemyIds.map(id => db.collection('enemies').doc(id).get()));
                     eSnaps.forEach(s => { 
                         if (s.exists) {
-                            enemyMap[s.id] = s.data().name; 
+                            const ed = s.data();
+                            enemyMap[s.id] = { name: ed.name || null, image: ed.image || null };
                         } else {
-                            // Try to look up by ID as a fallback if the ID might be a name itself
-                            enemyMap[s.id] = null;
+                            enemyMap[s.id] = { name: null, image: null };
                         }
                     });
                 }
@@ -1018,14 +1288,16 @@
                 bc.forEach(d => { 
                     const data = d.data(); 
                     let mType = data.isBoss ? 'boss' : (data.type === 'rare_mantis' ? 'rare_mantis' : 'mantis');
-                    const eName = data.name || enemyMap[data.enemyId] || data.enemyId || 'Enemigo';
+                    const eInfo = enemyMap[data.enemyId] || {};
+                    const eName = data.name || eInfo.name || data.enemyId || 'Enemigo';
+                    const eImg  = data.image || eInfo.image || null;
                     
                     if (data.locations && Array.isArray(data.locations) && data.locations.length > 0) {
                         data.locations.forEach((loc, idx) => {
-                            AppState.markers.push({id:`${d.id}_${idx}`, type:mType, x:loc.x, y:loc.y, entityName:eName, label:eName, count: parseInt(data.count) || 1}); 
+                            AppState.markers.push({id:`${d.id}_${idx}`, type:mType, x:loc.x, y:loc.y, entityName:eName, entityImage:eImg, label:eName, count: parseInt(data.count) || 1}); 
                         });
                     } else if (data.x != null && data.y != null) {
-                        AppState.markers.push({id:d.id, type:mType, x:data.x, y:data.y, entityName:eName, label:eName, count: parseInt(data.count) || 1}); 
+                        AppState.markers.push({id:d.id, type:mType, x:data.x, y:data.y, entityName:eName, entityImage:eImg, label:eName, count: parseInt(data.count) || 1}); 
                     }
 
                     if(eName) AppState.filters.entities.add(eName); 
@@ -1067,7 +1339,96 @@
                 rc.forEach(d => { const data = d.data(); if(data.name&&data.description?.includes(',')){ renderRoutePath(data.description,data.name,'#4ade80'); AppState.filters.routes.add(data.name); } });
                 renderSidebarFilters(); renderMarkers(); initMapEvents();
                 if (window.GWComments) window.GWComments.init({collection:'planets',docId:AppState.planetId,containerId:'planet-comments-section'});
+                
+                // === DROPS en panel de mapa ===
+                const dropDataArr = [];
+                dc.forEach(d => { const data = d.data(); const firstMarkerId = (data.locations && data.locations.length > 0) ? `drop_${d.id}_0` : `drop_${d.id}`; dropDataArr.push({...data, _markerId: firstMarkerId}); });
+                renderMapDrops(dropDataArr, enemyMap);
+
+                // === CONQUISTA: cargar horarios por servidor ===
+                loadPlanetConquest(AppState.planetId);
+
+                // === PLANET SWITCHER ===
+                loadPlanetSwitcher();
             } catch (e) { console.error(e); }
+        }
+
+        async function loadPlanetConquest(planetId) {
+            try {
+                const conquestSnap = await db.collection('conquest').where('planetId', '==', planetId).get();
+                if (conquestSnap.empty) return;
+
+                const conquestEntries = [];
+                conquestSnap.forEach(doc => conquestEntries.push({ id: doc.id, ...doc.data() }));
+
+                // Cargar servidores para obtener timezone
+                const serversSnap = await db.collection('servers').get();
+                const serverMap = {};
+                serversSnap.forEach(doc => { serverMap[doc.id] = { id: doc.id, ...doc.data() }; });
+
+                const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+
+                function getNextConquestLocal(dayIndex, timeStr, tz = 'UTC') {
+                    if (dayIndex === undefined || !timeStr) return null;
+                    const now = new Date();
+                    try {
+                        const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false }).formatToParts(now);
+                        const p = {};
+                        parts.forEach(x => p[x.type] = x.value);
+                        const serverNow = new Date(`${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}:${p.second}`);
+                        const currentDay = serverNow.getDay();
+                        let daysUntil = (dayIndex - currentDay + 7) % 7;
+                        const [h, m] = timeStr.split(':').map(Number);
+                        if (daysUntil === 0 && (h * 60 + m) <= (serverNow.getHours() * 60 + serverNow.getMinutes())) daysUntil = 7;
+                        const next = new Date(serverNow);
+                        next.setDate(serverNow.getDate() + daysUntil);
+                        next.setHours(h, m, 0, 0);
+                        return next;
+                    } catch(e) { return null; }
+                }
+
+                const container = document.getElementById('conquestStatusContainer');
+                container.style.display = 'block';
+                container.innerHTML = '';
+
+                const label = document.createElement('div');
+                label.style.cssText = 'display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;';
+                label.innerHTML = `<span style="background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(239,68,68,0.05)); border:1px solid rgba(239,68,68,0.3); color:#f87171; border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:flex; align-items:center; gap:8px;"><i class="fas fa-flag"></i> Planeta de Conquista</span>`;
+                container.appendChild(label);
+
+                const grid = document.createElement('div');
+                grid.style.cssText = 'display:flex; flex-wrap:wrap; gap:10px;';
+
+                conquestEntries.forEach(c => {
+                    const server = serverMap[c.serverId] || { name: c.serverId, timezone: 'UTC' };
+                    const tz = (server.timezone || 'UTC').trim();
+                    const dayName = c.dayIndex !== undefined ? days[c.dayIndex] : '—';
+                    const nextDate = getNextConquestLocal(c.dayIndex, c.time, tz);
+                    const isToday = nextDate && nextDate.toDateString() === new Date().toDateString();
+
+                    // Show server time and user local time
+                    let localTimeStr = '';
+                    if (nextDate) {
+                        localTimeStr = nextDate.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' });
+                    }
+
+                    const card = document.createElement('div');
+                    card.style.cssText = 'background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:12px; padding:12px 16px; min-width:190px;';
+                    card.innerHTML = `
+                        <div style="font-size:12px; font-weight:800; color:#f87171; margin-bottom:4px; text-transform:uppercase; letter-spacing:1px;">
+                            <i class="fas fa-server me-1"></i>${server.name || c.serverId}
+                        </div>
+                        <div style="font-size:14px; color:var(--text-primary); font-weight:700;">
+                            ${dayName} <span style="opacity:0.6;">a las</span> ${c.time || '--:--'}
+                            <span style="font-size:11px; color:var(--text-tertiary);">(${tz})</span>
+                        </div>
+                        ${localTimeStr ? `<div style="font-size:12px; color:var(--text-secondary); margin-top:4px;"><i class="fas fa-clock me-1"></i>Tu hora: ~${localTimeStr}${isToday ? ' <span style="color:#10B981; font-weight:700;">(HOY)</span>' : ''}</div>` : ''}
+                    `;
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(grid);
+            } catch (e) { console.error('Error loading conquest data:', e); }
         }
 
         function toggleAllGroups(show) {
@@ -1096,6 +1457,162 @@
             poly.setAttribute("marker-end","url(#arr)"); poly.dataset.routeName = name; 
             poly.style.display = AppState.filters.routes.has(name)?'block':'none';
             s.appendChild(poly);
+        }
+
+
+        // ── Planet Switcher ──────────────────────────────────────────
+        let allPlanetsCache = null;
+
+        async function loadPlanetSwitcher() {
+            const pills = document.getElementById('planetPills');
+            if (!pills) return;
+            try {
+                if (!allPlanetsCache) {
+                    const [planetSnap, sysSnap] = await Promise.all([
+                        db.collection('planets').orderBy('name').get(),
+                        db.collection('systems').get()
+                    ]);
+                    // Build system name map: id → name
+                    const sysNames = {};
+                    sysSnap.forEach(d => { sysNames[d.id] = d.data().name || d.id; });
+                    allPlanetsCache = [];
+                    planetSnap.forEach(d => {
+                        const data = d.data();
+                        const rawSys = data.systemId || data.system || '';
+                        // Resolve: if rawSys looks like a Firestore ID (long alphanum), map to name
+                        const sysName = sysNames[rawSys] || rawSys || 'Otros';
+                        allPlanetsCache.push({ id: d.id, ...data, _sysName: sysName });
+                    });
+                    // Sort planets within each system by name
+                    allPlanetsCache.sort((a, b) => (a._sysName).localeCompare(b._sysName) || (a.name||'').localeCompare(b.name||''));
+                }
+
+                // Group by resolved system name
+                const bySystem = {};
+                allPlanetsCache.forEach(p => {
+                    const sys = p._sysName || 'Otros';
+                    if (!bySystem[sys]) bySystem[sys] = [];
+                    bySystem[sys].push(p);
+                });
+
+                pills.innerHTML = '';
+                Object.entries(bySystem).forEach(([sysName, planets]) => {
+                    const sysLabel = document.createElement('span');
+                    sysLabel.className = 'planet-switcher-system';
+                    sysLabel.textContent = sysName;
+                    pills.appendChild(sysLabel);
+                    planets.forEach(p => {
+                        const pill = document.createElement('button');
+                        pill.className = 'planet-pill' + (p.id === AppState.planetId ? ' active' : '') + (!p.mapImage ? ' no-map' : '');
+                        pill.title = p.mapImage ? p.name : (p.name + ' — sin mapa');
+                        pill.textContent = p.name || p.id;
+                        pill.dataset.pid = p.id;
+                        pill.onclick = () => switchToPlanet(p.id);
+                        pills.appendChild(pill);
+                    });
+                });
+            } catch(e) { console.warn('Planet switcher error:', e); pills.innerHTML = '<span style="font-size:12px;color:var(--text-tertiary);">No disponible</span>'; }
+        }
+
+        async function switchToPlanet(newId) {
+            if (newId === AppState.planetId) return;
+            // Update URL without reload
+            const url = new URL(window.location.href);
+            url.searchParams.set('id', newId);
+            window.history.pushState({}, '', url.toString());
+            AppState.planetId = newId;
+            AppState.planetData = null;
+            AppState.markers = [];
+            AppState.filters.activeGroups = new Set(Object.keys(MARKER_UI));
+            AppState.filters.entities = new Set();
+            AppState.filters.routes = new Set();
+            AppState.map.isInitialized = false;
+            AppState.map.zoom = 1;
+            AppState.map.pan = { x: 0, y: 0 };
+            // Reset map UI
+            const img = document.getElementById('planetMapImage');
+            img.classList.remove('loaded');
+            img.src = '';
+            document.getElementById('mapLoader').style.display = 'flex';
+            document.getElementById('mapError').style.display = 'none';
+            document.getElementById('planetMapWrap').querySelectorAll('.map-marker').forEach(m => m.remove());
+            document.getElementById('routesOverlay').innerHTML = '';
+            document.getElementById('filterSidebarBody').innerHTML = '';
+            document.getElementById('mapDropsList').innerHTML = '';
+            document.getElementById('dropsTableBody').innerHTML = '';
+            document.getElementById('dropsCount').textContent = '0';
+            // Update pill active states
+            document.querySelectorAll('.planet-pill').forEach(p => {
+                p.classList.toggle('active', p.dataset.pid === newId);
+            });
+            await loadPlanet();
+            setMapScale('medium');
+            AppState.map.isInitialized = true;
+        }
+
+        // ── Minimap updater ───────────────────────────────────────────
+        function updateMinimap() {
+            const mm = document.getElementById('minimap');
+            const canvas = document.getElementById('mapMainCanvas');
+            const vp = document.getElementById('minimapViewport');
+            if (!canvas || !vp || !mm) return;
+            // Show only when zoomed in
+            const isZoomed = AppState.map.zoom > 1.05;
+            mm.style.display = isZoomed ? 'block' : 'none';
+            if (!isZoomed) return;
+            const canvasW = canvas.offsetWidth, canvasH = canvas.offsetHeight;
+            const minimapW = 110, minimapH = 110;
+            const vpW = Math.min(minimapW, minimapW / AppState.map.zoom);
+            const vpH = Math.min(minimapH, minimapH / AppState.map.zoom);
+            const vpX = Math.max(0, (-AppState.map.pan.x / canvasW) * minimapW);
+            const vpY = Math.max(0, (-AppState.map.pan.y / canvasH) * minimapH);
+            vp.style.width = vpW + 'px';
+            vp.style.height = vpH + 'px';
+            vp.style.left = Math.min(vpX, minimapW - vpW) + 'px';
+            vp.style.top = Math.min(vpY, minimapH - vpH) + 'px';
+        }
+
+        // ── Drops panel in map tab ────────────────────────────────────
+        let dropsOpen = false;
+        function toggleMapDrops() {
+            dropsOpen = !dropsOpen;
+            const body = document.getElementById('mapDropsBody');
+            const chevron = document.getElementById('dropsChevron');
+            body.classList.toggle('open', dropsOpen);
+            chevron.style.transform = dropsOpen ? 'rotate(180deg)' : '';
+        }
+
+        function renderMapDrops(dropData, enemyMap) {
+            const list = document.getElementById('mapDropsList');
+            const empty = document.getElementById('mapDropsEmpty');
+            const counter = document.getElementById('dropsCount');
+            if (!list) return;
+            list.innerHTML = '';
+            if (!dropData || dropData.length === 0) {
+                empty.style.display = 'block';
+                counter.textContent = '0';
+                return;
+            }
+            empty.style.display = 'none';
+            counter.textContent = dropData.length;
+            dropData.forEach(d => {
+                const ids = d.enemyIds || (d.enemyId ? [d.enemyId] : []);
+                const names = ids.map(id => (enemyMap && enemyMap[id]) || (id && id.length <= 20 ? id : 'Enemigo')).filter(Boolean).join(', ');
+                const rarityClass = d.frequency === 'Raro' ? 'rare' : (d.frequency === 'Legendario' ? 'epic' : 'common');
+                const hasCoords = (d.locations && d.locations.length > 0) || (d.x != null && d.y != null);
+                const row = document.createElement('div');
+                row.className = 'drop-row';
+                row.innerHTML = `
+                    <div style="flex:1;min-width:0;">
+                        <div class="drop-name">${d.itemName || '—'}</div>
+                        ${names ? `<div class="drop-source"><i class="fas fa-skull" style="opacity:0.5;margin-right:4px;"></i>${names}</div>` : ''}
+                    </div>
+                    <span class="drop-category">${d.category || 'Componente'}</span>
+                    <span class="drop-rarity ${rarityClass}">${d.frequency || 'Común'}</span>
+                    ${hasCoords ? `<button class="drop-btn-map" onclick="focusOnMarker('${d._markerId}')"><i class="fas fa-crosshairs me-1"></i>Mapa</button>` : ''}
+                `;
+                list.appendChild(row);
+            });
         }
 
         window.addEventListener('DOMContentLoaded', loadPlanet);

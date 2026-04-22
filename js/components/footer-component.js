@@ -23,7 +23,7 @@ class WikiFooter extends HTMLElement {
                                 <span class="text-[10px] text-slate-400 tracking-wider uppercase font-medium">Pirate Galaxy</span>
                             </div>
                         </div>
-                        <p class="text-sm text-slate-400 leading-relaxed max-w-xs mt-2">
+                        <p class="text-sm text-slate-400 leading-relaxed max-w-xs mt-2" data-i18n="footer.branding_desc">
                             La enciclopedia comunitaria definitiva. Encuentra toda la información sobre naves, sistemas, y componentes para dominar el universo.
                         </p>
                     </div>
@@ -31,22 +31,23 @@ class WikiFooter extends HTMLElement {
                     <!-- Links Rapidos -->
                     <div class="flex flex-col gap-4">
                         <h4 class="text-white font-semibold flex items-center gap-2">
-                            <i class="fas fa-link text-blue-500 text-sm"></i> Accesos Rápidos
+                            <i class="fas fa-link text-blue-500 text-sm"></i> <span data-i18n="footer.quick_links">Accesos Rápidos</span>
                         </h4>
                         <nav class="flex flex-col gap-2" aria-label="Enlaces rápidos">
-                            <a href="${basePath}index.html" class="text-sm text-slate-400 hover:text-blue-400 transition-colors inline-block w-fit">Inicio</a>
-                            <a href="${basePath}pages/wiki/ships.html" class="text-sm text-slate-400 hover:text-blue-400 transition-colors inline-block w-fit">Base de Naves</a>
-                            <a href="${basePath}pages/wiki/components.html" class="text-sm text-slate-400 hover:text-blue-400 transition-colors inline-block w-fit">Componentes</a>
-                            <a href="${basePath}pages/forum.html" class="text-sm text-slate-400 hover:text-blue-400 transition-colors inline-block w-fit">Foro Comunitario</a>
+                            <a href="${basePath}index.html" class="text-sm text-slate-400 hover:text-blue-400 transition-colors inline-block w-fit" data-i18n="footer.home">Inicio</a>
+                            <a href="${basePath}pages/wiki/ships.html" class="text-sm text-slate-400 hover:text-blue-400 transition-colors inline-block w-fit" data-i18n="footer.ships">Base de Naves</a>
+                            <a href="${basePath}pages/wiki/components.html" class="text-sm text-slate-400 hover:text-blue-400 transition-colors inline-block w-fit" data-i18n="footer.components">Componentes</a>
+                            <a href="${basePath}pages/forum.html" class="text-sm text-slate-400 hover:text-blue-400 transition-colors inline-block w-fit" data-i18n="footer.forum">Foro Comunitario</a>
+                            <a href="${basePath}pages/about.html" class="text-sm text-slate-400 hover:text-blue-400 transition-colors inline-block w-fit" data-i18n="footer.about">Acerca del Juego</a>
                         </nav>
                     </div>
 
                     <!-- Comunidad -->
                     <div class="flex flex-col gap-4">
                         <h4 class="text-white font-semibold flex items-center gap-2">
-                            <i class="fas fa-users text-purple-500 text-sm"></i> Comunidad
+                            <i class="fas fa-users text-purple-500 text-sm"></i> <span data-i18n="footer.community">Comunidad</span>
                         </h4>
-                        <p class="text-sm text-slate-400 mb-2">
+                        <p class="text-sm text-slate-400 mb-2" data-i18n="footer.community_desc">
                             Únete y contribuye a la mayor base de datos hispana de Pirate Galaxy.
                         </p>
                         <div class="flex gap-3">
@@ -64,15 +65,26 @@ class WikiFooter extends HTMLElement {
 
                 <div class="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p class="text-xs text-slate-500">
-                        &copy; ${currentYear} GalaxWiki. Una herramienta no oficial creada por fans.
+                        &copy; ${currentYear} <span data-i18n="footer.copyright">GalaxWiki. Una herramienta no oficial creada por fans.</span>
                     </p>
                     <p class="text-xs text-slate-500">
-                        "Pirate Galaxy" es una marca registrada de <span class="text-slate-400 font-medium">Splitscreen Studios GmbH</span>.
+                        <span data-i18n="footer.trademark">"Pirate Galaxy" es una marca registrada de</span> <span class="text-slate-400 font-medium">Splitscreen Studios GmbH</span>.
                     </p>
                 </div>
             </div>
         </footer>
         `;
+
+        // Re-apply translations if i18n is ready
+        if (typeof applyTranslations === 'function') {
+            setTimeout(applyTranslations, 50);
+        } else if (typeof window.setLanguage === 'function') {
+            // Trigger re-apply via the language change mechanism
+            setTimeout(function() {
+                var lang = typeof window.getCurrentLang === 'function' ? window.getCurrentLang() : 'es';
+                window.setLanguage(lang);
+            }, 150);
+        }
     }
 }
 

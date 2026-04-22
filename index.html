@@ -55,44 +55,9 @@
                     <i class="fas fa-moon theme-icon" id="themeIcon"></i>
                 </div>
 
-                <div class="auth-buttons" id="authButtons" style="display: none;">
-                    <a href="login.html" class="btn-header btn-login" data-i18n="auth.login">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Iniciar Sesión
-                    </a>
-                    <a href="register.html" class="btn-header btn-register" data-i18n="auth.register">
-                        <i class="fas fa-user-plus"></i>
-                        Registrarse
-                    </a>
-                </div>
-
-                <div class="dropdown" id="userProfile" style="display: none;">
-                    <div class="user-profile" data-bs-toggle="dropdown">
-                        <div class="user-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="user-info">
-                            <span class="user-name" id="userName">Usuario</span>
-                            <span class="user-fleet" id="userFleet">Flota Alpha</span>
-                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
-                        </div>
-                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
-                    </div>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="pages/profile.html" data-i18n="profile.myprofile"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
-                        <li><a class="dropdown-item" href="pages/wiki/tracker.html" data-i18n="profile.collection"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
-                        <li><a class="dropdown-item" href="pages/favorites.html" data-i18n="profile.favorites"><i class="fas fa-star me-2"></i>Favoritos</a></li>
-                        <li><a class="dropdown-item" href="pages/settings.html" data-i18n="profile.settings"><i class="fas fa-cog me-2"></i>Configuración</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li id="adminMenuItem" style="display: none;">
-                            <a class="dropdown-item" href="pages/admin/dashboard.html" data-i18n="profile.admin">
-                                <i class="fas fa-shield-alt me-2"></i>Panel Admin
-                            </a>
-                        </li>
-                        <li><button type="button" class="dropdown-item dropdown-item-button" onclick="logout()" data-i18n="auth.logout">
-                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
-                        </button></li>
-                    </ul>
+                <!-- header-auth.js rellena estos dos contenedores -->
+                <div class="auth-buttons" id="authButtons" style="display: none;"></div>
+                <div class="dropdown" id="userProfile" style="display: none;"></div>
                 </div>
             </div>
         </div>
@@ -174,88 +139,88 @@
 
     <main id="main-content" class="main-content">
         <section class="hero-section">
-            <h1 class="hero-title">Bienvenido a GalaxWiki</h1>
-            <p class="hero-description">
+            <h1 class="hero-title" data-i18n="hero.welcome">Bienvenido a GalaxWiki</h1>
+            <p class="hero-description" data-i18n="hero.description">
                 La enciclopedia definitiva de Pirate Galaxy. Encuentra información sobre naves, componentes, enemigos, misiones y mucho más.
             </p>
             
             <form class="search-container" action="pages/search.html" method="get" role="search" aria-label="Buscar en la wiki">
-                <input type="search" class="search-input" name="q" id="searchInput" placeholder="Buscar naves, componentes, enemigos... (Ctrl+K)" minlength="2" required aria-label="Buscar naves, componentes, enemigos">
+                <input type="search" class="search-input" name="q" id="searchInput" data-i18n-placeholder="hero.search_placeholder" placeholder="Buscar naves, componentes, enemigos... (Ctrl+K)" minlength="2" required aria-label="Buscar naves, componentes, enemigos">
                 <i class="fas fa-search search-icon"></i>
             </form>
             
             <div class="hero-stats">
                 <div class="stat-item">
                     <span class="stat-number" id="shipsCount">0</span>
-                    <span class="stat-label">Naves</span>
+                    <span class="stat-label" data-i18n="hero.stat_ships">Naves</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-number" id="componentsCount">0</span>
-                    <span class="stat-label">Componentes</span>
+                    <span class="stat-label" data-i18n="hero.stat_components">Componentes</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-number" id="enemiesCount">0</span>
-                    <span class="stat-label">Enemigos</span>
+                    <span class="stat-label" data-i18n="hero.stat_enemies">Enemigos</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-number" id="usersCount">0</span>
-                    <span class="stat-label">Usuarios</span>
+                    <span class="stat-label" data-i18n="hero.stat_users">Usuarios</span>
                 </div>
             </div>
         </section>
 
         <section class="home-cards-section">
-            <h2 class="home-section-title"><i class="fas fa-book-open"></i> Explora la Wiki</h2>
+            <h2 class="home-section-title"><i class="fas fa-book-open"></i> <span data-i18n="home.explore">Explora la Wiki</span></h2>
             <div class="features-grid features-grid--wiki">
                 <a href="pages/wiki/ships.html" class="feature-card feature-card--link feature-card--animate" style="--delay: 0">
                     <div class="feature-icon"><i class="fas fa-space-shuttle"></i></div>
-                    <h3 class="feature-title">Base de Naves</h3>
-                    <p class="feature-description">Explora todas las naves disponibles en Pirate Galaxy, estadísticas, requisitos y dónde conseguirlas.</p>
+                    <h3 class="feature-title" data-i18n="home.ships_title">Base de Naves</h3>
+                    <p class="feature-description" data-i18n="home.ships_desc">Explora todas las naves disponibles en Pirate Galaxy, estadísticas, requisitos y dónde conseguirlas.</p>
                 </a>
                 <a href="pages/wiki/components.html" class="feature-card feature-card--link feature-card--animate" style="--delay: 1">
                     <div class="feature-icon"><i class="fas fa-microchip"></i></div>
-                    <h3 class="feature-title">Componentes</h3>
-                    <p class="feature-description">Descubre todos los componentes, atributos y cómo mejorar tu nave al máximo.</p>
+                    <h3 class="feature-title" data-i18n="home.components_title">Componentes</h3>
+                    <p class="feature-description" data-i18n="home.components_desc">Descubre todos los componentes, atributos y cómo mejorar tu nave al máximo.</p>
                 </a>
                 <a href="pages/wiki/enemies.html" class="feature-card feature-card--link feature-card--animate" style="--delay: 2">
                     <div class="feature-icon"><i class="fas fa-skull-crossbones"></i></div>
-                    <h3 class="feature-title">Enemigos y Drops</h3>
-                    <p class="feature-description">Información sobre enemigos, drops y las mejores estrategias para farmear.</p>
+                    <h3 class="feature-title" data-i18n="home.enemies_title">Enemigos y Drops</h3>
+                    <p class="feature-description" data-i18n="home.enemies_desc">Información sobre enemigos, drops y las mejores estrategias para farmear.</p>
                 </a>
                 <a href="pages/wiki/systems.html" class="feature-card feature-card--link feature-card--animate" style="--delay: 3">
                     <div class="feature-icon"><i class="fas fa-map-marked-alt"></i></div>
-                    <h3 class="feature-title">Sistemas Universales</h3>
-                    <p class="feature-description">Mapas de sistemas, planetas y sectores con recursos disponibles.</p>
+                    <h3 class="feature-title" data-i18n="home.systems_title">Sistemas Universales</h3>
+                    <p class="feature-description" data-i18n="home.systems_desc">Mapas de sistemas, planetas y sectores con recursos disponibles.</p>
                 </a>
             </div>
         </section>
 
         <section class="home-cards-section home-cards-section--featured">
-            <h2 class="home-section-title"><i class="fas fa-star"></i> Misiones, Noticias y Foro</h2>
+            <h2 class="home-section-title"><i class="fas fa-star"></i> <span data-i18n="home.featured">Misiones, Noticias y Foro</span></h2>
             <div class="features-grid features-grid--featured">
                 <a href="pages/wiki/missions.html" class="feature-card feature-card--large feature-card--link feature-card--animate" style="--delay: 4">
                     <div class="feature-icon feature-icon--large"><i class="fas fa-tasks"></i></div>
-                    <h3 class="feature-title feature-title--large">Misiones</h3>
-                    <p class="feature-description">Guías de misiones, recompensas y objetivos. Planifica tu progreso en el juego.</p>
-                    <span class="feature-cta">Ver misiones <i class="fas fa-arrow-right"></i></span>
+                    <h3 class="feature-title feature-title--large" data-i18n="home.missions_title">Misiones</h3>
+                    <p class="feature-description" data-i18n="home.missions_desc">Guías de misiones, recompensas y objetivos. Planifica tu progreso en el juego.</p>
+                    <span class="feature-cta" data-i18n="home.missions_cta">Ver misiones <i class="fas fa-arrow-right"></i></span>
                 </a>
                 <a href="pages/news.html" class="feature-card feature-card--large feature-card--link feature-card--animate" style="--delay: 5">
                     <div class="feature-icon feature-icon--large"><i class="fas fa-newspaper"></i></div>
-                    <h3 class="feature-title feature-title--large">Noticias</h3>
-                    <p class="feature-description">Últimas actualizaciones, eventos y cambios del juego. No te pierdas nada.</p>
-                    <span class="feature-cta">Leer noticias <i class="fas fa-arrow-right"></i></span>
+                    <h3 class="feature-title feature-title--large" data-i18n="home.news_title">Noticias</h3>
+                    <p class="feature-description" data-i18n="home.news_desc">Últimas actualizaciones, eventos y cambios del juego. No te pierdas nada.</p>
+                    <span class="feature-cta" data-i18n="home.news_cta">Leer noticias <i class="fas fa-arrow-right"></i></span>
                 </a>
                 <a href="pages/forum.html" class="feature-card feature-card--large feature-card--link feature-card--animate" style="--delay: 6">
                     <div class="feature-icon feature-icon--large"><i class="fas fa-comments"></i></div>
-                    <h3 class="feature-title feature-title--large">Foro</h3>
-                    <p class="feature-description">Comparte estrategias, preguntas y conecta con la comunidad de jugadores.</p>
-                    <span class="feature-cta">Ir al foro <i class="fas fa-arrow-right"></i></span>
+                    <h3 class="feature-title feature-title--large" data-i18n="home.forum_title">Foro</h3>
+                    <p class="feature-description" data-i18n="home.forum_desc">Comparte estrategias, preguntas y conecta con la comunidad de jugadores.</p>
+                    <span class="feature-cta" data-i18n="home.forum_cta">Ir al foro <i class="fas fa-arrow-right"></i></span>
                 </a>
             </div>
         </section>
 
         <section class="home-cards-section home-cards-section--news" id="ultimas-noticias">
-            <h2 class="home-section-title"><i class="fas fa-newspaper"></i> Últimas noticias</h2>
+            <h2 class="home-section-title"><i class="fas fa-newspaper"></i> <span data-i18n="home.latest_news">Últimas noticias</span></h2>
             <div id="newsPreview" class="news-preview-grid">
                 <div class="news-skeleton news-skeleton-card" aria-hidden="true">
                     <div class="news-skeleton-img"></div>
@@ -291,6 +256,8 @@
     <script src="js/firebase-config.js"></script>
     <script src="js/toast.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="js/profile-frames.js"></script>
+    <script src="js/header-auth.js"></script>
     <script src="js/index.js"></script>
     <script type="application/ld+json">
     {

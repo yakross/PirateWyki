@@ -1,49 +1,54 @@
 // ==========================================
 // 🔥 CONFIGURACIÓN GLOBAL DE FIREBASE
 // ==========================================
-// Este archivo centraliza la configuración de Firebase
-// para que no tengas que repetirla en cada página
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBNxrvFcQSfd1Z4VarqrzrPXftaBxwKZ9o",
-    authDomain: "piratewyki.firebaseapp.com",
-    projectId: "piratewyki",
-    storageBucket: "piratewyki.firebasestorage.app",
+    apiKey:            "AIzaSyBNxrvFcQSfd1Z4VarqrzrPXftaBxwKZ9o",
+    authDomain:        "piratewyki.firebaseapp.com",
+    projectId:         "piratewyki",
+    storageBucket:     "piratewyki.firebasestorage.app",
     messagingSenderId: "501878813096",
-    appId: "1:501878813096:web:177f9460b3976f2ffb6d9d",
-    measurementId: "G-6J1C57D842"
+    appId:             "1:501878813096:web:177f9460b3976f2ffb6d9d",
+    measurementId:     "G-6J1C57D842"
 };
 
-// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Referencias globales (todas las páginas usan auth y db desde aquí)
 window.auth = firebase.auth();
-window.db = firebase.firestore();
+window.db   = firebase.firestore();
 
-// Funciones útiles compartidas
+// ── Persistencia de sesión (mantiene al usuario logueado al cerrar el navegador) ──
+window.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
+// ── Utilidades compartidas ──────────────────────────────────
 function showAlert(alertId, message) {
-    const alert = document.getElementById(alertId);
-    if (alert) {
-        alert.textContent = message;
-        alert.style.display = 'block';
-        setTimeout(() => {
-            alert.style.display = 'none';
-        }, 5000);
-    }
+    const el = document.getElementById(alertId);
+    if (!el) return;
+    el.textContent = message;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 5000);
 }
 
 function setLoading(buttonId, isLoading, originalText, loadingText) {
-    const button = document.getElementById(buttonId);
-    if (button) {
-        if (isLoading) {
-            button.disabled = true;
-            button.innerHTML = `<span class="loading-spinner"></span>${loadingText}`;
-        } else {
-            button.disabled = false;
-            button.innerHTML = originalText;
-        }
-    }
+    const btn = document.getElementById(buttonId);
+    if (!btn) return;
+    btn.disabled = isLoading;
+    btn.innerHTML = isLoading
+        ? `<span class="loading-spinner"></span>${loadingText}`
+        : originalText;
 }
 
-console.log('✅ Firebase configurado correctamente');
+// ── Formatear fecha relativa ────────────────────────────────
+function gwTimeAgo(date) {
+    if (!date) return '';
+    const d    = date.toDate ? date.toDate() : new Date(date);
+    const diff = Math.floor((Date.now() - d.getTime()) / 1000);
+    if (diff < 60)    return 'hace unos segundos';
+    if (diff < 3600)  return 'hace ' + Math.floor(diff / 60) + ' min';
+    if (diff < 86400) return 'hace ' + Math.floor(diff / 3600) + ' h';
+    if (diff < 604800) return 'hace ' + Math.floor(diff / 86400) + ' días';
+    return d.toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+window.gwTimeAgo = gwTimeAgo;
+
+console.log('✅ Firebase configurado — proyecto: piratewyki');

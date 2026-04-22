@@ -7,6 +7,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../../css/styles.css" rel="stylesheet">
+    <!-- Editor de texto rico Quill.js -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" rel="stylesheet">
 </head>
 <body>
     <header class="header">
@@ -60,7 +62,7 @@
     <main class="main-container">
         <p class="mb-3"><a href="missions.html" class="nav-link" style="display: inline-flex;"><i class="fas fa-arrow-left me-2"></i>Volver a Misiones</a></p>
         <div id="missionContent"></div>
-        <div id="mission-comments-section" style="padding: 0 0 32px;"></div>
+        <div id="mission-comments-section" style="padding:0 0 32px;"></div>
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
@@ -71,6 +73,7 @@
     <script src="../../js/content-utils.js"></script>
     <script src="../../js/header-auth.js"></script>
     <script src="../../js/favorites.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
     <script src="../../js/comments.js"></script>
     <script>
 (function() {
@@ -99,7 +102,7 @@
             if (m.reward) meta.push('Recompensa: ' + esc(m.reward));
             else if (m.rewards) meta.push('Recompensas: ' + (Array.isArray(m.rewards) ? m.rewards.map(esc).join(', ') : esc(m.rewards)));
             container.innerHTML = '<div class="profile-card" style="text-align: left; position: relative;">' +
-                '<button type="button" class="btn-fav" data-type="mission" data-id="' + id.replace(/"/g,'&quot;') + '" data-name="' + esc(m.name || '') + '" title="Añadir a favoritos" style="position:absolute;top:16px;right:16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;color:var(--accent);cursor:pointer;padding:8px 12px;"><i class="' + favStar + ' fa-star"></i></button>' +
+                '<button type="button" class="btn-fav" data-type="mission" data-id="' + id.replace(/"/g,'&quot;') + '" data-name="' + esc(m.name || '') + '" title="Añadir a favoritos" style="position:absolute;top:16px;right:16px;"><i class="' + favStar + ' fa-star"></i></button>' +
                 (m.image ? '<img src="' + m.image.replace(/"/g,'&quot;') + '" alt="" style="width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-bottom:16px;">' : '') +
                 '<h1 class="page-title">' + esc(m.name || 'Misión') + '</h1>' +
                 '<p class="profile-meta">' + meta.join(' · ') + '</p>' +

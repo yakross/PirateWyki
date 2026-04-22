@@ -1,19 +1,102 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GalaxWiki - Buscar</title>
-    <meta name="description" content="Busca naves, componentes, enemigos, misiones y pinturas en GalaxWiki - Pirate Galaxy">
+    <title>GalaxWiki - Búsqueda Global</title>
+    <meta name="description" content="Busca naves, componentes, enemigos, misiones, sistemas, planetas y más en GalaxWiki - Pirate Galaxy">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../css/styles.css" rel="stylesheet">
+    <style>
+        /* ── Filtro de tipo ── */
+        .type-filters {
+            display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+        }
+        .type-btn {
+            padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border-color);
+            background: var(--bg-card); color: var(--text-secondary);
+            font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.18s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .type-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .type-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* ── Sección de resultados ── */
+        .results-section { margin-bottom: 32px; }
+        .results-section-title {
+            font-size: 13px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.2px; color: var(--text-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .result-count-badge {
+            background: rgba(102,126,234,0.15); color: #a78bfa;
+            border-radius: 999px; font-size: 10px; padding: 2px 8px; font-weight: 700;
+        }
+
+        /* ── Skeleton loaders ── */
+        .skeleton-result { height: 72px; border-radius: 12px; margin-bottom: 8px; }
+        @keyframes sk { 0%,100%{opacity:.45} 50%{opacity:.9} }
+        .skeleton-base { animation: sk 1.4s ease-in-out infinite; background: var(--border-color); }
+
+        /* ── Tarjeta de resultado genérica ── */
+        .result-card {
+            display: flex; align-items: flex-start; gap: 12px;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 14px 16px;
+            text-decoration: none; color: inherit;
+            margin-bottom: 8px; transition: all 0.2s;
+        }
+        .result-card:hover {
+            border-color: rgba(102,126,234,0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(102,126,234,0.1);
+            color: inherit;
+        }
+        .result-card-icon {
+            width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+        }
+        .result-card-body { flex: 1; min-width: 0; }
+        .result-card-name {
+            font-size: 15px; font-weight: 600; color: var(--text-primary);
+            margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .result-card-meta { font-size: 12px; color: var(--text-secondary); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .result-card-desc { font-size: 12px; color: var(--text-tertiary); margin-top: 3px; }
+        .result-card-type {
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .5px; padding: 2px 8px; border-radius: 999px;
+            flex-shrink: 0; align-self: flex-start;
+        }
+
+        /* Colores por tipo */
+        .type-ships    { background: rgba(102,126,234,0.15); color: #a78bfa; }
+        .type-components { background: rgba(59,130,246,0.15); color: #60a5fa; }
+        .type-drones   { background: rgba(6,182,212,0.15);  color: #22d3ee; }
+        .type-cortex   { background: rgba(168,85,247,0.15); color: #c084fc; }
+        .type-gravitons{ background: rgba(234,179,8,0.15);  color: #facc15; }
+        .type-paints   { background: rgba(236,72,153,0.15); color: #f472b6; }
+        .type-enemies  { background: rgba(239,68,68,0.15);  color: #f87171; }
+        .type-missions { background: rgba(34,197,94,0.15);  color: #4ade80; }
+        .type-systems  { background: rgba(14,165,233,0.15); color: #38bdf8; }
+        .type-planets  { background: rgba(16,185,129,0.15); color: #34d399; }
+        .type-news     { background: rgba(251,146,60,0.15); color: #fb923c; }
+
+        mark {
+            background: rgba(102,126,234,0.35); color: inherit;
+            border-radius: 3px; padding: 0 2px;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
         <div class="header-content">
             <div class="logo-section">
-                <a href="../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                <a href="../index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;">
                     <div class="logo-img"><i class="fas fa-rocket"></i></div>
                     <div class="logo-text">
                         <span class="logo-title">GalaxWiki</span>
@@ -23,28 +106,28 @@
             </div>
             <div class="user-section">
                 <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon theme-icon" id="themeIcon"></i></div>
-                <div class="auth-buttons" id="authButtons" style="display: none;">
-                    <a href="../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesiÃ³n</a>
+                <div class="auth-buttons" id="authButtons" style="display:none;">
+                    <a href="../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
                     <a href="../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
                 </div>
-                <div class="dropdown" id="userProfile" style="display: none;">
+                <div class="dropdown" id="userProfile" style="display:none;">
                     <div class="user-profile" data-bs-toggle="dropdown">
                         <div class="user-avatar"><i class="fas fa-user"></i></div>
                         <div class="user-info">
                             <span class="user-name" id="userName">Usuario</span>
                             <span class="user-fleet" id="userFleet">Flota</span>
-                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display:none;">Admin</span>
                         </div>
-                        <i class="fas fa-chevron-down" style="color: var(--accent);"></i>
+                        <i class="fas fa-chevron-down" style="color:var(--accent);"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
-                        <li><a class="dropdown-item" href="wiki/tracker.html"><i class="fas fa-check-double me-2"></i>Mi ColecciÃ³n</a></li>
+                        <li><a class="dropdown-item" href="wiki/tracker.html"><i class="fas fa-check-double me-2"></i>Mi Colección</a></li>
                         <li><a class="dropdown-item" href="favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
-                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>ConfiguraciÃ³n</a></li>
+                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesiÃ³n</a></li>
+                        <li id="adminMenuItem" style="display:none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout();return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
                     </ul>
                 </div>
             </div>
@@ -69,44 +152,71 @@
     </nav>
 
     <main class="main-container">
-        <h1 class="page-title"><i class="fas fa-search me-2"></i>BÃºsqueda Global</h1>
+        <h1 class="page-title"><i class="fas fa-search me-2"></i>Búsqueda Global</h1>
         <p class="page-subtitle" id="searchSummary">Busca en toda la wiki...</p>
 
-        <form class="filters-bar" action="search.html" method="get" style="margin-bottom: 28px;">
-            <input type="text" name="q" id="searchInput" class="search-input" placeholder="Buscar naves, componentes, enemigos, misiones..." value="" autocomplete="off">
-            <button type="submit" class="btn-header btn-register" style="padding: 10px 20px;"><i class="fas fa-search me-1"></i>Buscar</button>
+        <form class="filters-bar" action="search.html" method="get" style="margin-bottom:16px;">
+            <input type="text" name="q" id="searchInput" class="search-input"
+                placeholder="Buscar naves, componentes, enemigos, misiones, sistemas..."
+                value="" autocomplete="off">
+            <button type="submit" class="btn-header btn-register" style="padding:10px 20px;">
+                <i class="fas fa-search me-1"></i>Buscar
+            </button>
         </form>
 
-        <!-- Estado de carga -->
-        <div id="resultsSearching" class="empty-state" style="display:none;">
-            <i class="fas fa-spinner fa-spin" style="font-size:32px; color:var(--accent); margin-bottom:12px;"></i>
-            <p>Buscando en toda la wiki...</p>
+        <!-- Filtros por tipo (se muestran tras buscar) -->
+        <div id="typeFilters" class="type-filters" style="display:none;">
+            <button class="type-btn active" data-type="all" onclick="filterType('all',this)">
+                <i class="fas fa-border-all"></i> Todos
+            </button>
+            <button class="type-btn" data-type="ships" onclick="filterType('ships',this)">
+                <i class="fas fa-space-shuttle"></i> Naves
+            </button>
+            <button class="type-btn" data-type="components" onclick="filterType('components',this)">
+                <i class="fas fa-cog"></i> Componentes
+            </button>
+            <button class="type-btn" data-type="drones" onclick="filterType('drones',this)">
+                <i class="fas fa-satellite-dish"></i> Drones
+            </button>
+            <button class="type-btn" data-type="cortex" onclick="filterType('cortex',this)">
+                <i class="fas fa-brain"></i> Cortex
+            </button>
+            <button class="type-btn" data-type="gravitons" onclick="filterType('gravitons',this)">
+                <i class="fas fa-gem"></i> Gravitones
+            </button>
+            <button class="type-btn" data-type="paints" onclick="filterType('paints',this)">
+                <i class="fas fa-palette"></i> Pinturas
+            </button>
+            <button class="type-btn" data-type="enemies" onclick="filterType('enemies',this)">
+                <i class="fas fa-skull"></i> Enemigos
+            </button>
+            <button class="type-btn" data-type="missions" onclick="filterType('missions',this)">
+                <i class="fas fa-tasks"></i> Misiones
+            </button>
+            <button class="type-btn" data-type="systems" onclick="filterType('systems',this)">
+                <i class="fas fa-globe"></i> Sistemas
+            </button>
+            <button class="type-btn" data-type="planets" onclick="filterType('planets',this)">
+                <i class="fas fa-circle"></i> Planetas
+            </button>
+            <button class="type-btn" data-type="news" onclick="filterType('news',this)">
+                <i class="fas fa-newspaper"></i> Noticias
+            </button>
         </div>
 
-        <!-- Resultados por categorÃ­a -->
-        <div id="resultsShips" class="content-section" style="display:none;">
-            <h2 class="page-title" style="font-size: 20px; margin-bottom: 12px;"><i class="fas fa-space-shuttle me-2"></i>Naves</h2>
-            <div class="ships-grid" id="shipsGrid"></div>
+        <!-- Estado de carga con skeleton -->
+        <div id="resultsSearching" style="display:none;">
+            <div class="skeleton-base skeleton-result"></div>
+            <div class="skeleton-base skeleton-result" style="opacity:.7;"></div>
+            <div class="skeleton-base skeleton-result" style="opacity:.5;"></div>
         </div>
-        <div id="resultsComponents" class="content-section" style="display:none;">
-            <h2 class="page-title" style="font-size: 20px; margin-bottom: 12px;"><i class="fas fa-cog me-2"></i>Componentes</h2>
-            <div class="items-grid" id="componentsGrid"></div>
-        </div>
-        <div id="resultsEnemies" class="content-section" style="display:none;">
-            <h2 class="page-title" style="font-size: 20px; margin-bottom: 12px;"><i class="fas fa-skull me-2"></i>Enemigos</h2>
-            <div class="items-grid" id="enemiesGrid"></div>
-        </div>
-        <div id="resultsMissions" class="content-section" style="display:none;">
-            <h2 class="page-title" style="font-size: 20px; margin-bottom: 12px;"><i class="fas fa-tasks me-2"></i>Misiones</h2>
-            <div class="items-grid" id="missionsGrid"></div>
-        </div>
-        <div id="resultsPaints" class="content-section" style="display:none;">
-            <h2 class="page-title" style="font-size: 20px; margin-bottom: 12px;"><i class="fas fa-palette me-2"></i>Pinturas</h2>
-            <div class="items-grid" id="paintsGrid"></div>
-        </div>
-        <div id="emptyAll" class="empty-state" style="display: none;">
-            <i class="fas fa-search-minus" style="font-size:32px; opacity:.4; margin-bottom:12px;"></i>
-            <p>No se encontraron resultados. Prueba con otras palabras.</p>
+
+        <!-- Contenedor unificado de resultados -->
+        <div id="allResults"></div>
+
+        <div id="emptyAll" class="empty-state" style="display:none;">
+            <i class="fas fa-search-minus" style="font-size:32px;opacity:.4;margin-bottom:12px;display:block;"></i>
+            <p>No se encontraron resultados. Prueba con otras palabras clave.</p>
         </div>
     </main>
 
@@ -118,176 +228,283 @@
     <script src="../js/header-auth.js"></script>
     <script src="../js/notifications.js"></script>
     <script>
+    (function() {
         const db = window.db;
 
+        // ── utilidades ────────────────────────────────────────────────
         function getParam(name) {
             return (new URLSearchParams(window.location.search).get(name) || '').trim();
         }
-
         function esc(s) {
-            return ('' + (s || '')).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            return ('' + (s || ''))
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
-
-        function highlight(text, q) {
+        function hl(text, q) {
             if (!text || !q) return esc(text || '');
-            const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-            return esc(text).replace(re, '<mark style="background:rgba(102,126,234,0.35);color:inherit;border-radius:3px;padding:0 2px;">$1</mark>');
+            const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+            return esc(text).replace(re,'<mark>$1</mark>');
+        }
+        function m(t, q) { return (t || '').toLowerCase().includes(q); }
+        function drops(item) {
+            const d = item.drops != null ? item.drops : item.drop;
+            if (Array.isArray(d)) return d.filter(Boolean).join(', ');
+            return typeof d === 'string' ? d : '';
         }
 
-        function statsLine(stats) {
-            if (!stats || typeof stats !== 'object') return '';
-            const p = [];
-            if (stats.armor != null) p.push('Blindaje: ' + stats.armor);
-            if (stats.speed != null) p.push('Velocidad: ' + stats.speed);
-            if (stats.damage != null) p.push('DaÃ±o: ' + stats.damage);
-            return p.join(' Â· ');
+        // ── definición de todas las colecciones a buscar ─────────────
+        const COLLECTIONS = [
+            {
+                key: 'ships', label: 'Naves', icon: 'fa-space-shuttle', colorClass: 'type-ships',
+                fields: d => [d.name, d.faction, d.location, d.description, d.role, d.type],
+                link: d => `wiki/ship-detail.html?id=${esc(d.id)}`,
+                card: (d, raw, q) => ({
+                    name: d.name,
+                    meta: [d.faction, d.type, d.location].filter(Boolean),
+                    desc: d.description,
+                    image: d.image
+                })
+            },
+            {
+                key: 'components', label: 'Componentes', icon: 'fa-cog', colorClass: 'type-components',
+                fields: d => [d.name, d.type, d.rarity, d.description, d.dropLocation],
+                link: d => `wiki/component-detail.html?id=${esc(d.id)}`,
+                card: (d) => ({
+                    name: d.name,
+                    meta: [d.type, d.rarity, d.dropLocation].filter(Boolean),
+                    desc: d.description,
+                    image: d.image
+                })
+            },
+            {
+                key: 'drones', label: 'Drones', icon: 'fa-satellite-dish', colorClass: 'type-drones',
+                fields: d => [d.name, d.type, d.rarity, d.description],
+                link: d => `wiki/components.html?tab=drones`,
+                card: (d) => ({
+                    name: d.name,
+                    meta: [d.type, d.rarity].filter(Boolean),
+                    desc: d.description,
+                    image: d.image
+                })
+            },
+            {
+                key: 'cortex', label: 'Cortex', icon: 'fa-brain', colorClass: 'type-cortex',
+                fields: d => [d.name, d.type, d.rarity, d.description],
+                link: d => `wiki/components.html?tab=cortex`,
+                card: (d) => ({
+                    name: d.name,
+                    meta: [d.type, d.rarity].filter(Boolean),
+                    desc: d.description,
+                    image: d.image
+                })
+            },
+            {
+                key: 'gravitons', label: 'Gravitones', icon: 'fa-gem', colorClass: 'type-gravitons',
+                fields: d => [d.name, d.type, d.rarity, d.description],
+                link: d => `wiki/components.html?tab=gravitones`,
+                card: (d) => ({
+                    name: d.name,
+                    meta: [d.type, d.rarity].filter(Boolean),
+                    desc: d.description,
+                    image: d.image
+                })
+            },
+            {
+                key: 'paints', label: 'Pinturas', icon: 'fa-palette', colorClass: 'type-paints',
+                fields: d => [d.name, d.type, d.rarity, d.description],
+                link: d => `wiki/components.html?tab=pinturas`,
+                card: (d) => ({
+                    name: d.name,
+                    meta: [d.type, d.rarity].filter(Boolean),
+                    desc: d.description,
+                    image: d.image
+                })
+            },
+            {
+                key: 'enemies', label: 'Enemigos', icon: 'fa-skull', colorClass: 'type-enemies',
+                fields: d => [d.name, d.system, d.planet, d.description, d.type, drops(d)],
+                link: d => `wiki/enemy-detail.html?id=${esc(d.id)}`,
+                card: (d) => ({
+                    name: d.name,
+                    meta: [[d.system, d.planet].filter(Boolean).join(' – '), d.type, drops(d) ? 'Drops: ' + drops(d).slice(0,60) : ''].filter(Boolean),
+                    desc: d.description,
+                    image: d.image
+                })
+            },
+            {
+                key: 'missions', label: 'Misiones', icon: 'fa-tasks', colorClass: 'type-missions',
+                fields: d => [d.name, d.system, d.description, d.type],
+                link: d => `wiki/mission-detail.html?id=${esc(d.id)}`,
+                card: (d) => ({
+                    name: d.name,
+                    meta: [d.system, d.type, d.levelMin != null ? 'Niv. ' + d.levelMin : ''].filter(Boolean),
+                    desc: d.description
+                })
+            },
+            {
+                key: 'systems', label: 'Sistemas', icon: 'fa-globe', colorClass: 'type-systems',
+                fields: d => [d.name, d.description],
+                link: d => `wiki/system-detail.html?id=${esc(d.id)}`,
+                card: (d) => ({
+                    name: d.name,
+                    meta: [d.levelMin != null && d.levelMax != null ? `Niv. ${d.levelMin}–${d.levelMax}` : ''].filter(Boolean),
+                    desc: d.description
+                })
+            },
+            {
+                key: 'planets', label: 'Planetas', icon: 'fa-circle', colorClass: 'type-planets',
+                fields: d => [d.name, d.description, d.systemName],
+                link: d => `wiki/planet-detail.html?id=${esc(d.id)}`,
+                card: (d) => ({
+                    name: d.name,
+                    meta: [d.systemName, d.levelMin != null && d.levelMax != null ? `Niv. ${d.levelMin}–${d.levelMax}` : ''].filter(Boolean),
+                    desc: d.description,
+                    image: d.image
+                })
+            },
+            {
+                key: 'news', label: 'Noticias', icon: 'fa-newspaper', colorClass: 'type-news',
+                fields: d => [d.title, d.content, d.summary, d.author],
+                link: d => `news-detail.html?id=${esc(d.id)}`,
+                card: (d) => ({
+                    name: d.title,
+                    meta: [d.author, d.createdAt ? (d.createdAt.toDate ? d.createdAt.toDate().toLocaleDateString('es-ES') : '') : ''].filter(Boolean),
+                    desc: d.summary || d.content
+                })
+            }
+        ];
+
+        // ── estado global ─────────────────────────────────────────────
+        let allResultSections = [];
+
+        // ── filtro de tipo ────────────────────────────────────────────
+        function filterType(type, btn) {
+            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            allResultSections.forEach(sec => {
+                sec.el.style.display = (type === 'all' || sec.key === type) ? 'block' : 'none';
+            });
         }
 
-        function formatDrops(item) {
-            const drops = item.drops != null ? item.drops : item.drop;
-            if (Array.isArray(drops)) return drops.filter(Boolean).join(', ');
-            return typeof drops === 'string' ? drops : '';
+        // ── render de una sección ─────────────────────────────────────
+        function renderSection(col, results, raw, q) {
+            const section = document.createElement('div');
+            section.className = 'results-section';
+            section.dataset.type = col.key;
+
+            section.innerHTML = `
+                <div class="results-section-title">
+                    <i class="fas ${col.icon}"></i>
+                    ${esc(col.label)}
+                    <span class="result-count-badge">${results.length}</span>
+                </div>
+                <div class="results-list"></div>
+            `;
+
+            const list = section.querySelector('.results-list');
+            results.slice(0, 30).forEach(d => {
+                const info = col.card(d, raw, q);
+                const card = document.createElement('a');
+                card.href = col.link(d);
+                card.className = 'result-card';
+
+                const iconHtml = info.image
+                    ? `<img src="${esc(info.image)}" alt="" style="width:40px;height:40px;object-fit:contain;border-radius:8px;">`
+                    : `<div class="result-card-icon ${col.colorClass}" style="background:var(--bg-card);border:1px solid var(--border-color);"><i class="fas ${col.icon}"></i></div>`;
+
+                const metaHtml = info.meta && info.meta.length
+                    ? info.meta.map(t => `<span>${esc(t)}</span>`).join('<span style="opacity:.3">·</span>')
+                    : '';
+
+                const descHtml = info.desc
+                    ? `<div class="result-card-desc">${hl((info.desc + '').slice(0, 120), q)}${(info.desc + '').length > 120 ? '…' : ''}</div>`
+                    : '';
+
+                card.innerHTML = `
+                    ${iconHtml}
+                    <div class="result-card-body">
+                        <div class="result-card-name">${hl(info.name, raw)}</div>
+                        ${metaHtml ? `<div class="result-card-meta">${metaHtml}</div>` : ''}
+                        ${descHtml}
+                    </div>
+                    <span class="result-card-type ${col.colorClass}">${esc(col.label)}</span>
+                `;
+                list.appendChild(card);
+            });
+
+            return section;
         }
 
+        // ── búsqueda principal ────────────────────────────────────────
         async function runSearch() {
             const raw = getParam('q');
             const q = raw.toLowerCase();
             const summaryEl = document.getElementById('searchSummary');
             document.getElementById('searchInput').value = raw;
-
-            // Hide all sections
-            ['resultsShips','resultsComponents','resultsEnemies','resultsMissions','resultsPaints','emptyAll','resultsSearching'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
+            document.getElementById('allResults').innerHTML = '';
+            document.getElementById('emptyAll').style.display = 'none';
+            document.getElementById('typeFilters').style.display = 'none';
+            allResultSections = [];
 
             if (raw.length < 2) {
                 summaryEl.textContent = 'Escribe al menos 2 caracteres y presiona Buscar.';
                 return;
             }
 
-            summaryEl.textContent = 'Buscando "' + raw + '" en toda la wiki...';
+            summaryEl.textContent = `Buscando "${raw}" en toda la wiki...`;
             document.getElementById('resultsSearching').style.display = 'block';
 
             try {
-                const [shipsSnap, componentsSnap, enemiesSnap, missionsSnap, paintsSnap] = await Promise.all([
-                    db.collection('ships').get(),
-                    db.collection('components').get(),
-                    db.collection('enemies').get(),
-                    db.collection('missions').get(),
-                    db.collection('paints').get()
-                ]);
+                // Fetcher paralelo de todas las colecciones (ignora errores individuales)
+                const snaps = await Promise.allSettled(
+                    COLLECTIONS.map(col => db.collection(col.key).get())
+                );
 
                 document.getElementById('resultsSearching').style.display = 'none';
 
-                const ships = [], components = [], enemies = [], missions = [], paints = [];
-                shipsSnap.forEach(d => ships.push({ id: d.id, ...d.data() }));
-                componentsSnap.forEach(d => components.push({ id: d.id, ...d.data() }));
-                enemiesSnap.forEach(d => enemies.push({ id: d.id, ...d.data() }));
-                missionsSnap.forEach(d => missions.push({ id: d.id, ...d.data() }));
-                paintsSnap.forEach(d => paints.push({ id: d.id, ...d.data() }));
+                let total = 0;
+                const container = document.getElementById('allResults');
 
-                const m = t => (t || '').toLowerCase().includes(q);
+                COLLECTIONS.forEach((col, i) => {
+                    if (snaps[i].status !== 'fulfilled') return; // colección no existe o error
+                    const snap = snaps[i].value;
+                    const docs = [];
+                    snap.forEach(d => docs.push({ id: d.id, ...d.data() }));
 
-                const fShips      = ships.filter(s => m(s.name) || m(s.faction) || m(s.location) || m(s.description) || m(s.role));
-                const fComponents = components.filter(c => m(c.name) || m(c.type) || m(c.rarity) || m(c.description));
-                const fEnemies    = enemies.filter(e => m(e.name) || m(e.system) || m(e.planet) || m(e.description) || m(formatDrops(e)));
-                const fMissions   = missions.filter(m2 => m(m2.name) || m(m2.system) || m(m2.description));
-                const fPaints     = paints.filter(p => m(p.name) || m(p.type) || m(p.rarity) || m(p.description));
+                    // Filtrar por query
+                    const filtered = docs.filter(d =>
+                        col.fields(d).some(f => m(f, q))
+                    );
+                    if (!filtered.length) return;
 
-                const total = fShips.length + fComponents.length + fEnemies.length + fMissions.length + fPaints.length;
-                summaryEl.textContent = total + ' resultado' + (total !== 1 ? 's' : '') + ' para "' + raw + '"';
+                    total += filtered.length;
+                    const section = renderSection(col, filtered, raw, q);
+                    container.appendChild(section);
+                    allResultSections.push({ key: col.key, el: section });
+                });
 
-                // Ships
-                if (fShips.length) {
-                    document.getElementById('resultsShips').style.display = 'block';
-                    document.getElementById('shipsGrid').innerHTML = fShips.map(s => `
-                        <a href="wiki/ship-detail.html?id=${esc(s.id)}" class="ship-card" style="display:block;text-decoration:none;color:inherit;">
-                            ${s.image ? `<img src="${esc(s.image)}" alt="" style="width:100%;height:120px;object-fit:contain;border-radius:8px;margin-bottom:8px;">` : ''}
-                            <div class="ship-header">
-                                <div class="ship-name">${highlight(s.name, raw)}</div>
-                                <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                                    ${s.type ? `<span class="badge badge-type">${esc(s.type)}</span>` : ''}
-                                    ${s.faction ? `<span class="badge badge-faction">${esc(s.faction)}</span>` : ''}
-                                </div>
-                            </div>
-                            ${s.role ? `<div class="ship-meta" style="color:var(--accent);">${esc(s.role)}</div>` : ''}
-                            ${statsLine(s.stats) ? `<div class="ship-description" style="font-size:12px;">${statsLine(s.stats)}</div>` : ''}
-                        </a>`).join('');
-                }
-
-                // Components
-                if (fComponents.length) {
-                    document.getElementById('resultsComponents').style.display = 'block';
-                    document.getElementById('componentsGrid').innerHTML = fComponents.map(c => `
-                        <a href="wiki/component-detail.html?id=${esc(c.id)}" class="item-card" style="display:block;text-decoration:none;color:inherit;">
-                            <div class="item-header">
-                                <div class="item-name">${highlight(c.name, raw)}</div>
-                                <div>${c.type ? `<span class="badge badge-type">${esc(c.type)}</span>` : ''} ${c.rarity ? `<span class="badge badge-azul">${esc(c.rarity)}</span>` : ''}</div>
-                            </div>
-                            ${c.dropLocation ? `<div class="item-meta">${esc(c.dropLocation)}</div>` : ''}
-                            ${c.description ? `<p class="item-description">${highlight(c.description.slice(0,100), raw)}${c.description.length > 100 ? 'â€¦' : ''}</p>` : ''}
-                        </a>`).join('');
-                }
-
-                // Enemies
-                if (fEnemies.length) {
-                    document.getElementById('resultsEnemies').style.display = 'block';
-                    document.getElementById('enemiesGrid').innerHTML = fEnemies.map(e => {
-                        const loc = [e.system, e.planet].filter(Boolean).join(' â€“ ');
-                        return `
-                        <a href="wiki/enemy-detail.html?id=${esc(e.id)}" class="item-card" style="display:block;text-decoration:none;color:inherit;">
-                            <div class="item-header">
-                                <div class="item-name">${highlight(e.name, raw)}</div>
-                                ${e.type ? `<span class="badge badge-normal">${esc(e.type)}</span>` : ''}
-                            </div>
-                            ${loc ? `<div class="item-meta"><i class="fas fa-globe me-1"></i>${esc(loc)}</div>` : ''}
-                            ${formatDrops(e) ? `<div class="item-drops"><strong>Drops:</strong> ${esc(formatDrops(e))}</div>` : ''}
-                        </a>`;
-                    }).join('');
-                }
-
-                // Missions
-                if (fMissions.length) {
-                    document.getElementById('resultsMissions').style.display = 'block';
-                    document.getElementById('missionsGrid').innerHTML = fMissions.map(ms => `
-                        <a href="wiki/mission-detail.html?id=${esc(ms.id)}" class="item-card" style="display:block;text-decoration:none;color:inherit;">
-                            <div class="item-header">
-                                <div class="item-name">${highlight(ms.name, raw)}</div>
-                                ${ms.system ? `<span class="badge badge-type">${esc(ms.system)}</span>` : ''}
-                            </div>
-                            ${ms.levelMin != null ? `<div class="item-meta">Nivel mÃ­n. ${ms.levelMin}</div>` : ''}
-                            ${ms.description ? `<p class="item-description">${highlight(ms.description.slice(0,100), raw)}${ms.description.length>100?'â€¦':''}</p>` : ''}
-                        </a>`).join('');
-                }
-
-                // Paints
-                if (fPaints.length) {
-                    document.getElementById('resultsPaints').style.display = 'block';
-                    document.getElementById('paintsGrid').innerHTML = fPaints.map(p => `
-                        <a href="wiki/paint-detail.html?id=${esc(p.id)}" class="item-card" style="display:block;text-decoration:none;color:inherit;">
-                            <div class="item-header">
-                                <div class="item-name">${highlight(p.name, raw)}</div>
-                                <div>${p.type ? `<span class="badge badge-type">${esc(p.type)}</span>` : ''} ${p.rarity ? `<span class="badge badge-azul">${esc(p.rarity)}</span>` : ''}</div>
-                            </div>
-                            ${p.description ? `<p class="item-description">${highlight(p.description.slice(0,100), raw)}${p.description.length>100?'â€¦':''}</p>` : ''}
-                        </a>`).join('');
+                // Mostrar filtros si hay resultados de más de 1 tipo
+                if (allResultSections.length > 1) {
+                    document.getElementById('typeFilters').style.display = 'flex';
                 }
 
                 if (total === 0) {
                     document.getElementById('emptyAll').style.display = 'block';
-                    summaryEl.textContent = 'Sin resultados para "' + raw + '"';
+                    summaryEl.textContent = `Sin resultados para "${raw}"`;
+                } else {
+                    summaryEl.textContent = `${total} resultado${total !== 1 ? 's' : ''} para "${raw}"`;
                 }
+
             } catch (err) {
-                console.error(err);
+                console.error('Search error:', err);
                 document.getElementById('resultsSearching').style.display = 'none';
-                document.getElementById('emptyAll').textContent = 'Error al buscar. Por favor recarga e intenta nuevamente.';
+                document.getElementById('emptyAll').innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Error al buscar. Recarga la página e intenta de nuevo.';
                 document.getElementById('emptyAll').style.display = 'block';
             }
         }
 
         window.addEventListener('DOMContentLoaded', runSearch);
+    })();
     </script>
 </body>
 </html>
-

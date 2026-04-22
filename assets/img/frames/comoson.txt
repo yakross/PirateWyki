@@ -1,0 +1,1 @@
+Las imágenes deben ser PNG con fondo transparente, tamaño recomendado 256x256px o 512x512px, en forma circular o con el diseño que quieras — se aplicarán sobre el avatar.

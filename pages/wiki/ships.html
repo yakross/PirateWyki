@@ -177,6 +177,9 @@
             <select id="factionFilter" class="filter-select">
                 <option value="">Facción: todas</option>
             </select>
+            <select id="levelFilter" class="filter-select">
+                <option value="">Nivel requerido: todos</option>
+            </select>
             <button type="button" style="background: var(--accent); color: white; border: none; padding: 5px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13px; margin-left: auto;" onclick="location.href='ship-compare.html'">
                 <i class="fas fa-balance-scale"></i> Comparar
             </button>
@@ -306,6 +309,7 @@
             const search = document.getElementById('searchInput').value.toLowerCase();
             const typeFilter = document.getElementById('typeFilter').value;
             const factionFilter = document.getElementById('factionFilter').value;
+            const levelFilter = document.getElementById('levelFilter').value;
 
             // Destruir charts existentes antes de re-renderizar
             Object.values(activeCharts).forEach(c => { try { c.destroy(); } catch(e){} });
@@ -316,12 +320,14 @@
                 const faction = (ship.faction || '').toLowerCase();
                 const location = (ship.location || '').toLowerCase();
                 const type = (ship.type || '').toLowerCase();
+                const shipLevel = (ship.requirements && ship.requirements.level != null) ? ship.requirements.level : (ship.level != null ? ship.level : null);
 
                 const matchesSearch = !search || name.includes(search) || faction.includes(search) || location.includes(search);
                 const matchesType = !typeFilter || type === typeFilter.toLowerCase();
                 const matchesFaction = !factionFilter || faction === factionFilter.toLowerCase();
+                const matchesLevel = !levelFilter || (levelFilter === 'none' ? shipLevel == null : (shipLevel != null && shipLevel <= parseInt(levelFilter)));
 
-                return matchesSearch && matchesType && matchesFaction;
+                return matchesSearch && matchesType && matchesFaction && matchesLevel;
             });
 
             if (filtered.length === 0) {
@@ -399,7 +405,7 @@
                             <div style="display:flex; gap:2px; flex-wrap:wrap; max-width:100px;">${compIcons}</div>
                         </td>
                         <td style="text-align: center;">
-                            <button type="button" class="btn-fav" data-id="${ship.id}" data-name="${name}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:6px; font-size:16px;"><i class="far fa-star"></i></button>
+                            <button type="button" class="btn-fav" data-id="${ship.id}" data-name="${name}" title="Añadir a favoritos"><i class="far fa-star"></i></button>
                         </td>
                     </tr>`;
                 });
@@ -566,6 +572,7 @@
         document.getElementById('searchInput').addEventListener('input', renderShips);
         document.getElementById('typeFilter').addEventListener('change', renderShips);
         document.getElementById('factionFilter').addEventListener('change', renderShips);
+        document.getElementById('levelFilter').addEventListener('change', renderShips);
 
         document.getElementById('shipsGrid').addEventListener('click', async (e) => {
             const btn = e.target.closest('.btn-fav');
@@ -661,6 +668,21 @@
 
                 types.forEach(t => { const o = document.createElement('option'); o.value = t.val; o.textContent = t.label; typeSel.appendChild(o); });
                 factions.forEach(f => { const o = document.createElement('option'); o.value = f.val; o.textContent = f.label; factionSel.appendChild(o); });
+
+                // Populate level filter from ship data
+                const levelSel = document.getElementById('levelFilter');
+                const levels = new Set();
+                allShips.forEach(s => {
+                    const lv = (s.requirements && s.requirements.level != null) ? s.requirements.level : (s.level != null ? s.level : null);
+                    if (lv != null) levels.add(lv);
+                });
+                const sortedLevels = Array.from(levels).sort((a, b) => a - b);
+                sortedLevels.forEach(lv => {
+                    const o = document.createElement('option');
+                    o.value = lv;
+                    o.textContent = `Hasta nivel ${lv}`;
+                    levelSel.appendChild(o);
+                });
             } catch (e) { console.warn('Filtros no cargados:', e); }
         }
 

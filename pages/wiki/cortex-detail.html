@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
@@ -96,7 +96,7 @@
             if (c.parts1st != null) parts.push('1Âº: ' + c.parts1st); if (c.parts2nd != null) parts.push('2Âº: ' + c.parts2nd); if (c.parts3rd != null) parts.push('3Âº: ' + c.parts3rd); if (c.parts4th != null) parts.push('4Âº: ' + c.parts4th); if (c.parts5th != null) parts.push('5Âº: ' + c.parts5th);
             const partsHtml = parts.length ? '<p class="profile-meta"><strong>Partes por puesto:</strong> ' + parts.join(', ') + '</p>' : '';
             container.innerHTML = '<div class="profile-card" style="text-align: left; position: relative;">' +
-                '<button type="button" class="btn-fav" data-type="cortex" data-id="' + escA(id) + '" data-name="' + escA(c.name || '') + '" title="AÃ±adir a favoritos" style="position:absolute;top:16px;right:16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;color:var(--accent);cursor:pointer;padding:8px 12px;"><i class="' + favStar + ' fa-star"></i></button>' +
+                '<button type="button" class="btn-fav" data-type="cortex" data-id="' + escA(id) + '" data-name="' + escA(c.name || '') + '" title="Añadir a favoritos" style="position:absolute;top:16px;right:16px;"><i class="' + favStar + ' fa-star"></i></button>' +
                 (c.image ? '<img src="' + escA(c.image) + '" alt="" style="width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-bottom:16px;">' : '') +
                 '<h1 class="page-title">' + esc(c.name || 'Cortex') + '</h1>' +
                 '<p class="profile-meta">' + meta.join(' Â· ') + '</p>' + partsHtml +

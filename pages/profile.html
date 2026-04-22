@@ -1,18 +1,60 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GalaxWiki - Mi Perfil</title>
+    <title>GalaxWiki - Perfil</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../css/styles.css" rel="stylesheet">
+    <style>
+        /* Marco de perfil sobre el avatar */
+        .profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 10px; }
+        .profile-frame-img {
+            position: absolute; inset: -6px;
+            width: calc(100% + 12px); height: calc(100% + 12px);
+            border-radius: 50%; object-fit: cover;
+            pointer-events: none; z-index: 2;
+        }
+        /* Stats grid del perfil */
+        .profile-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px; margin-top: 12px;
+        }
+        .profile-stat-box {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 12px 14px;
+        }
+        .profile-stat-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .profile-stat-value { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-top: 2px; }
+        /* Logros */
+        .achievements-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .achievement-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 20px; padding: 6px 12px; font-size: 13px;
+            color: var(--text-primary); cursor: default;
+        }
+        .achievement-badge:hover { border-color: var(--accent); }
+        /* Botón editar perfil */
+        .btn-edit-profile {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 18px; border-radius: 10px;
+            background: rgba(102,126,234,0.12);
+            border: 1px solid rgba(102,126,234,0.3);
+            color: #a78bfa; font-size: 13px; font-weight: 600;
+            text-decoration: none; transition: all 0.2s; margin-top: 12px;
+        }
+        .btn-edit-profile:hover { background: rgba(102,126,234,0.2); color: #a78bfa; }
+    </style>
 </head>
 <body>
     <header class="header">
         <div class="header-content">
             <div class="logo-section">
-                <a href="../index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+                <a href="../index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;">
                     <div class="logo-img"><i class="fas fa-rocket"></i></div>
                     <div class="logo-text">
                         <span class="logo-title">GalaxWiki</span>
@@ -21,22 +63,29 @@
                 </a>
             </div>
             <div class="user-section">
-                <div class="theme-toggle" onclick="toggleTheme()">
-                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
-                </div>
-                <div class="auth-buttons" id="authButtons" style="display: none;">
+                <!-- Botón de idioma -->
+                <button onclick="toggleLanguage()" title="Cambiar idioma" style="
+                    background: rgba(102,126,234,0.12); border: 1px solid rgba(102,126,234,0.3);
+                    color: #a78bfa; border-radius: 8px; padding: 6px 12px;
+                    font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+                    display:inline-flex; align-items:center; gap:5px;">
+                    <i class="fas fa-globe" style="font-size:11px;"></i>
+                    <span id="langToggleText">ES</span>
+                </button>
+                <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon theme-icon" id="themeIcon"></i></div>
+                <div class="auth-buttons" id="authButtons" style="display:none;">
                     <a href="../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
                     <a href="../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
                 </div>
-                <div class="dropdown" id="userProfile" style="display: none;">
+                <div class="dropdown" id="userProfile" style="display:none;">
                     <div class="user-profile" data-bs-toggle="dropdown">
                         <div class="user-avatar"><i class="fas fa-user"></i></div>
                         <div class="user-info">
                             <span class="user-name" id="userName">Usuario</span>
                             <span class="user-fleet" id="userFleet">Flota</span>
-                            <span class="badge badge-admin" id="userRoleBadge" style="display: none;">Admin</span>
+                            <span class="badge badge-admin" id="userRoleBadge" style="display:none;">Admin</span>
                         </div>
-                        <i class="fas fa-chevron-down" style="color: #667eea;"></i>
+                        <i class="fas fa-chevron-down" style="color:var(--accent);"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
@@ -44,8 +93,8 @@
                         <li><a class="dropdown-item" href="favorites.html"><i class="fas fa-star me-2"></i>Favoritos</a></li>
                         <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li id="adminMenuItem" style="display: none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                        <li id="adminMenuItem" style="display:none;"><a class="dropdown-item" href="admin/dashboard.html"><i class="fas fa-shield-alt me-2"></i>Panel Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout();return false;"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
                     </ul>
                 </div>
             </div>
@@ -65,208 +114,310 @@
                 <li class="nav-item"><a href="wiki/calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
                 <li class="nav-item"><a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
                 <li class="nav-item"><a href="news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
-
             </ul>
         </div>
     </nav>
 
     <main class="main-container">
-        <h1 class="page-title"><i class="fas fa-user me-2"></i>Mi Perfil</h1>
-        <p class="page-subtitle">Tu perfil de usuario en GalaxWiki.</p>
+        <h1 class="page-title" id="pageTitle"><i class="fas fa-user me-2"></i>Mi Perfil</h1>
+        <p class="page-subtitle" id="pageSubtitle">Tu perfil de usuario en GalaxWiki.</p>
 
-        <div id="profileLoading" class="empty-state" style="padding: 60px 24px;">
-            <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: var(--accent); margin-bottom: 16px;"></i>
+        <div id="profileLoading" class="empty-state" style="padding:60px 24px;">
+            <i class="fas fa-spinner fa-spin" style="font-size:48px;color:var(--accent);margin-bottom:16px;"></i>
             <p>Cargando...</p>
         </div>
-        <div id="profileGuest" class="empty-state" style="padding: 60px 24px; display: none;">
-            <i class="fas fa-lock" style="font-size: 48px; color: var(--accent); margin-bottom: 16px;"></i>
+
+        <div id="profileGuest" class="empty-state" style="padding:60px 24px;display:none;">
+            <i class="fas fa-lock" style="font-size:48px;color:var(--accent);margin-bottom:16px;"></i>
             <p><strong>Inicia sesión</strong></p>
             <p>Para ver tu perfil necesitas estar registrado.</p>
-            <a href="../login.html" class="btn-header btn-register" style="margin-top: 16px; display: inline-block;">Iniciar sesión</a>
+            <a href="../login.html" class="btn-header btn-register" style="margin-top:16px;display:inline-block;">Iniciar sesión</a>
         </div>
 
-        <div id="profileContent" class="profile-content" style="display: none;">
+        <div id="profileContent" class="profile-content" style="display:none;">
             <div class="profile-card">
+                <!-- Avatar + Marco -->
                 <div class="profile-avatar-wrap">
                     <div class="profile-avatar" id="profileAvatar">
                         <i class="fas fa-user"></i>
                     </div>
-                    <span class="badge badge-admin" id="profileRoleBadge" style="display: none;">Admin</span>
+                    <img id="profileFrameImg" src="" alt="" class="profile-frame-img" style="display:none;">
+                    <span class="badge badge-admin" id="profileRoleBadge" style="display:none;">Admin</span>
                 </div>
+
                 <h2 class="profile-username" id="profileUsername">Usuario</h2>
-                <p class="profile-email" id="profileEmail">â€”</p>
+                <p class="profile-email" id="profileEmail" style="display:none;">—</p>
+
                 <p class="profile-fleet"><i class="fas fa-ship me-2"></i><span id="profileFleet">Sin flota</span></p>
-                <p class="profile-meta" id="profileServerWrap" style="display: none;"><i class="fas fa-server me-2"></i>Servidor: <span id="profileServer">—</span></p>
-                <p class="profile-meta" id="profileLevelWrap" style="display: none;"><i class="fas fa-signal me-2"></i>Nivel <span id="profileLevel">—</span></p>
-                <p class="profile-meta"><small>Miembro desde <span id="profileCreated">—</span></small></p>
-            </div>
-            <div class="profile-stats">
-                <div id="gw-rank-badge" style="margin-bottom: 24px;"></div>
-                <h3 class="profile-section-title"><i class="fas fa-star me-2"></i>Favoritos</h3>
-                <p class="text-secondary" id="profileFavCount">0 elementos guardados. <a href="favorites.html">Ver favoritos</a></p>
+                <p class="profile-meta" id="profileServerWrap" style="display:none;">
+                    <i class="fas fa-server me-2"></i>Servidor: <span id="profileServer">—</span>
+                </p>
+                <p class="profile-meta" id="profileLevelWrap" style="display:none;">
+                    <i class="fas fa-signal me-2"></i>Nivel <span id="profileLevel">—</span>
+                </p>
+                <p class="profile-meta">
+                    <i class="fas fa-calendar me-1"></i> Miembro desde <span id="profileCreated">—</span>
+                </p>
+
+                <!-- Stats rápidas -->
+                <div class="profile-stats-grid">
+                    <div class="profile-stat-box">
+                        <div class="profile-stat-label">Mensajes</div>
+                        <div class="profile-stat-value" id="profilePostCount">0</div>
+                    </div>
+                    <div class="profile-stat-box">
+                        <div class="profile-stat-label">Favoritos</div>
+                        <div class="profile-stat-value" id="profileFavCountNum">0</div>
+                    </div>
+                    <div class="profile-stat-box">
+                        <div class="profile-stat-label">XP total</div>
+                        <div class="profile-stat-value" id="profileXp">0</div>
+                    </div>
+                </div>
+
+                <!--
+                    Botón "Editar perfil" → lleva a settings.html donde está
+                    TODO lo editable: datos, foto, correo y contraseña.
+                -->
+                <a href="settings.html" class="btn-edit-profile" id="btnEditProfile" style="display:none;">
+                    <i class="fas fa-pen"></i> Editar perfil
+                </a>
             </div>
 
-            <!-- Link to Collection Tracker -->
-            <div style="margin-top: 24px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div class="profile-stats">
+                <!-- Rango / XP -->
+                <div id="gw-rank-badge" style="margin-bottom:24px;"></div>
+
+                <!-- Logros -->
+                <h3 class="profile-section-title" id="achievementsTitle" style="display:none;">
+                    <i class="fas fa-trophy me-2"></i>Logros
+                </h3>
+                <div class="achievements-wrap" id="achievementsWrap"></div>
+
+                <!-- Favoritos -->
+                <h3 class="profile-section-title" style="margin-top:20px;">
+                    <i class="fas fa-star me-2"></i>Favoritos
+                </h3>
+                <p class="text-secondary" id="profileFavCount">0 elementos guardados.</p>
+            </div>
+
+            <!-- Tracker -->
+            <div id="trackerLink" style="margin-top:24px;padding:20px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
                 <div>
-                    <h3 style="margin: 0 0 6px; font-size: 18px; color: var(--text-primary);"><i class="fas fa-check-double me-2" style="color: var(--accent);"></i>Mi Colección de Planos</h3>
-                    <p style="margin: 0; color: var(--text-tertiary); font-size: 14px;">Lleva el control de los planos que ya conseguiste (Naves, Componentes, Pinturas).</p>
+                    <h3 style="margin:0 0 6px;font-size:18px;color:var(--text-primary);">
+                        <i class="fas fa-check-double me-2" style="color:var(--accent);"></i>Mi Colección de Planos
+                    </h3>
+                    <p style="margin:0;color:var(--text-tertiary);font-size:14px;">Lleva el control de los planos que ya conseguiste.</p>
                 </div>
-                <a href="wiki/tracker.html" class="btn-header btn-register" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;">
+                <a href="wiki/tracker.html" class="btn-header btn-register" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;">
                     <i class="fas fa-external-link-alt"></i> Abrir Tracker
                 </a>
             </div>
         </div>
+        <!--
+            NOTA: el formulario de cambio de correo se movió a settings.html
+            (sección "Correo electrónico") para centralizar toda la edición
+            de cuenta en un solo lugar. El botón "Editar perfil" lleva allí.
+        -->
     </main>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
     <script src="../js/firebase-config.js"></script>
+    <script src="../js/i18n.js"></script>
     <script src="../js/header-auth.js"></script>
     <script src="../js/gamification.js"></script>
+    <script src="../js/profile-frames.js"></script>
     <script>
-        (function () {
-            const auth = window.auth;
-            const db = window.db;
+    (function() {
+        'use strict';
+        const auth = window.auth;
+        const db   = window.db;
 
-            async function calculateAchievements(uid) {
-                const achievements = [];
-                try {
-                    const bpDoc = await db.collection('user_blueprints').doc(uid).get();
-                    if (bpDoc.exists) {
-                        if (Object.keys(bpDoc.data()).length > 20) achievements.push({ icon: '🥇', name: 'Collector', desc: 'Gran colección de planos' });
-                    }
-                    const favSnap = await db.collection('users').doc(uid).collection('favorites').get();
-                    if (favSnap.size >= 10) achievements.push({ icon: '🚀', name: 'Explorer', desc: 'Múltiples elementos favoritos' });
-                    const userDoc = await db.collection('users').doc(uid).get();
-                    if (userDoc.exists && userDoc.data().createdAt) {
-                         const created = userDoc.data().createdAt.toDate();
-                         if ((Date.now() - created.getTime()) / 86400000 > 30) achievements.push({ icon: '🌟', name: 'Veteran', desc: 'Miembro por más de 30 días' });
-                    }
-                } catch(e) {}
-                return achievements;
+        function formatDate(ts) {
+            if (!ts) return '—';
+            const d = ts.toDate ? ts.toDate() : new Date(ts);
+            return d.toLocaleDateString('es', { day:'2-digit', month:'long', year:'numeric' });
+        }
+
+        function setAvatar(src) {
+            const el = document.getElementById('profileAvatar');
+            if (!el) return;
+            if (src) {
+                el.innerHTML = '<img src="' + src.replace(/"/g,'&quot;') + '" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML=\'<i class=\\\'fas fa-user\\\'></i>\'">';
+            } else {
+                el.innerHTML = '<i class="fas fa-user"></i>';
+            }
+        }
+
+        async function calculateAchievements(uid, data) {
+            const list = [];
+            try {
+                if (data.xp >= 2500) list.push({ icon: '👑', name: 'Leyenda',        desc: 'Rango máximo' });
+                else if (data.xp >= 1200) list.push({ icon: '🌟', name: 'Almirante', desc: 'Gran experiencia' });
+                if (data.postCount >= 100) list.push({ icon: '💬', name: 'Comunicador',   desc: '100+ mensajes en el foro' });
+                if (data.postCount >= 10)  list.push({ icon: '🗣️', name: 'Activo',        desc: '10+ mensajes en el foro' });
+                const bpDoc = await db.collection('user_blueprints').doc(uid).get();
+                if (bpDoc.exists && Object.keys(bpDoc.data()).length > 20)
+                    list.push({ icon: '🥇', name: 'Coleccionista', desc: 'Gran colección de planos' });
+                const favSnap = await db.collection('users').doc(uid).collection('favorites').get();
+                if (favSnap.size >= 10) list.push({ icon: '🚀', name: 'Explorador', desc: '10+ favoritos' });
+                if (data.createdAt) {
+                    const days = (Date.now() - data.createdAt.toDate().getTime()) / 86400000;
+                    if (days > 30)  list.push({ icon: '🛸', name: 'Veterano',       desc: 'Más de 30 días en GalaxWiki' });
+                    if (days > 180) list.push({ icon: '⚔️',  name: 'Experimentado', desc: 'Más de 6 meses' });
+                }
+                if (data.role === 'admin') list.push({ icon: '🛡️', name: 'Administrador', desc: 'Acceso total' });
+            } catch(_) {}
+            return list;
+        }
+
+        async function loadProfile(currentUser, targetUid) {
+            const loading = document.getElementById('profileLoading');
+            const guest   = document.getElementById('profileGuest');
+            const content = document.getElementById('profileContent');
+
+            if (loading) loading.style.display = 'none';
+
+            if (!targetUid && !currentUser) {
+                if (guest) guest.style.display = 'block';
+                return;
             }
 
-            async function loadProfile(userWrapper, targetUid) {
-                const loading = document.getElementById('profileLoading');
-                const guest = document.getElementById('profileGuest');
-                const content = document.getElementById('profileContent');
-                if (loading) loading.style.display = 'none';
-                if (!targetUid && !userWrapper) {
-                    if (guest) guest.style.display = 'block';
-                    return;
-                }
-                if (guest) guest.style.display = 'none';
-                if (content) content.style.display = 'block';
+            if (guest)   guest.style.display   = 'none';
+            if (content) content.style.display  = 'block';
 
-                const isOwnProfile = !targetUid || (userWrapper && userWrapper.uid === targetUid);
-                const uidToLoad = targetUid || (userWrapper ? userWrapper.uid : null);
-                if (!uidToLoad) return;
+            const isOwn    = !targetUid || (currentUser && currentUser.uid === targetUid);
+            const uidToLoad = targetUid || (currentUser ? currentUser.uid : null);
+            if (!uidToLoad) return;
 
-                const privateLinks = document.querySelectorAll('.private-link, .btn-register');
-                if (!isOwnProfile) {
-                    document.querySelector('.page-title').innerHTML = '<i class="fas fa-user me-2"></i>Perfil de Jugador';
-                    document.querySelector('.page-subtitle').textContent = 'Viendo perfil público.';
-                    privateLinks.forEach(el => el.style.display = 'none');
-                    const trackerLink = document.querySelector('a[href="wiki/tracker.html"]');
-                    if (trackerLink) trackerLink.style.display = 'none';
-                    document.getElementById('profileEmail').style.display = 'none';
-                }
-                if (isOwnProfile && userWrapper) {
-                    document.getElementById('profileEmail').textContent = userWrapper.email || '—';
-                }
+            // Ajustar título si es perfil ajeno
+            if (!isOwn) {
+                document.getElementById('pageTitle').innerHTML    = '<i class="fas fa-user me-2"></i>Perfil de Jugador';
+                document.getElementById('pageSubtitle').textContent = 'Perfil público.';
+                const tLink = document.getElementById('trackerLink');
+                if (tLink) tLink.style.display = 'none';
+            }
 
-                document.getElementById('profileUsername').textContent = isOwnProfile ? (userWrapper ? (userWrapper.displayName || userWrapper.email) : 'Usuario') : 'Cargando...';
-                if (isOwnProfile && userWrapper && userWrapper.photoURL) {
-                    document.getElementById('profileAvatar').innerHTML = '<img src="' + userWrapper.photoURL + '" alt="Avatar">';
-                }
+            // Mostrar email solo en perfil propio
+            if (isOwn && currentUser) {
+                const emailEl = document.getElementById('profileEmail');
+                if (emailEl) { emailEl.textContent = currentUser.email || ''; emailEl.style.display = 'block'; }
+            }
 
-                let favCount = 0;
-                try {
-                    if (db) {
-                        const userDoc = await db.collection('users').doc(uidToLoad).get();
-                        if (userDoc.exists) {
-                            const d = userDoc.data();
-                            document.getElementById('profileUsername').textContent = d.username || document.getElementById('profileUsername').textContent;
-                            document.getElementById('profileFleet').textContent = d.fleet || 'Sin flota';
-                            var serverWrap = document.getElementById('profileServerWrap');
-                            var serverEl = document.getElementById('profileServer');
-                            if (serverWrap && serverEl && (d.server != null && d.server !== '')) {
-                                serverEl.textContent = d.server;
-                                serverWrap.style.display = 'block';
-                            } else if (serverWrap) serverWrap.style.display = 'none';
-                            const levelWrap = document.getElementById('profileLevelWrap');
-                            const levelEl = document.getElementById('profileLevel');
-                            if (levelWrap && levelEl && (d.level != null && d.level !== '')) {
-                                levelEl.textContent = d.level;
-                                levelWrap.style.display = 'block';
-                            } else if (levelWrap) levelWrap.style.display = 'none';
-                            const isAdmin = d.role === 'admin';
-                            const badge = document.getElementById('profileRoleBadge');
-                            if (badge) badge.style.display = isAdmin ? 'inline-block' : 'none';
-                            if (d.avatar) {
-                                document.getElementById('profileAvatar').innerHTML = '<img src="' + d.avatar.replace(/"/g, '&quot;') + '" alt="Avatar" onerror="this.parentElement.innerHTML=\'<i class=\'fas fa-user\'></i>\'">';
-                            }
-                            
-                            // Render Gamification XP
-                            const userXp = d.xp || 0;
-                            if (typeof gwRenderRankBadge === 'function') {
-                                gwRenderRankBadge('gw-rank-badge', userXp);
-                            }
-                            
-                            const achievements = await calculateAchievements(uidToLoad);
-                            if (achievements.length > 0) {
-                                const achC = document.createElement('div');
-                                achC.innerHTML = '<h4 style="font-size: 14px; margin-top: 16px; margin-bottom: 8px;"><i class="fas fa-trophy me-2"></i>Logros</h4><div style="display: flex; gap: 8px; flex-wrap: wrap;">' + 
-                                    achievements.map(a => `<span class="badge" title="${a.desc}" style="background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary);">${a.icon} ${a.name}</span>`).join('') + '</div>';
-                                document.querySelector('.profile-card').appendChild(achC);
-                            }
-                        } else {
-                            if (!isOwnProfile) document.getElementById('profileUsername').textContent = 'Usuario Desconocido';
+            // Mostrar botón editar solo en perfil propio
+            const editBtn = document.getElementById('btnEditProfile');
+            if (editBtn && isOwn) editBtn.style.display = 'inline-flex';
+
+            // Avatar provisional (Google)
+            if (isOwn && currentUser && currentUser.photoURL) setAvatar(currentUser.photoURL);
+
+            let favCount = 0;
+            try {
+                const doc = await db.collection('users').doc(uidToLoad).get();
+                if (doc.exists) {
+                    const d = doc.data();
+
+                    document.getElementById('profileUsername').textContent  = d.username || (currentUser ? currentUser.displayName || currentUser.email : '—') || '—';
+                    document.getElementById('profileFleet').textContent     = d.fleet    || 'Sin flota';
+                    document.getElementById('profilePostCount').textContent = d.postCount != null ? d.postCount : 0;
+                    document.getElementById('profileXp').textContent        = d.xp       != null ? d.xp       : 0;
+                    document.getElementById('profileCreated').textContent   = formatDate(d.createdAt);
+
+                    const serverWrap = document.getElementById('profileServerWrap');
+                    const serverEl   = document.getElementById('profileServer');
+                    if (serverWrap && d.server) { serverEl.textContent = d.server; serverWrap.style.display = 'block'; }
+
+                    const levelWrap = document.getElementById('profileLevelWrap');
+                    const levelEl   = document.getElementById('profileLevel');
+                    if (levelWrap && d.level != null && d.level !== '') { levelEl.textContent = d.level; levelWrap.style.display = 'block'; }
+
+                    const roleBadge = document.getElementById('profileRoleBadge');
+                    if (roleBadge) roleBadge.style.display = d.role === 'admin' ? 'inline-block' : 'none';
+
+                    // Avatar desde Firestore (base64 o URL)
+                    setAvatar(d.avatar || (isOwn && currentUser ? currentUser.photoURL : '') || '');
+
+                    // Marco de perfil
+                    if (typeof gwResolveFramePath === 'function') {
+                        const framePath = gwResolveFramePath(d);
+                        const frameImg  = document.getElementById('profileFrameImg');
+                        if (frameImg && framePath) {
+                            frameImg.src           = framePath;
+                            frameImg.style.display = 'block';
                         }
-                        const favSnap = await db.collection('users').doc(uidToLoad).collection('favorites').get();
-                        favCount = favSnap.size;
                     }
-                    if (isOwnProfile && userWrapper && userWrapper.metadata) {
-                        const created = userWrapper.metadata.creationTime;
-                        document.getElementById('profileCreated').textContent = created ? new Date(created).toLocaleDateString('es') : '—';
-                    } else if (!isOwnProfile) {
-                        const uDoc = await db.collection('users').doc(uidToLoad).get();
-                        if (uDoc.exists && uDoc.data().createdAt) {
-                            document.getElementById('profileCreated').textContent = uDoc.data().createdAt.toDate().toLocaleDateString('es');
+
+                    // XP / rango
+                    if (typeof gwRenderRankBadge === 'function') {
+                        gwRenderRankBadge('gw-rank-badge', d.xp || 0);
+                    }
+
+                    // Logros
+                    const achievements = await calculateAchievements(uidToLoad, d);
+                    if (achievements.length > 0) {
+                        const title = document.getElementById('achievementsTitle');
+                        const wrap  = document.getElementById('achievementsWrap');
+                        if (title) title.style.display = 'block';
+                        if (wrap) {
+                            wrap.innerHTML = achievements.map(a =>
+                                `<span class="achievement-badge" title="${a.desc}">${a.icon} ${a.name}</span>`
+                            ).join('');
                         }
                     }
-                } catch (e) {
-                    console.error('Error cargando perfil:', e);
+                } else if (!isOwn) {
+                    document.getElementById('profileUsername').textContent = 'Usuario desconocido';
                 }
-                document.getElementById('profileFavCount').innerHTML = favCount + ' elemento(s) guardado(s).' + (isOwnProfile ? ' <a href="favorites.html">Ver favoritos</a>' : '');
+
+                // Favoritos
+                const favSnap = await db.collection('users').doc(uidToLoad).collection('favorites').get();
+                favCount = favSnap.size;
+
+                // Fecha si es perfil ajeno y no hay createdAt en el doc
+                if (!isOwn) {
+                    const ud = await db.collection('users').doc(uidToLoad).get();
+                    if (ud.exists && ud.data().createdAt) {
+                        document.getElementById('profileCreated').textContent = formatDate(ud.data().createdAt);
+                    }
+                }
+            } catch(e) {
+                console.error('Error cargando perfil:', e);
             }
 
-            function init() {
-                const params = new URLSearchParams(window.location.search);
-                const targetUid = params.get('uid');
+            const favEl  = document.getElementById('profileFavCount');
+            const favNum = document.getElementById('profileFavCountNum');
+            if (favEl)  favEl.textContent  = favCount + ' elemento' + (favCount !== 1 ? 's' : '') + ' guardado' + (favCount !== 1 ? 's' : '') + '.';
+            if (favNum) favNum.textContent = favCount;
 
-                if (!auth) {
-                    if (targetUid) loadProfile(null, targetUid);
-                    else {
-                        if (document.getElementById('profileLoading')) document.getElementById('profileLoading').style.display = 'none';
-                        if (document.getElementById('profileGuest')) document.getElementById('profileGuest').style.display = 'block';
-                    }
-                    return;
-                }
-                auth.onAuthStateChanged(function (user) {
-                    if (user || targetUid) loadProfile(user, targetUid);
-                    else {
-                        if (document.getElementById('profileLoading')) document.getElementById('profileLoading').style.display = 'none';
-                        if (document.getElementById('profileGuest')) document.getElementById('profileGuest').style.display = 'block';
-                    }
-                });
+            // Link de favoritos solo en perfil propio
+            if (isOwn && favEl) favEl.innerHTML += ' <a href="favorites.html">Ver favoritos</a>';
+        }
+
+        function init() {
+            const params    = new URLSearchParams(window.location.search);
+            const targetUid = params.get('uid');
+
+            if (!auth) {
+                document.getElementById('profileLoading').style.display = 'none';
+                document.getElementById('profileGuest').style.display   = 'block';
+                return;
             }
-            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-            else init();
-        })();
+
+            auth.onAuthStateChanged(function(user) {
+                if (user || targetUid) {
+                    loadProfile(user, targetUid);
+                } else {
+                    document.getElementById('profileLoading').style.display = 'none';
+                    document.getElementById('profileGuest').style.display   = 'block';
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+        else init();
+    })();
     </script>
 </body>
 </html>
-

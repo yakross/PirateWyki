@@ -76,10 +76,9 @@
             <ul class="nav-links">
                 <li class="nav-item"><a href="../../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
                 <li class="nav-item"><a href="ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
-                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
-
-                <li class="nav-item"><a href="enemies.html" class="nav-link active"><i class="fas fa-skull"></i> Enemigos</a></li>
                 <li class="nav-item"><a href="builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="enemies.html" class="nav-link active"><i class="fas fa-skull"></i> Enemigos</a></li>
                 <li class="nav-item"><a href="systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
                 <li class="nav-item"><a href="missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
                 <li class="nav-item"><a href="misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
@@ -106,6 +105,9 @@
                 <option value="ligeros">Ligeros</option>
                 <option value="medianos">Medianos</option>
                 <option value="verdes">Verdes</option>
+            </select>
+            <select id="levelFilterEnemies" class="filter-select">
+                <option value="">Nivel: todos</option>
             </select>
             <div class="view-toggle">
                 <button type="button" class="btn-toggle active" id="btnViewGrid" onclick="setEnemyView('grid')" title="Vista cuadrícula"><i class="fas fa-th"></i></button>
@@ -224,6 +226,16 @@
 
                 if (loadMoreBtn) loadMoreBtn.style.display = (docs.length === PAGE_SIZE) ? 'inline-block' : 'none';
 
+                // Populate level filter
+                const levelSel = document.getElementById('levelFilterEnemies');
+                const levels = new Set();
+                allItems.forEach(it => { if (it.level != null) levels.add(it.level); });
+                levelSel.innerHTML = '<option value="">Nivel: todos</option>';
+                Array.from(levels).sort((a,b)=>a-b).forEach(lv => {
+                    const o = document.createElement('option');
+                    o.value = lv; o.textContent = 'Nivel ' + lv;
+                    levelSel.appendChild(o);
+                });
                 renderItems();
             } catch (error) {
                 console.error('Error cargando enemigos:', error);
@@ -238,6 +250,7 @@
 
         document.getElementById('searchInput').addEventListener('input', renderItems);
         document.getElementById('typeFilter').addEventListener('change', renderItems);
+        document.getElementById('levelFilterEnemies').addEventListener('change', renderItems);
 
         let enemyViewMode = localStorage.getItem('enemyViewPref') || 'grid';
         function setEnemyView(mode) {
@@ -257,6 +270,7 @@
             const emptyState = document.getElementById('emptyState');
             const search = document.getElementById('searchInput').value.toLowerCase();
             const typeFilter = document.getElementById('typeFilter').value.toLowerCase();
+            const levelFilterVal = document.getElementById('levelFilterEnemies').value;
 
             const filtered = allItems.filter(item => {
                 const name = (item.name || '').toLowerCase();
@@ -265,9 +279,11 @@
                 const desc = (item.description || '').toLowerCase();
                 const type = (item.type || '').toLowerCase();
                 const dropsStr = formatDrops(item) || '';
+                const itemLevel = item.level != null ? item.level : null;
                 const matchesSearch = !search || name.includes(search) || system.includes(search) || planet.includes(search) || desc.includes(search) || dropsStr.toLowerCase().includes(search);
                 const matchesType = !typeFilter || type.includes(typeFilter);
-                return matchesSearch && matchesType;
+                const matchesLevel = !levelFilterVal || (itemLevel != null && itemLevel == parseInt(levelFilterVal));
+                return matchesSearch && matchesType && matchesLevel;
             });
 
             if (filtered.length === 0) {
@@ -307,7 +323,7 @@
                         ${dropsText ? `<div class="item-drops"><strong>Drops:</strong> ${dropsText}</div>` : ''}
                         <div class="item-footer" style="display:flex; justify-content:space-between; align-items:center;">
                             <span>${created ? `Actualizado: ${created}` : ''}</span>
-                            <button type="button" class="btn-fav" data-type="enemy" data-id="${item.id}" data-name="${(item.name || 'Sin nombre').replace(/"/g, '&quot;')}" title="Añadir a favoritos" style="background:none; border:none; color:var(--text-tertiary); cursor:pointer; padding:4px;"><i class="far fa-star"></i></button>
+                            <button type="button" class="btn-fav" data-type="enemy" data-id="${item.id}" data-name="${(item.name || 'Sin nombre').replace(/"/g, '&quot;')}" title="Añadir a favoritos" style="position:absolute;top:10px;right:10px;"><i class="far fa-star"></i></button>
                         </div>
                     `;
                     grid.appendChild(card);

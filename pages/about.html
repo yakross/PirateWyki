@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxWiki - Acerca del Juego</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/components/footer-component.js"></script>
+    <style>
+        .about-hero {
+            background: linear-gradient(135deg, rgba(102,126,234,0.12) 0%, rgba(118,75,162,0.10) 100%);
+            border: 1px solid rgba(102,126,234,0.2);
+            border-radius: 20px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 220px; height: 220px;
+            background: radial-gradient(circle, rgba(102,126,234,0.15), transparent 70%);
+            pointer-events: none;
+        }
+        .about-hero-title {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a78bfa, #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+        .about-hero-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .about-logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(102,126,234,0.1);
+            border: 1px solid rgba(102,126,234,0.25);
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #a78bfa;
+            margin-bottom: 24px;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+        .info-card:hover { border-color: rgba(102,126,234,0.4); }
+        .info-card-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-card-title i { color: var(--accent); font-size: 15px; }
+
+        .entity-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .entity-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .entity-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.1));
+            border: 1px solid rgba(102,126,234,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: #a78bfa;
+            flex-shrink: 0;
+        }
+        .entity-info { flex: 1; }
+        .entity-name {
+            font-size: 15px; font-weight: 700;
+            color: var(--text-primary); margin-bottom: 3px;
+        }
+        .entity-desc {
+            font-size: 13px; color: var(--text-secondary); line-height: 1.5;
+        }
+        .entity-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; color: var(--accent);
+            text-decoration: none; font-weight: 600;
+            padding: 5px 12px;
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 20px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .entity-link:hover {
+            background: rgba(102,126,234,0.1);
+            color: #c4b5fd;
+            border-color: rgba(102,126,234,0.5);
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .timeline-item:last-child { border-bottom: none; }
+        .timeline-year {
+            min-width: 52px;
+            font-size: 13px; font-weight: 700;
+            color: #a78bfa;
+            padding-top: 2px;
+        }
+        .timeline-text {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.6;
+        }
+        .timeline-text strong { color: var(--text-primary); }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 4px;
+        }
+        .platform-pill {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13px; font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .platform-pill i { color: #a78bfa; font-size: 16px; }
+
+        .disclaimer-box {
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 13px;
+            color: #fbbf24;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-top: 8px;
+        }
+        .disclaimer-box i { flex-shrink: 0; margin-top: 2px; }
+
+        .link-card {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            text-decoration: none; color: inherit;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+        }
+        .link-card:hover {
+            border-color: rgba(102,126,234,0.4);
+            background: rgba(102,126,234,0.05);
+            color: inherit;
+        }
+        .link-card-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 17px; flex-shrink: 0;
+        }
+        .link-card-text { flex: 1; }
+        .link-card-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+        .link-card-url  { font-size: 12px; color: var(--text-tertiary); }
+        .link-card-arrow { color: var(--text-tertiary); font-size: 13px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="../index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;">
+                    <div class="logo-img"><i class="fas fa-rocket"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">GalaxWiki</span>
+                        <span class="logo-subtitle">PIRATE GALAXY</span>
+                    </div>
+                </a>
+            </div>
+            <div class="user-section">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                </div>
+                <div class="auth-buttons" id="authButtons" style="display:none;">
+                    <a href="../login.html" class="btn-header btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="../register.html" class="btn-header btn-register"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </div>
+                <div class="dropdown" id="userProfile" style="display:none;"></div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="navigation">
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-item"><a href="wiki/ships.html" class="nav-link"><i class="fas fa-space-shuttle"></i> Naves</a></li>
+                <li class="nav-item"><a href="wiki/builds.html" class="nav-link"><i class="fas fa-tools"></i> Builds</a></li>
+                <li class="nav-item"><a href="wiki/components.html" class="nav-link"><i class="fas fa-cog"></i> Componentes</a></li>
+                <li class="nav-item"><a href="wiki/enemies.html" class="nav-link"><i class="fas fa-skull"></i> Enemigos</a></li>
+                <li class="nav-item"><a href="wiki/systems.html" class="nav-link"><i class="fas fa-globe"></i> Sistemas</a></li>
+                <li class="nav-item"><a href="wiki/missions.html" class="nav-link"><i class="fas fa-tasks"></i> Misiones</a></li>
+                <li class="nav-item"><a href="wiki/misc-info.html" class="nav-link"><i class="fas fa-info-circle"></i> Misc Info</a></li>
+                <li class="nav-item"><a href="wiki/calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Calculadora</a></li>
+                <li class="nav-item"><a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Foro</a></li>
+                <li class="nav-item"><a href="news.html" class="nav-link"><i class="fas fa-newspaper"></i> Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-container">
+
+        <!-- Hero -->
+        <div class="about-hero">
+            <div class="about-logo-badge">
+                <i class="fas fa-gamepad"></i> Página Oficial del Juego
+            </div>
+            <h1 class="about-hero-title">Pirate Galaxy</h1>
+            <p class="about-hero-subtitle">
+                Un MMORPG espacial de acción donde los jugadores comandan naves estelares, forjan alianzas y luchan por el control de la galaxia.
+                Gratuito, con más de una década de historia.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Columna izquierda -->
+            <div class="col-lg-8">
+
+                <!-- Desarrollador y editor -->
+                <div class="info-card">
+                    <div class="info-card-title">
+                        <i class="fas fa-building"></i> Desarrollador y Editor
+                    </div>
+
+                    <div class="entity-row">
+                        <div class="entity-icon"><i class="fas fa-code"></i></div>
+                        <div class="entity-info">
+                            <div class="entity-name">Splitscreen Studios GmbH</div>
+                            <div class="entity-desc">
+                                Estudio alemán fundador y desarrollador original de Pirate Galaxy. Con sede en Hamburgo, Alemania,
+                                crearon el juego en 2009 y lo mantuvieron durante años. Son los autores del motor de juego, la lore
+                                y el diseño de toda la galaxia.
+                            </div>
+                        </div>
+                        <a href="https://www.splitscreen-studios.com" target="_blank" rel="noopener" class="entity-link">
+                            <i class="fas fa-external-link-alt"></i> Web
+                        </a>
+                    </div>
+
+                    <div class="entity-row">
+                        <div class="entity-icon"><i class="fas fa-chess-king"></i></div>
+                        <div class="entity-info">
+                            <div class="entity-name">Gamigo AG</div>
+                            <div class="entity-desc">
+                                Empresa alemana de juegos online que adquirió Pirate Galaxy y actualmente actúa como editora
+                                y operadora del juego. Gamigo gestiona la distribución, los servidores, el soporte y las
+                                actualizaciones oficiales del título desde su adquisición.
+                            </div>
+                        </div>
+                        <a href="https://www.gamigo.com" target="_blank" rel="noopener" class="entity-link">
+                            <i class="fas fa-external-link-alt"></i> Web
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Historia del juego -->
+                <div class="info-card">
+                    <div class="info-card-title">
+                        <i class="fas fa-history"></i> Historia del Juego
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-year">2009</div>
+                        <div class="timeline-text">
+                            <strong>Lanzamiento original.</strong> Splitscreen Studios lanza Pirate Galaxy como un juego de navegador
+                            gratuito (browser game) para PC. El juego rápidamente gana popularidad en Europa y Latinoamérica.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2012</div>
+                        <div class="timeline-text">
+                            <strong>Expansión de contenido.</strong> Se añaden nuevos sistemas estelares, tipos de naves y el sistema
+                            de conquista de territorios entre flotas. El juego alcanza cientos de miles de usuarios registrados.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2015</div>
+                        <div class="timeline-text">
+                            <strong>Transición a cliente descargable.</strong> El juego migra del navegador a un cliente de escritorio
+                            descargable, mejorando el rendimiento gráfico y la estabilidad.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2018</div>
+                        <div class="timeline-text">
+                            <strong>Adquisición por Gamigo.</strong> Gamigo AG adquiere Pirate Galaxy de Splitscreen Studios y toma
+                            el control de la operación, los servidores y el desarrollo continuo del juego.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">Hoy</div>
+                        <div class="timeline-text">
+                            <strong>Operación continua.</strong> Pirate Galaxy sigue activo bajo la operación de Gamigo con servidores
+                            internacionales. La comunidad hispanohablante permanece activa, lo que dio origen a esta wiki.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descripción del juego -->
+                <div class="info-card">
+                    <div class="info-card-title">
+                        <i class="fas fa-rocket"></i> ¿De qué trata Pirate Galaxy?
+                    </div>
+                    <p style="font-size:14px; color:var(--text-secondary); line-height:1.8; margin-bottom:16px;">
+                        Pirate Galaxy es un MMORPG de acción espacial ambientado en una galaxia futurista donde la humanidad
+                        colonizó los sistemas estelares. La energía que alimenta la civilización —el <strong style="color:var(--text-primary);">Cryonite</strong>—
+                        es controlada por una raza alienígena llamada los <strong style="color:var(--text-primary);">Mantis</strong>,
+                        y los jugadores forman la resistencia que lucha por recuperarla.
+                    </p>
+                    <p style="font-size:14px; color:var(--text-secondary); line-height:1.8; margin-bottom:16px;">
+                        Los jugadores construyen y personalizan su nave, instalan componentes (armas, escudos, reparadores),
+                        completan misiones, exploran sistemas planetarios y se unen a <strong style="color:var(--text-primary);">flotas</strong>
+                        para participar en guerras de conquista de territorios.
+                    </p>
+                    <p style="font-size:14px; color:var(--text-secondary); line-height:1.8; margin:0;">
+                        El juego es <strong style="color:#22c55e;">gratuito (Free to Play)</strong> con opciones de microtransacciones
+                        cosméticas y de conveniencia, pero el núcleo del contenido es accesible para todos los jugadores.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Columna derecha -->
+            <div class="col-lg-4">
+
+                <!-- Plataformas -->
+                <div class="info-card">
+                    <div class="info-card-title">
+                        <i class="fas fa-desktop"></i> Plataformas
+                    </div>
+                    <div class="platform-grid">
+                        <div class="platform-pill"><i class="fab fa-windows"></i> Windows</div>
+                        <div class="platform-pill"><i class="fas fa-globe"></i> Navegador</div>
+                        <div class="platform-pill"><i class="fab fa-android"></i> Android</div>
+                    </div>
+                    <p style="font-size:12px;color:var(--text-tertiary);margin-top:14px;margin-bottom:0;">
+                        La versión principal es el cliente Windows descargable. El soporte de navegador puede variar según la versión.
+                    </p>
+                </div>
+
+                <!-- Datos rápidos -->
+                <div class="info-card">
+                    <div class="info-card-title">
+                        <i class="fas fa-info-circle"></i> Datos del Juego
+                    </div>
+                    <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                        <tr style="border-bottom:1px solid var(--border-color);">
+                            <td style="padding:9px 0; color:var(--text-tertiary); width:45%;">Género</td>
+                            <td style="padding:9px 0; color:var(--text-primary); font-weight:600;">MMORPG de acción</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-color);">
+                            <td style="padding:9px 0; color:var(--text-tertiary);">Modelo</td>
+                            <td style="padding:9px 0; color:#22c55e; font-weight:600;">Free to Play</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-color);">
+                            <td style="padding:9px 0; color:var(--text-tertiary);">Desarrollador</td>
+                            <td style="padding:9px 0; color:var(--text-primary); font-weight:600;">Splitscreen Studios</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-color);">
+                            <td style="padding:9px 0; color:var(--text-tertiary);">Editor / Op.</td>
+                            <td style="padding:9px 0; color:var(--text-primary); font-weight:600;">Gamigo AG</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-color);">
+                            <td style="padding:9px 0; color:var(--text-tertiary);">Lanzamiento</td>
+                            <td style="padding:9px 0; color:var(--text-primary); font-weight:600;">2009</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:9px 0; color:var(--text-tertiary);">Idiomas</td>
+                            <td style="padding:9px 0; color:var(--text-primary); font-weight:600;">ES, EN, DE, FR, PT</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Links oficiales -->
+                <div class="info-card">
+                    <div class="info-card-title">
+                        <i class="fas fa-link"></i> Enlaces Oficiales
+                    </div>
+
+                    <a href="https://pirate-galaxy.gamigo.com" target="_blank" rel="noopener" class="link-card">
+                        <div class="link-card-icon" style="background:linear-gradient(135deg,rgba(102,126,234,0.2),rgba(118,75,162,0.1));">
+                            <i class="fas fa-rocket" style="color:#a78bfa;"></i>
+                        </div>
+                        <div class="link-card-text">
+                            <div class="link-card-name">Sitio Oficial</div>
+                            <div class="link-card-url">pirate-galaxy.gamigo.com</div>
+                        </div>
+                        <i class="fas fa-external-link-alt link-card-arrow"></i>
+                    </a>
+
+                    <a href="https://www.gamigo.com" target="_blank" rel="noopener" class="link-card">
+                        <div class="link-card-icon" style="background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(16,185,129,0.08));">
+                            <i class="fas fa-chess-king" style="color:#22c55e;"></i>
+                        </div>
+                        <div class="link-card-text">
+                            <div class="link-card-name">Gamigo AG</div>
+                            <div class="link-card-url">gamigo.com</div>
+                        </div>
+                        <i class="fas fa-external-link-alt link-card-arrow"></i>
+                    </a>
+
+                    <a href="https://www.splitscreen-studios.com" target="_blank" rel="noopener" class="link-card">
+                        <div class="link-card-icon" style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(251,191,36,0.08));">
+                            <i class="fas fa-code" style="color:#fbbf24;"></i>
+                        </div>
+                        <div class="link-card-text">
+                            <div class="link-card-name">Splitscreen Studios</div>
+                            <div class="link-card-url">splitscreen-studios.com</div>
+                        </div>
+                        <i class="fas fa-external-link-alt link-card-arrow"></i>
+                    </a>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="disclaimer-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>GalaxWiki</strong> es una wiki no oficial creada por fans. No está afiliada, respaldada ni
+                        patrocinada por Splitscreen Studios GmbH ni Gamigo AG.
+                        "Pirate Galaxy" es marca registrada de sus respectivos propietarios.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <wiki-footer basepath="../"></wiki-footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/header-auth.js"></script>
+</body>
+</html>
